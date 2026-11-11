@@ -61,6 +61,8 @@ h1,h2,h3{margin:0;line-height:1.25;text-wrap:balance}
 .tabs button{min-height:48px;padding:.2rem 1.1rem;border:2px solid var(--rule2);background:var(--sheet);border-radius:12px;font-size:1.05rem;font-weight:700}
 .tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .fsgrp{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
+.grpseg button{min-height:48px;font-size:1.05rem;font-weight:900;padding:.2rem 1.1rem}
+.grpseg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .hdr-r{margin-left:auto;display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px}
 .seg{display:inline-flex;border:2px solid var(--rule2);border-radius:10px;overflow:hidden;background:var(--sheet)}
 .seg button{border:0;background:none;padding:.25rem .8rem;min-height:44px;font-weight:500}
@@ -294,6 +296,7 @@ details.more summary{cursor:pointer;font-weight:700;min-height:44px;display:flex
 .pv-bar .sp{flex:1}
 .pv-note{padding:8px max(16px,env(safe-area-inset-left,0px));font-size:.95rem;background:var(--accent-soft)}
 .pv-scroll{flex:1;overflow:auto;padding:18px 16px 40px}
+#printView.portrait .paper{width:794px}
 #printView .paper{width:1100px;max-width:none;margin:0 auto;padding:28px 30px;box-shadow:0 2px 14px rgba(0,0,0,.25);border-radius:2px}
 
 /* employment */
@@ -411,10 +414,11 @@ textarea.inp{min-height:4.5rem;resize:vertical}
 
 <div class="app">
   <header class="top">
-    <h1>治療師排班表</h1>
+    <h1 id="appTitle">治療師排班表</h1>
+    <div class="seg grpseg" role="group" aria-label="班表"><button type="button" data-act="group" data-v="ther">治療師</button><button type="button" data-act="group" data-v="desk">櫃台</button></div>
     <nav class="tabs" role="tablist" aria-label="頁面">
       <button type="button" role="tab" data-act="tab" data-v="sched">排班</button>
-      <button type="button" role="tab" data-act="tab" data-v="staff">治療師資料</button>
+      <button type="button" role="tab" data-act="tab" data-v="staff" id="staffTab">治療師資料</button>
       <button type="button" role="tab" data-act="tab" data-v="settings">班別與人力</button>
     </nav>
     <div class="hdr-r">
@@ -439,7 +443,7 @@ textarea.inp{min-height:4.5rem;resize:vertical}
 <div id="printView" hidden></div>
 <div id="tour" hidden><div class="tour-spot" aria-hidden="true"></div><div class="tour-card" role="dialog" aria-modal="true" aria-labelledby="tourT"><div class="tour-n" id="tourN"></div><h3 id="tourT"></h3><p id="tourB"></p><div class="tour-btns"><button type="button" class="btn sm" data-tour="skip">跳過教學</button><span class="sp"></span><button type="button" class="btn" data-tour="prev">上一步</button><button type="button" class="btn primary" data-tour="next">下一步</button></div></div></div>
 
-<script type="application/json" id="seedEnc">{"iv":"DXl9BS0j-Tl3bISt","ct":"3gUw9hQZgH0G6pyLVi7oZDQYRhruVR0QQgQDbyYyEwiBkJoRoJK0wsNue8lbizdtnJP6TeDEk2jbyfUQZxvMJ0cC-4iUbaYADUhcjaiVL1lmODQhlMH2n0vChqfKn4JqCw-Ydd0k7Jh6HDSauG7DlPJXgtQbkxBXPSrlwlg0APe673-nJjD8PrsDkhXnwnUGIUQzGht5pxZIay5ILC1OI3TAmoaR-TBc17_fg1tNrllDrsREtfXtNCCzcXYojpdR1n_gPO9ZKNGidfP5i1e7aszNnkiiCmgMgytXnqkJI25D8NhW2jIKp6NNqHw0AD2Ar-h7XkXK6CjZsaB88CkHXcP6r-GaiZme-kgMnPB7ydYc6jZFJSLmLNkqEXuELZr1ai6QaY-ALvqrp9DkKXdi10U9XfdsOlES2yB10Om1KFVD7wWNI5RufZ6kwvxcuuPq9J26BdFHJDBq2D62GQIixEKqS-i_YrRi-Ikks9zLke9T779o0Orz9OjvTpzU-IqDHjR3GZspxx43CKRvUKTNEfSrc3_l6XfrwLXoiPhGJoWrTvfpA1hIdz-NR2nYzHA6KrL-23vGitIHere8pOlsoGEAF9vGAvfrSArwqxVBBWi6eQD5ivygW8whRKCVMSupsJdrOW_qzd2zqwxDnROYelSn2tDh_WLpQCWGy10jeWYCqCkof9z0O9ZwUXSZNyufopGWHCyN7LIczqxsubyhPtVZmx425uc_dZsJoygXslXn0mZfheIYg6dQcapvTM3uywmVNFz39ftzC6-jTtXnqaODGORDJ8pYWyHhHtF8wvoaj8BfY7txSiiTqH0X57BuySVE52K_Mr9Up4II-n57Lw6X7FH1gYoe07K_1LF8k5q_WP4Wck3XvXAx3SD4dG-GwYqplkrLdy4lIj0oIkkAvyXBZzHyNvjDZRVhsV4Qdnnq4ii1Q3ibDtf1xVRTHxJ5r0bcnkr7Ws9dB0229H1rFZX7g7dQtAC_r0ryW8H0FRSPR-ZKWNWmY0e5pTXaOFytABfumoA8iluVl_h7i-StICzam4Nj8xLCoLqlFwXaExhSOUGGIfvnYa_3LHCK4B_FBT0PFJOlXrmrZJGUOQwJ1N2605GeyuOZ4OjsjG147qVdzqSwB0t8c9C0-e7MNDCK4TcONsSfn6ou0poNixAxkNi6PlW30tmufZdT2N_Mf2MVZ_WazLGqf-oaGp6-dIIODECA7Ilv16lnNlO2mXUZ7p-05uiLtLZfr2ClLDxK1R5JH5apBXVqF5R1IR1cRjBM8UnA8iEYyjBlws4chNt5_A6oA0eKFCaVAtcu6wjOaloxZeFFykjBeh_lAES6apv5rfiXCfr1co-135TbR2SAzp6iWGJr0hEqdXJNTvVtzd0-iLhCFL4-lVudC48tTVCD88OR1UOgHv9tykXJz06ZOFip5UX9V6VlksFq_wLoKDR1EtQpHUplePYnLLKocIn2YYVKPQIFHbdEHvKODjBrPH9vWMabho-vVsHWYkC4_FwIuHVyVIneM5hF0x2cbq0WcOzhUtWaa9kKYkVPw1XFyVaJ2XEYCaRJUOttY5RRvshDOjckAAuKAXxBxrMtyrV8o40QC-ECw7ZLLgMTdfLaostsy-41gmro0jcyKj8Pq_eTod-RZK4FjhlZWw5shqkeKHIyvxbT4VZ1V6U9nfnr2jEt-kbFvZDOTwRmsj9qVyeb5vS3Ljiqcum0rCrpgDZ8KHYCYar89kLFs_NT1q41JxMwNKrhuuEDLU3JCy-ITWl5Ds9EkSjqhDJqWquN0x0aWbKpXcRwtAsJ_jQxbZ5XuvGMcZExOHKXo2HPEVEmsxF9m2739xKl7VZ9hH9EoLiDTLRzWPPc9Z73kh0PtNQOvGJMyCxdExKTE9sRHAbrXQ_fi2RfQBUiGa278oCfZGVFPQfPIOtcTAQOyikajDtuokrJJDLz-RgniHiBqBAZe4218YBKEGkYCMqlJy2OwEQFkdSRhYT0HMXFX1o8s8PJxzbOoyl1Ma0_CW_NuQqW4aDfa0a6Lmee0rAkkplCCy-iHocv63OJTGOgOQHNZGs2jtyhqXW7jOJYc6pN64CMJ6U7aUhaYH5CFpElF2lpGU6cSe22taPFTTe9lO0Owlcl0odkM50MPFV7I9CRqIq6H9q-k7mnLAWajgF6tXqzj8mq74BBy8NRRWAMIyDlxbdWbqRJU92p_fNS18UYOiiAZVrTbzOwJq5muTpp1YVDMvk9d1wtU0vsauEPwso1n0yRriApoCxMqD6tWBFrzakjhXxFf7QyRFffepdwNsmiXBkZ_SntxJkIoiFpDXyZ8l5Z8PYlW3Qc6n0yUsEuC35GVks63QerRSmGA4F3sp7FvQ-gp1XX1dIkjQD2VPgSZYaWu-Ewe6FyeZ9IyXM6Xb_VLY79wCbIYhd10so0PYBWv2wnh_mIEMZvprt9bfkMuei9KqPRFx4bcWuEx6Fz9-B3hYZbvHC0nzPWlamvPOn9eZa0gnQL65VIrqPI2FZAraxOEfAuaoVtYoPr9m-y-ATGS6ymkBqkgtdYtNvhIheWVDXLTE6Tkb_bSrUWn0x-LgQ9qt5NqqUJcVpGR7xrnau_5Ge5V9cbEDBMXfxma8kPzLzcBJgfUd39v1Lepu08wGKJ0CTxzfIKpupAW3mpRG7r92JvV3frGwan-rUWJ3Z1qfIUcIH0ZYGPiXLFHUNUEfycpQDVPzreRSgvNIEP16ERpSAbypsZWMGyDwIP8J6xuMtfyWbf2yh42UDfBIXCNKPD74GoCp8vtG8-eA8b4aFJXLrZP9pM2LdLhetGSt4__RLqKsvwoamiBf68ko3-gelkwijFwu5OcgxVVmRhLKr813Vo9EplNfEzFbF9pnIlgpj3Rxw3jMRQgu-aptuChIRfzdKo3pVhfEgAQNhV4c9Y7x_lqH0qM5Pg7Vz3tXAeX1E6MOvdgaLtmWMaRkFv0uacHrV6nDtkY0OE-3Mp5vEv9FR_gpycGn6_qQpde1BQA4bZS6B9gQJwRZPltDy3uygA-jxCFUrYsM5GY6ZxrHSmb12FJI_0xepoJn8KZuCBsl4AWJghMmNOiSULekmb9GNEvCnkimlGE7IhdXRYkCoGGlEsxLRrXugBAE2CwHx8QoQTRCdiUfJESLNs4oT10tn8xilUZaKfLLlpuJhG26-wPMgmp0Yq2jozSZlS-n3lX7v5lLf5vUOZBvWD4E9owVwpkmAR_dE8T6RKYl3Z7AdtQ5VgW2QUHFhVWYS0l-drrxwiZ0K6DXKHBX82EkTrEB0lJKHpSqSeLjcyJzlRe0Sa0VKAsdk5y5jEkJ5lr_gpY1EXZxNSRwpRr1SB3rIOjxIw4huqaUZxYo1uXUIYw_y-OyvMOAU3skcAXRgQuaguEn9lwTJPZNsnjZXVvPR0b_mosYop8qDXmTukhIOw7IZwmDhM78ESCKW7sPdst-UrXnipLNZa3MucxxAMQzoTlMJZ0dBztCaRX2CeCT4-y2V6lkEuGMtfEP52D0uudaYwO3g6gQ6KF6n0yPvbeLI3X82tDnP4ou8cdYzliJyYYj_B638FfMM5MMajWnbCMDA05lH9lI0gBzWAGjrnf-yVowfVHd6M3leq2DDdU8QDgRZAIlXDAdwtmY_RnN7Qn68HznY4GsOVygaCpFkUCsNckS6IdTjVbTEHKWtDR0SUXeVhTMvAbytGSyXGnK1hacJgA_MBPVi3CQzo9bLA-Cjf-57QGZQYGp510DRea6vJaYmZA_phB9Inm861RlO2o7H_uKuarHgJruKHz1W9xlrg70pd8l4M_ThqxUMI4Oo-vHqVym0XaiMROIZn9PZb5PYMFoX0a4plguvTTUkMRr3JoQhRexjCffjfkLbAsZ-IutagdI_L5LHDkRULMtQWl2Xj6sAgxzG6JnVw1w9ogMr_Obr4thJb5oT9yF62ftYdQDhuKx7CauqoYMqd88-LWY7d4p_lCT2xnsBgN4MgpGeKQKMZEIu6YfvDOyMSzuCkaNuLxCWm0eqv3xSslRkv7D85OpIhGq3LJp9GSDS2TVNOeylwc-yGKZX9Gp6QReQ8efCtkiiMR39E07MJfglkELmzIzvrtv3pGV7g71N5KZUctlo3DtG4OQPLgN97otLySzxlCjxlQwhUH0NnNyU6p-bT3BlKtbAAX3nv6WioDFzaPhrf8EfdiVdGztMPzyTRSVVyND_GKhRgnWu3JWILN_Ql5zwEAb53L0ltwCg_neK4SvUP99Naqh3NZ4gwWZVpUagn3nvWAjnjot-QiVwKD63PcghHd4MIRUzq94IOIHn9bC0RcDGf9XoFU0q-0MtvdWqVSY76WTjUeG3aliRdTix5o7LUnDuEQM9pBFx54Bf483hF0FTBnmedfxl5O9DeKnb70naFRNBHSItkBYP661RatD5af9Txju6VtJXpM9jYQuBAMMM-47QKR-dVy_TvcixHPodscnQAGEU0CSO0K5W4ymTe7hU-nQme2GZB4_VsnC3z2db4fsvs3o8-6c5kv9KBxG8dt-O-_TMpQK-o3SSCawYfGf7WhMcIj1Epd1mPejLliP9XAuzL9GM8ZRtjuFucQ5eF2DA0lzC5ua7UA2r7CcTEB8Y0DYOcf5pEKPBgb6FuPck6qRk5ZBWLsmlynz_xPesojPZdp1vj5UY0zRkwyMQbtzYC_broZMs0pLw3ark39xOuCwwLLH1_N-ZHWbZ8bKJ9qdolP9UumqzWFSxTdSvLXPSBFy_miql2aDBLJ_2IMYkecw3yDZvrf9RJOj0tZarddsTnIby4CDr7TiKNR8QCyw9SVKL6nf3Zxnegpq3daR_Pqy3woN3ImrC72M0CcJG6Qhb-x8cscL5YnQQfAnsk0dTAXDWs1MK9NaQYiKL-hI2p2rzzT_a_cUgw5G4ZP62CF_89RhyQDI4R2Br3nGgeoz9MK_hwis9dyNO_ry6ufLxngBwC1qKMJM2SzApmpuo5HJtRzu2jbG7MPfemRBhxyDvCqtNN107-q5-cU19eKB7OkgOAD5jRJZrfti_X4Lhk6xVyrx_pDscBJPqy9pQopiH_7x2tWOzsm-9vOT6tdKx-V8ceBPAvMS_e0gIZCoBq9j0HB5GN_A9-BrsK7R_7zV2CJyHXiYoRrI9RQ7Z1T1Q3FHKeksgTdTruieS33YKryQCU9gR77lTZ3XjIF0jWfuby4v4n940oQHWhAavXkcsCyQNAphplIu6Tl8Et9uByvz8IUukM5AJn17ZRUZVBIyyBDF0KCAWUgW7XKq36d0N5OqZKC_Y3nHXZuzYkn-NeQdUX9FDCoWEHq0vNYSoBwGru1PLlsxp33hxQAbIuG0dm_mkVeraEqNgl-hhrBSlW_o9Pig5GSUt1WiNRkM7yQpfwR-y9_zwNbfdoUv39vrwiXrt8zBP6YuYypwhu44tc1yuKsMZNDf2rUcH29cnUjindyhpU6V95-GIpNIbqH9UMv5ae0FJ_l8KfhSORBgIOexud13v1X79OF9wvbKxnttclEhoH-Fel_dr-S3xFOB6XCDotP2B6gVgjRmCJpXBO3um3WnN08jIu8zlKS5CxMfvY2Ca2tCMz-1zcTqr7mvOClaq4rhEpi3wNi7IK30BJIB2IaD43ZoIZPdbmPvWMcq2j98w9TMT7bj1vtqcPT3GTm24zNlHP5OFSOa0_V3geoNdnGIL32EwaO8AC9yGuFXZxtzUVMjucP_f9EzGW7NNOOutrOI4JCz4QhpCxVsJXSPakDJ83veaKhRTpFKPET5pnhU3r9MwsGdu6HIVKDLOBOZ34pu0UWpZTk0yeKK537jzRMfUir58kaG5wd2MYTKfk1OPqiYlg1xPI4e9d3YYQ4dNFOiIaV7LYmkZCggBaZEC6INCnuhrEzGWPyhddsVfUT-4ihNzIknhbcLRIpxQBUn9ygJL7qag0rZySAKIwCQmmPQjDXggwCQOyUIn80w-SlNeMaoj3Q2leCRK9hC9DGPlg_ePNWiBU-TvkstxJinMtpu1NsoJ0eQQy8DGg4mW_RUyE4_klzgxrO9aDEwrBODE_wxtT_jtB4ppkc_ZcO6po4fzuGImbWP_SCdas9Q_CmSNHEU83wx2sU07eElLFfXlSbUKi02RPo44lSoqEYf3lOk1-o1a5nCSVymxq-5ntQRQqwJZ-RojkFg-UbRwmoQkaOrwvaNCVV1F53fItRY9w1hD0UO0wCsYDDz0i4FmFnepxBXM7lRPtrW4xvBL4gWBx1YaSEx0N03DU4E-iQvYrTsLIJOIW7bZ8ft2RQ0wgkqV37l1MH58JbncK4ejwaWzvNTasGC-k2n-8XCcPC7ZcxV0yFT2-8LvwxFdtVLkXYkwmVU62GCNKgEtbuJr0lF3klLwLUgC54r-GcDNLmDOjaBo2V1OwQSjQb3L0iOQsBXs79H34CkhQS71UNIcAUkW3Gjz000bubUKz-0a6zigR0aQSC-Q2G0iS7X6jyXB9kVfGnOJTaHl3ZNtF2cK8LlsT5qj8e1wJnNfJAKxaJuaWZgkSZeMS3KwjyvH38w9BCQsM6DXp37k6LjUhwpSp8cAJsCAd_Iwx3KTgYkgUckxAhyGbkGi6w-Dq1b47J-Rz9_k8N4NoRog3cCWtjzNiC2AHTqizGjitaSJGMky-OdxXXaVL-zRd5M95w9PRdJHeXbmsorWoO9PEShL6E0tIH2zbEnUiXfEPPweFHnfrLDrgN--i8C4wJG3okFkxySpfGX66U9h5rr_0Oqr3qJa-Q-Jz3UB5XBQiKzhmi7wWNvCjzHnaY7M3DVzXI94vBV0v_kwvfJ0PU-oVmQIDTWWi5uPvZKiUuizWDmiyYVEtrh1tsu0eCLwOysmXWX-vGy_F8g3EKCjfSccLv_fyuxug8p3CZQfoCBswNEzVOz04OmTvx4VHatUkEmM26eLX-f9oaypMBMlGGfTwvJFRCfiHkPPphGzpe8kDCvzBQREQ5npTJGrhzI_Fb0G1E0JHbSA1l23gBHnDRmRPsySUu9S52824F-bAUC5N8PQo4CyMZ9yORD4u89bklFs1qBDbt1QQjpEOEc-Gr0PnantkQeBXRsIXm7DNBpLu-a1grsuBauMHllRnYoFM5seHLAhkR2iwv8mJaXYrLe-5_ike1gEncmd93FeEyt15utIWPCOUgR1M4DavE-v38Q5dRqYs9GfwDoiFPgzWng7NGR6pnko56FNN7b8HIPC2JDSdYnTDqXO5qV6BEzPz2iOOGPeCfHbZqsjXLvKQQFQI9F3fWVGGWVRt1PAdtx5cQwuwPt2ElOX81NjAbiQfvoqI6TS7Ym2pHQ5-tDyBAZ8Yd5zrRXZ-i1L6yUTxV-wsoyJ33QiwqV1wrLP4p8un6-MgvBLsOzCwj0QXf-r8e443fUAqPtsxz2PLTndXrRjOYnSJoqU57bbR4OE_-Hbvv7Cd7bjfijc"}</script>
+<script type="application/json" id="seedEnc">{"iv":"o0VsWCVLwnvJ7qbm","ct":"eI6oQVAa3xsJtfw-zzR9oWrBQXjbH8V9JkiC9UfKXD0Y7TIAZHL2vIEjIREWCyaJlBnPZVHuNIoVfRmtGy6vwJZJ-cgc3f8J32UllUOFJn1LNowQMHS2CHM8dVOgdBDHn0Igp3fAjGVgwmGV3hksAb2VmDLB_l_91rNUgMtB4KEnPUWXkxiyNZs_qPTzDv6-H7BiMydXHpaqTz_d22THsL64Wq1E4AG75ZAugd6jhjd0m2a_aqrgywdPsEU2O6aWGUkZ0UpzueB_d5xKX_fPTamJ5FL_RbW-_3_zPTdEJPebN2gBgsdMBFP760S9U7g7BgkVSUNQjJXp1AvR0_CKsXcwkgIjdxcDBbC_JEJH3WGM_AFU5erBldWXa5wLY8cMZsoVvDIMs7fQK1btevTrKH2zsh2PA_eSWsiphGkq4P6kxerrGLiVavIrUsRYHohXSkYwIi5ufL49Gcw1FsoC_VvXCZOmgtR8oAWo-TPZCnRQ0XHpxQwGGezFhdbh5vU2dm-wP2TAXOKms57a55UIl9oCb9gNWkqorL983bt4kauTtN1n3kl9XpfPBLeXmxxTRP2zi-0fbJzEJjb_6BGPyQI0tvMlv6xueqZ2R_fZhG3BBGHjOPZ4k2e_9TX0NqQm8SjsmeeuXm0ndr_QBMwabi9Y3hHc5MOblFxPkkwe9ZkZniTM6GcSN5tH2E-CTj5i3miSB9kzISpEuVVZlA_lFiU2FaCwAs0CLfLropFblDpF7RFakJQt4wpNpg0uWJp58D8gM5Vkkggdax78W6Lnfen7T-UivJuPtcf3bDDER5nCDXYlo5ZTAw3wmSJ8jTuHr3o46jQFefzgYQcb8PRSg7v-g5qfa8j9WPJU6XigDty6FmNvIMnL2gz7v9HuOrbjI9Fj-_t-Xo6ZPgsRRW4o1UvdBQvdXXky-NPKmFK3G_IpzUWiT4m8xBdbJtyIT9VZAsRxYonxg9qy2pQAKGyzzAtHu-5dnHrUhE-i1XLjNBlLvhc8m3fx4cwPmflrJXf0zPmrvxDMAOtXLisoBhOKMJBZmxuKlOVn02HfgYugJu03CEbVNlKEFx5sSotfU5Gg3asbpze6lZ04oLkmgv_ox0_pwho6-GEISjgmbTMoPSZsCcCBFSU3jux_Ti2GNmezplxaWNc6NE97xYwHmELNEqMnjZRbu87qGem_mUsnTS30I7-Jw-4fkFsXcfZXqBuXofeU6nyPXXZz6_KRYRxz3hII2n_SPaiPEAVd1xa6sECsdcLdbMhJgKHnC7N3iMss4RwG5enujgZMdg2Zk-oQYd6elg3UOdnW4KZ1PsRRR4cRsc6NkJQw5z10XEQfa0DQQASHQftoZjIZ_3pCsaAbXirC1vkz7-sTnlwB1YuYTbss47Cufnh-qdvscTRbcnn3YJdwSG3V5YRrDhSyPF7MR0jSNb3EnCM5c8niA8YBQxZiPm9UsLqOxTBj1aJCCGUjpge2BcFyLgIxvRTS8luwO7HfbKdKeNaXjLtoKT5d_fczqWRVSGrGyyi5JTXH5hldxrd2HHb1CNiGf9Sf1h1XC8C2SBck29n9PWvS5pL5BbXN2AoJLwfR3hr4QjDl4UU5BcRNQtFxqFdgn-NQAGxsO8Yvb2PXmT9_5_eFiuG-CrbjuF37w07w3pgXaUxjVyU9bCFSdek9auWy8iytjdEOIT7QcGInOlwXYrnTyL6UIQLXe7zdy4RKVCLdizVkmtPaHzro3RxkyMZjJwiPeBj8Jr7bfqJQhVit1U_RM5E5_9t_IJULao6NxjdmAkKk4Gwb7Q3EyECvryMi50C1EGZrVW5mZjgPUBoOmW97uU1IvkUz_PMyKOWUtRxT8LHMf8HFUWores4IyKW_fmAuS5iXA_hPFSOrUGmQD2F4oKh-AbCC9VARv6qCBX0NoXOe8bHtuYvBpKyCWS3LfwTzZY793zIVKpLOwHGGYMil8fofX_kuEEBxVVTaeEb95OmAIqZ5IUz__gDNPIMjy0_qMZWpDV4SC8MpHswJMPh32OLa92Vux2tlZyufmYMd_hzwyba4xihXbO6F5ulNzK_7kDK47JY0CzLz5dwSSYZDE8QWK44-RMV6pWM2nCVYvZuyGsak3wo6hHrytQieti2kGh_WcUTc7NUFK1eGsM5nf7b2RTWOlSSD1zTIKhgug3c3AJLCyh692o9ctZhY_WUQebkyDogIq8OyMX4FeGh0SAXnAW02QM4utYZVxklMtOsoas9HTKl0eLc2Mq9NdbHs6LU3-1a5Mpz4iDVAJDUYd-kteL_pKh8HrFrKwPptx_wa_tVW02F_7GyQaMFrOkkYh6P7z-ghYhDuTBxgFGcgYDGBd6X7bmg70nJUMtc6WXo0gaghvqZ2mJl3l0bO4l_BrCUiTJuNojO5jYh3fsOovwXtWgZqAUNbNGLZ7TTAR-llP4ZgDzXavF77T4oOt5KVf73UtBn161Rt_gDgu9FWUwoSujH7XQcwKR_ztZF10ksxx47BsNUp1z0VVIclA8SnW4BGGKcr5dU6HdIr9xTapj_2BimSTmEBiUbQXqe7j_v0wNPyG_KJ6UUV9kmgdknZTm9B1SOZfWu6TtvS_EbM9u-SFN-yxJCNf3HohBlDpdOzlr0_NLDh1pBa0SZeU8wfvuRN8O35m8u1g5hmfw-NXg2e40g9gr8ToSCF-OnAGAJfJ2aJlQ3QWeue1nBeQ1k3TDF12ai70FtP5sKP6uPkzRx75pOrVHJ_VuoGvWmsLyzGZXXurzWlkbssdbvHcZc5dauK0AfQo3QFYGPkgXF-lTXBKLpjljfSHggA5yDiJzpVWXBgVfPhorMJBx2jIeHW8ecC7bTW5cd4N71tWYUUPo2zrHDpoBhEUGH-74bi0myu9-v6Y45wvOA77PiUNKWqpLCn5dffEwgwy-dAtKj_98X3DrR7EM5CHo7rZOYh7PyoYoPGOgrJufjD431pBkrrrlAdpfCjjXHt-QVJWTvAH4gbJykgnujs-WwPFZC_hEN_o0O0H2JFgB1FKSs9vKyZTFs9Lb2TdV46OQusvk7dA7hkk6MHsTbJHCMntx7EKlRp1Ihbhm1fd0k431yznD1rAajxU3w4GsGHsaBxit_oOEh7QT-lqYRAjS02enZ9pwY8e5zjq4bR6rW4Q8jHJFOm6qSXONoTsFNIxlEqpypHcIOHwxZx0l6nL9M8ISDrQkSVnj9akWrxEtrQ4Lgtz-taJL09kBN66J6DM6S83N15Ynx44JhahQ-zpLIxQvPSXCdJ__UGhpDcqKVewA_yFfWgmh-vsc4OYP-uK5u9A0-qbFvV12iova6dtJQgrFuAzhMEWWBcha1LW0b2zqO5p2Uz4FBo6E8_dDtVXfEytO4hPvt1mEX9YrPSeL53dl-PVcjeQeCh6XHLYKY8uuiABhcXJmOcUzC3DDi4PQwo2bmZKhwwbpZcFI_GXzOdWvgzYGS7nDbkXUxK-TDyA790XKM15WkuT3lnDxKDNjYgeJfm9jRoroXGbqvpfK2DnqPW8DHnfDq7Yz7v5H5TyrXmBcBlhbkMpct8xUcahkzbpHSgX1UZ9Nzv1CeodGQDmuonpV_51WPAL8K3OccQ63VUluH-G6vfq9wv4h00Acitv2qTHOhbmT4gmrZ_CrV_TsiQCw8Wjj5Uo_72pC2h9VVXdVw3JGQ1Jfwp_6VBErW2WolMzp42xQSypetunF8_egO7LhtKQMhSdv42wxZPKH9M10wcKGFmgbYRM6YMCbEfWZWAwdJjeFng5q4Ana1pp6xbdLcYDE5b0DP4QSbS5FhffV5Sngkb4K2CmtS0W6wKff0vwd7gRCmHEyipp1aJ8WMTLllNx_vOsxfgv_lmHI-vrPyVXmDEwDFi1V5KhDOkV6KAwEc08EWk0AxTA_S2loQ7JZtnd6wf3q22Sxvca3AipJC3IjsMw9rFZsod-hraRPCXzDLbLNhemWja09PdG1DUolrO0QiLYZ88ieXfsZPgiKfWOTiZ6P5CqCl2YVtJqnuByrdYkkuUzCjdQ4BWA0TQEQ4wVvWKoAweu_cg0fF3TG6NDuarJNoJAxoc3b9Ri1tON-BXaMANNEUDGX19NamqheLhjvrLYWVmA6SLSFE2cx3yUW_iHbv9Z_o3S0TlgSmyV2ZXrfe2eJIE8SQKVQZZyHPWuorx5nJXyQBwHRzJjhbqJpHkDw6eSFVTyvCNmSRr1y4tvJJAZLIhUI1d_YIum8DxLbYugG5bQMSbSXFipNbkB6hVuS2YG_83ck-9Z93awUTg9m9BDc9gm8mBCOaQ_Qy8YwoIkpS0prywR5Qwd-C_Ly2RRQ6rrGktGH5ONgsSE8M9Dc9mSoGMxJpK9ao9cgJlVT5gySb-qyJyVbFpk8SVt7oHeAZXooJbuVYe7Rg8t9ruYOB1dh9Z5WdPX9idupFu5J7zAVgsgE-zjLA_6OuwXbFSddD1u9N0ib_5ynZaOVMFUIaQUsfk5KOjYp90F6nbn-4CpTnelgoJYhuV4TQhnZ7kcBtYqv2Tvv1eDaiEpUvyBk4SRL3cJi8cmOV_39QvdaT-wVszG9JPL42KA6b-JuZ7zuTAXAfuCSR404tteBEkCRCAKcVG38-n2vrLMmf1qq-ZczR_j-YELrsH0e_ckQHzjbnB34wh1rKwZ2aJhqkC8BSXwrqXGCl4t3AIk_oK7x4WZ1qmJ2HFJtcYE8r_G0AvnaKqZBMCyzcTTMXMnGkG2cpUZRWAOBRWSS89he4NhWN4yRYo5f0ZoKsZMBz0a2K-n6J98Ph6bMHOSWRHcIHg_sOguSTFiYr43EDR5D_scB1w5r1gFKQAqoSj5Y6Z2KH1o76Jl8TTPHEEKtrIYeoyjB3JgEnxIBBGq91D05YnzXZTuWNYhkuEbFQImwtV010pv_lDZRdJu3lFYeJXna3s_hicr-XtjeBsJO6dggVzUwV85tZ3cInu_gLxq1CVdUgbjoej_5LVh-xvAdmA21qY8hZHK1RCCt3r4z_lkrtlufUpJJmv-shfOAav5eu9UcgC0YGcS8QbFjX8SfnSoXJ99yjUGiTFQwgm--dGbA9Rqz0VHV4lLC84DSrWZd3L8seFjMaiG7brb7jfpsFjWMeCRenFcxQqjiFbqtc9TsFbNoqsWPpaIaYpJCQPHESZGYvSLuyQykif7eVehlXX-b6mCAcmC8wIiUGgzHy_WmbDvd4GvpK1-f-BkFZnXNDcXJXFRuoQqz_mSvUGx9dBFDRlfDyCOcYEi7CM4UyldqdEpEJBoyGonQ9lQSJmjS6yY9EvWCctHE2AbmvTwfYDM9Ly7YJTMeYbHqttide1X8Fe4Ow79Cag4BDpQaEoezxu1qb6mQalW3WXBToHKYQkvXlOthi3orkdn5eUkYH5kOetAY6cwQIbmqic6iCkgr73SQPTlhqyHeE1X0ux8NvqDSLf3bp01UQxExEGgWBdOZFS40dNIm3wMr83YBkxQEwMRRNArm5UpUAjGDrAQpKt4PgidBSfp0i3iq3K7efIml1rpmlWML_b9lzq7JqwwCYaaOvL7C_qlOWHHm7SNoiVsxNZ5DRiFix67JEU_nNFtzMptc3Felz9LJMl2eGn9vpgyH5ILb57-aqstvh9_WmNsF40M8USGC1wrH_843BN1s3Rk6k0mJlVk2BQufuPuccMtAiLZ8hEutx6I2tzx8lMYURU8Is1_Xk9oLJuUyR8MVFpknpDDD2t2C2VVtLui2z2JRcfkoJFWmDzHAFnhYJ6lJYf79AM6mj2koGjaXeGYxP4L_Zl8xpiKIS2uz7weJgnqMpxVF00pmyadPq1eHy3JLywKlnIFdOdMk7iSxZYdrLyidaYXqv0fHx1TnDeqGOdMY2xBlvi5DZOMz_a_avwcvA1Qq2JCSP9YoU-XBR03ETBdyruPTVZ-_-0ZMHa3pEIeJllEZhoTdYqn_EN2wyLDHasEhHCiLz4g2KVllWvjBrXzVIpE0Ni3TjFAGUTVXh7uC3X1lW_iaIMnZyEqYVPX496PmSsaQPrn4V3CWS8j3CJQrg8bH5KtG_OaJui8iuU-jFbGecqi80zukz4YkOGB4O1O7mfd7dKiD3p6IWVLsNX9sZ0TpUBn3Tsy4-tEfRoaLFcoIqdtnwRhta3nSVr8STQyRvcXbm60cHxCdBAVkS_mxlsyBkBomrKi44hXi4fm74opgvGFhj1N2UF0pB7lH0bRlu3osul1pokeqKd9k8d5KYId1Tzy2WQqialDLwghF6vrLruS3SSiMZG0fPOi8WKieNnERoAlW5Nd_yLS24GB4ruR0TPnzROAaeRJ4CO1ug6KUzMxd5IArtBbeItxPdHM2zuci5gw5HVCW0SLfKDqdC8BQ6KJZE5CAhQyQRJr5prgHbMH3fk4DV869ZFzJF6w5CDWP9HJdY12BHAF2zto76Lc0uAukyDYR4cGtiTyaR_Ol8jHygEE4tLLEs7FOxc3n9WZY5aAQW-8_w7FZMoO7ySX0Jroo4KGH9XbxLlXhqoWPWHc7Wj1buor28fY3YhhsvZl7z9_lFBw68bfOw6MqwBpuExa5mAvBwsQe8ukYgkDJE10Bp8kokwbEIo5oW-9PO6KWAYvlEdowuZNsZIxufZvrIQpctWQPMaFF5uBEfDisrAJ8xyGpwuQENXJfFbC3Dkj8yaYhkxLto04ePYCkB-qO242Z0Fy9QT9Ig1sPPTM4OGWCHfwZb3w9Wym6ze0Ntyz-11ouz9xbnhYLLbOIpVK2T-XOdH0AjXPlb4o9uWUM9DlDrfwfKqSftFokv0QvwxcrzQE2xQc069l-QEQmMFb3jzlIvvlEmeBY1UbrzM5DqyZmgXQlUBbP7qfjIWs5JGVIMUvNqEfKt3I9Lbb1vLNr1IRgHLffAjnD-J66AoxIa0zaW_YTY5S1BCvw9NsnrsLhHNMTr1d_3uzezf8C-5FmVBUAMozkDEbieaiTzWnXJXJEaZpM43JZ9x0p1LUup2WWHTY2W_v0K8rteZmmpZCt7_pqYmjULwpCfvEs6em8jOR2IIu6RdUFjd30PynEbIiNZjfNeVQ4JD8ALoqF63W0M4lG-Be6XzWm34_k7OCA2qfQWmQTv__g3ZP5gkqnOmjujv7xwTjna41iBKMQz_MQKywiHjrM-cpFFXCVeWxC0smf9ab4xRceveXQTcMucyz3LYRPI-lOm1pzrbMiP_jjTM2yp4TQLCWlo8J-B0pE3qOhCA-hvb7Ugx22nLldljpt1rm9S2r8kW9ogwwaEoXZpO25Ui_Oaud5X5FRG2ONPAuOAIAPbXwagcxP2SSe_e1OVuDrIuOMMQ5LuNH6TphTXhImrUEzwUYc5EKwb1EaG4F3GwoKE4cuj46EKZWJuGGT5h3jtEAoJdjSuSfb4ZN8zpCyHpy7DHiMiPIJZQJzQjShL6BBrIh01zUP1NLqO_oubAryGnerJW0URm4TSp2iEuDErEXBOWJMy0nmBAyC8J4UpU4kVJsKLmut_ktS26wDUMydLVJgAzLcWllRz5PoZe2sogqElhg070FeKYQedNTZDzyfapZsE_rqgxrTQiqqlyL_B7lCtdubgGyy39opeCIAebJMa2SFJLJJrrEh3I4zMQBBShSKJXwo4UjDpAB1gxDRKV0X4CL5hIUst0ZwVCY7r5LSsqrh9IW4_94FCZx1WH8qUA6TbQFyaGmhmtCZbGeBn61LlXKBQiqSmt7mU0fiHVpwI5BaDcy87oEqgFbIV8fMSzBW46f8on9jCuNXGVhDgp6ROUH69HtdXKdM4_YP7PVDnUYfT213c5GV_iufRmUycrPA-42_SO3AqfyZdjMxYHxjIaThS4BedS6u5ymVuozTBKpbP5WwDhFX6WzOcAkTOd78VzG6BzAWn64ik1ZpVhgGH_oc9aODSvJYGAgTVBy4y902nN2zKx3DQc0lFu6irS2LL5tljDKzqeuITYAMafwf8gWUQX6GGJ_KsApCopEI2UyxQf90cIWpXiy0vDMngaDyEFRF0rER1-YVyDvWPBmpI_A1LrnYfE73WULkllxII2xKw2klI7GdgAXbIGHpDfZHZA_ouY1T5A2L1oR5a2zYvgCFXbo0UwFMZVOhaPPmRZB0h_KkKDxU2zsDGoHMj6V6A797UoCORZKJRZKpxWUchswMLC9ernSUqV3g_FwrvqeWFFtKDNQv9_Rl_QvQfcYgecUcxHrpETTjOgg38NqHpQgK9g0vS3RMSERvTv2prxHESTvWNjKIBT2_94bsI8pnLvW_s03Rd6pDsMS8w-PQAEL6uFOQ7tjEohG7qF2AP1RDdWG0aiaY8P7Ef1Z9h6ZoH7aFs1TeIwzYbKylz_4NuXvYPpANn53E_ivxjrRbg-bXpmT_XFGwxIwXkEbkgcMb_iA9D9c9He1zpi2OcOavDCHLhXQgeTJxw0g8XZPUNiebYSfepAWAhZYz0M4eDy3eFlLPjgtbUjRxp9x3HUFeUPhTYoESmy_9pwXsqF3uydY9n9eT0_HE_Yc97ItESbJUsWAmprbQyC2NH3W_BZWKh1Zb-TjiA631ajHzj0uQzbhNatjdvH_INkkTfFrn5WBBrJXkcAGDQMloQQhyW390pqY99QMhVfVAlBsMP6H0s3U-LgTEob5L3Ckn1iBaJ6qltfDXgj0CGpLdnX7-zTvQwTdZ1VgVNc4Jn9KDyUb3DZpaYK3Qv9whfxgo0XEZoponxDfNlS2Wp505iUAVc9iuslLyH4DRhulvXIAefxk7p6uzZZCD-r0ZwB77Pr87eL2Qx0JNYfUey0QZmLaA4q-I0wnX0ITK1aSv0k4a_y9wrLVDyBO1UN-40z4d9oTqiJVh4XDVyKRGYaN5Q_Z8NwBC2Y-HO2s93rVlmBwM5u8j3Zotz24HSov2QNnp-wcJUPaMesWjzHMFTst_gVwmotUIFIYXqhVMzuYf0h1AOlBdhfOz6gytfAiXlHVo7D7bK1B1f3zaR7tSEGfk7_lXvKkiJ75n9uVeC11CoutL_ne2d8yiC29ITQ8VJud8Q8CkKRG0zLj07ejOrt_VLU3xz8wzH13Re2R_AxlNe_XYvM1-SYKHdbi3-vSRAzIvaYjXqXMI8JEOt2xnMJiR31-JwzJ7nQ8Y-qa0b9K48JbfwdcMheWSStbetjjYSRmbDI6CyN5ALyNXtXB_fpRrhz-rIvNx5bi_8bl6v97XDcHUXsXo37mz3mkKntCo03RfXBG67GfmtJS_QuMypIzsWMeLrGcq5Czx-r-Ry01_hcOeeXYQAFYgWyaZRh30bOhn0JpR8ESk7p9DmKJ6fAaWnSdWvxWYba4Vp4c_5YAXVzPbn0UIaXbu8ROgroBMA1FqCNBquTFopUMmUbVHndtrF0bGQvaoOTZoWTU5_rBALyG7YJrdMcmuzNAP7STO5s71a9FwfYdga1HB14cyLAxYSJTHW6J_XnEulw35aT6y3i6k7o0kyK3Zw_1GAkaihy7xsh2Qqx54P8s3I3lY5OcsYfUN5wLqC_q5fC37cjuBqybQWq-Op89Zk4s-iRbcEghgiOcxfZxFj0SK7vZ86UV1kuRWFIPfBSScIGrPtbLiDAD14y134ObfPWec94n57PU1wMV8rAv9t6MKjQ3jdIM1yb3z1o_9BheJqmy5plcomoRAbMPCUU4REaCLZ9QYOgHFkE8SwrClGHApkuY1X2O2SwbQgNKB0-mo3Yo_rwTx_fkktsZVUuhcXTwQLKrLjahcF9cAA7Q3cHtIqZKtM1J8rT7aus2ezU6zSyYZijMMm9KUMnVnRMP1keIHtxgxtbBHWuu8UIFryywPnPCG-RzibX56g-i9ubwSWHqZ5t1rcgfU9RYHxMiXWWJFnyIYHe0d9lfEh77INf-oAsLyExYhdqia5NHGSdk9pvPfVpZ555Y1TVzaaEX3DUpQLXnCoOfb2mg3MJCH2Z62bKXIUYPGYRKrBauSaoi2ItM_yuJlLuPlCI8IPcVuCpYnWq0T93k-yc3edD1YsaLMYLrEli1zIhPmg-QdONOzbDSC5p7rRmbgjaNkT9C6RiYKL69BqIceHYFOSCB7gVOg-fu8OKYcT0gbI-NTNgIRu3PwzMWsU9pGF5mIRDMEVssx2siU8nKiD9vO4zugSduYd7m0YOrsPf5gKaz3e7HhUIBk6FwEWtqa6gHIsHTvCjtEIzW7R_cKv1foUfgGzk1WzNU-SaPkNv6Gk4dZ3jrIhuh2hFtnN5DvXJAP86gCk1FvLd6RPEIOd7HSNONF-JCEj-t2z4iayLit11re9QMWHlNptjPU0AXP6aZbtReCtYTRTMxir2A-ehjNZle4Csp0K-gXWqdQfzgeZqf55_firKPb7iwYL3b07zwWltjAHfEcF4HD4FbUiTfRpxTi2Fs9zzaChyP3fc25BPNZ-EljKtxIQsZZDVLMdcWdzo32SdNfG4p1SvcRKV7aAFzLgQGwkjqHETEITzWIz7F90_-KJB8ppJ6aZ4b4aEyytX7HRAgyddMPwJLVsiQQdOJkpLmoEY-6jZTxT1lKdmKGadwyLuEN2hmn1cH2gqGQ9mod6zkfN-KE7bHieXLo5jKRNHqPvZKgdYz4cG-0sAW1VW5tK5593IPUOLzIUgWuPpb9Nuj72dP1Y9VhsIKAcrL_g-ufe67q-JKbhU6PBVhVx6viS6OhojWgeXURnrvh77yP09p9wvLBJP925qRgpdj-3QJG1mJ7E5OZBaI9-brZfGtg0Ex9dD8-m1KRJpXy8haxRVbCVxSh9mbv9V9t2rtGmVzPsaPPxkoxci-UWXMQ9diegpJpk0vk5w2NpDa6fdQNkYv34z-mXsDCIViLRmAnAVWybmDFgUdRltlsnpkcea1gGrWW0hmqOEEBTfqZFuxtmfkZOM5mYU5yDslrWXoO7HB03J0AeodCpJXhMzpdH8PKQv95Q4r_asmsWV7QB6lFhDMx9ATZ0KzH3REWi43cDmJxVGVGqylymSURxDr7IoIc3jQEjHoesEWy3AKtomVNVRjAFhsZ0CtJyhbwubjjcI0311pz-DRbk0gM6-c9-oNVmMXobINDNxz_byHTEZfkv-h_QJqp3RXNo3zjok5QCjHhHD8h3DZ2IcakSECJM7ae_89WwLSadCSReRFH0IVZWEHCWX-9o-fI3JTX5vpkyLRL6HT0O56L_2jmi_imk7FNv6M3RRMnJdgbE1QxAhRgltA0u-dQReUMF_JREgX1W3NR2fmEGQUqLouHoXJPF42ZIGJGhK2xyi-dMpNTQ1-6_-2h7FUnj876KObHIgadM4BnQaTnf-uuRUSn6uVm3Ld7AoRNEfifc6TV66z_aNKjIfIOzhn8XftkrEYrYKqJymKDDYMIBC3EBKtaDjUC4yOybZT3Q0fwK8R_V10V5B8usxtlrr0IdjN5UOx_nzcWPEDVgpngXRoBJR32JXTPHRQ0bGriSCPJ8DL8pe1OJq2bg0K7JPhG8pjHQGQI15fxDOYxxT2P4CaZPRrzQv_DPWAz60i-qTN1rYKqtKfeffH1OI5_vLNdcJ2DfZdKv7bZpsEdMSTh0jPoyNpeTHZjxraza8IrOYKn6-d8oyTmhqw6LNXy-aqO-WY20Y72XdJyenc3tBHfnCCRpZPgBxtYo0JN25v9NDqcLemwLhP2kSAL_J_YQKJnpyUfvYlVSpbeDbgkgfn5PCXrNkmbQQMqIIukSMHP7nWrSAnupU5tWbqmhZO-g4Qv1u9WPnm646pMRq_P3YKPvcz_lEGDXYDD-rcxtwgk34wgg1-BBTYoo4gaMeHddu_Dc1ooHh5Yis0_eRdB3xPN4XozTduUAA1Ed-nGwi2gax9UD4sMzmmaouOI0pMPwwF3vdZV7FchzTTlEg73uDDZ8LrvUf27YhwdnmYtq-K3cNcBLmfiL9bDuKWBoiYy1TrRBYN95CIBHinRP8jzsv72Okvybg3ivrH4YwSqCz8J4PaGXMVPXTqK7Df_jkUWCqTf80ZQTkPSM9886ToaagabuSXQS61knUu54Wn2itWxSojnasbs_LPdQei_miiYSJIwNT0cbLbnifdSCH3neXvXJumsXdGYKuAn5F5A-_oKMw-0aOy09FDyeF5t6VNkEkUlLIgF6ewaJAzza4VEbpwnWVCF8ZFW2qZM_NpP8-H9DAy2vP3iMVCkyyFSoI7mw3q6CC4RMmt3T2lOLawQ"}</script>
 <script>
 /*CORE-START*/
 const SL=['E','M','L'];
@@ -627,14 +631,27 @@ const DEF_CFG={
 [1,2,3,4,5].forEach(d=>{DEF_CFG.need[d+'E']=2;DEF_CFG.need[d+'M']=1;DEF_CFG.need[d+'L']=2});
 DEF_CFG.need['6E']=2;DEF_CFG.need['6M']=0;DEF_CFG.need['6L']=0;
 DEF_CFG.need['0E']=2;DEF_CFG.need['0M']=0;DEF_CFG.need['0L']=0;
+const DESK_CFG={opts:[
+    {id:'dE',label:'早',text:'8:30-12:30',h:4,cov:'E',short:false},
+    {id:'dM',label:'午',text:'14:00-17:00',h:3,cov:'M',short:false},
+    {id:'dL',label:'晚',text:'17:30-21:30',h:4,cov:'L',short:false},
+    {id:'dML',label:'午晚',text:'14:00-17:00 17:30-21:30',h:7,cov:'ML',short:false},
+    {id:'dEM',label:'早午',text:'8:30-12:30 14:00-17:00',h:7,cov:'EM',short:false},
+    {id:'dEL',label:'早晚',text:'8:30-12:30 17:30-21:30',h:8,cov:'EL',short:false}],
+  need:{},unpopular:[],maxPerDay:2,ptMinPct:70,maxOk:2};
+[1,2,3,4,5].forEach(d=>{DESK_CFG.need[d+'E']=1;DESK_CFG.need[d+'M']=1;DESK_CFG.need[d+'L']=1});
+DESK_CFG.need['6E']=1;DESK_CFG.need['6M']=0;DESK_CFG.need['6L']=0;DESK_CFG.need['0E']=1;DESK_CFG.need['0M']=0;DESK_CFG.need['0L']=0;
 
 const S={cfg:clone(DEF_CFG),staff:{},month:{e:{},hol:{},base:null},ym:ls('tr.ym')||nextYm(),tab:'sched',
   brush:null,picker:null,undo:[],readonly:false,mode:'loading',slow:false,editBase:false,confirmClear:false,confirmDel:false,confirmOpt:null,
   view:ls('tr.view')==='slot'?'slot':'person',side:ls('tr.side')!=='off',hist:{},editId:null,prefTool:'p',loaded:{staff:false,cfg:false,month:false}};
+S.group=ls('tr.group')==='desk'?'desk':'ther';
+const PX=()=>S.group==='desk'?'desk-':'';
+const GNAME=()=>S.group==='desk'?'櫃台':'治療師';
 const fsv=ls('tr.fs');if(fsv)document.documentElement.dataset.fs=fsv;
 
 function normStaff(id,d){d=d||{};return {id,code:d.code||'?',name:d.name||'未命名',short:d.short||'',color:d.color??0,minH:+d.minH||0,targetH:+d.targetH||0,maxH:+d.maxH||0,isMe:!!d.isMe,active:d.active!==false,emp:(d.emp==='ft'||d.emp==='pt')?d.emp:(d.isMe?'ft':'pt'),hoursMode:d.hoursMode||((+d.minH||+d.targetH||+d.maxH)?'fixed':'auto'),pref:d.pref||{},note:d.note||'',order:+d.order||0}}
-function normCfg(d){const c=clone(DEF_CFG);if(!d)return c;if(Array.isArray(d.opts))c.opts=d.opts.map(o=>({id:o.id,label:o.label||'',text:o.text||'',h:+o.h||0,cov:sortCov(o.cov||''),short:!!o.short}));
+function normCfg(d){const c=clone(S&&S.group==='desk'?DESK_CFG:DEF_CFG);if(!d)return c;if(Array.isArray(d.opts))c.opts=d.opts.map(o=>({id:o.id,label:o.label||'',text:o.text||'',h:+o.h||0,cov:sortCov(o.cov||''),short:!!o.short}));
   if(d.need){Object.assign(c.need,d.need);SL.forEach(k=>{if(d.need['0'+k]===undefined)c.need['0'+k]=c.need['6'+k]??0})}if(Array.isArray(d.unpopular))c.unpopular=d.unpopular;if(d.maxPerDay)c.maxPerDay=d.maxPerDay;c.ptMinPct=d.ptMinPct>0?+d.ptMinPct:70;c.maxOk=d.maxOk>0?+d.maxOk:2;return c}
 function normMonth(d){d=d?clone(d):{};const o={e:d.e||{},hol:d.hol||{},base:d.base>0?+d.base:null};if(Array.isArray(d.sun)&&d.sun.length)o.sun=d.sun;return o}
 
@@ -667,11 +684,7 @@ async function initStore(){
   if(db){DB=db;S.mode='db';
     try{const user=await window.claude.use('user');const c=user&&user.can?await user.can('data.write'):null;if(c===false)S.readonly=true}catch(e){}
     slowTimer=setTimeout(()=>{S.slow=true;render()},10000);
-    DB.collection('staff').onSnapshot(snap=>{const next={};
-      snap.docs.forEach(d=>{const pd=pending.get('staff/'+d.id);if(pd){if(pd.val)next[d.id]=S.staff[d.id]||normStaff(d.id,pd.val)}else next[d.id]=normStaff(d.id,d.data())});
-      for(const [path,pd] of pending){if(path.startsWith('staff/')&&pd.val){const id=path.slice(6);if(!next[id]&&S.staff[id])next[id]=S.staff[id]}}
-      S.staff=next;S.loaded.staff=true;gotData(snap.metadata);render('remote')},()=>{S.loaded.staff=true;render()});
-    DB.doc('config/settings').onSnapshot(d=>{if(!pending.has('config/settings'))S.cfg=normCfg(d.exists?d.data():null);S.loaded.cfg=true;gotData(d.metadata);render('remote')},()=>{S.loaded.cfg=true;render()});
+    subGroup();
     subMonth();
   }else{S.mode='local';
     await unlockSeed();
@@ -681,23 +694,37 @@ async function initStore(){
     if(!has&&!S.noStore){try{localStorage.setItem('tr.docs',(SEEDTXT||'{}'))}catch(e){S.noStore=true}}
     const docs=S.noStore?JSON.parse((SEEDTXT||'{}')):localDocs();
     if(!S.noStore){try{const seed=JSON.parse((SEEDTXT||'{}'));let ch=false;for(const k in docs){if(k.startsWith('staff/')&&docs[k]&&docs[k].emp===undefined&&seed[k]&&seed[k].emp){docs[k].emp=seed[k].emp;ch=true}}if(ch)localStorage.setItem('tr.docs',JSON.stringify(docs))}catch(e){}}
-    Object.keys(docs).forEach(p=>{if(p.startsWith('staff/')){const id=p.slice(6);S.staff[id]=normStaff(id,docs[p])}});
-    S.cfg=normCfg(docs['config/settings']);S.month=normMonth(docs['months/'+S.ym]);S.loaded={staff:true,cfg:true,month:true};render();loadHist()}
+    /* data added in later versions (e.g. the front desk roster) is copied in once if this browser has none of it yet */
+    if(!S.noStore){try{const seed=JSON.parse((SEEDTXT||'{}'));if(!Object.keys(docs).some(k=>k.startsWith('desk-'))){let ch=false;for(const k in seed){if(k.startsWith('desk-')){docs[k]=seed[k];ch=true}}if(ch)localStorage.setItem('tr.docs',JSON.stringify(docs))}}catch(e){}}
+    loadGroupLocal(docs);render();loadHist()}
 }
+let unsubStaff=null,unsubCfg=null;
+function loadGroupLocal(docs){const pre=PX()+'staff/';S.staff={};
+  Object.keys(docs).forEach(p=>{if(p.startsWith(pre)){const id=p.slice(pre.length);S.staff[id]=normStaff(id,docs[p])}});
+  S.cfg=normCfg(docs[PX()+'config/settings']);S.month=normMonth(docs[PX()+'months/'+S.ym]);S.loaded={staff:true,cfg:true,month:true}}
+function subGroup(){if(unsubStaff)unsubStaff();if(unsubCfg)unsubCfg();const G=PX();S.staff={};S.loaded.staff=false;S.loaded.cfg=false;
+    unsubStaff=DB.collection(G+'staff').onSnapshot(snap=>{if(PX()!==G)return;if(snap.metadata&&snap.metadata.fromCache&&!snap.docs.length)return;const next={};
+      snap.docs.forEach(d=>{const pd=pending.get(G+'staff/'+d.id);if(pd){if(pd.val)next[d.id]=S.staff[d.id]||normStaff(d.id,pd.val)}else next[d.id]=normStaff(d.id,d.data())});
+      for(const [path,pd] of pending){if(path.startsWith(G+'staff/')&&pd.val){const id=path.slice((G+'staff/').length);if(!next[id]&&S.staff[id])next[id]=S.staff[id]}}
+      S.staff=next;S.loaded.staff=true;gotData(snap.metadata);render('remote')},()=>{S.loaded.staff=true;render()});
+    unsubCfg=DB.doc(G+'config/settings').onSnapshot(d=>{if(PX()!==G)return;if(d.metadata&&d.metadata.fromCache&&!d.exists)return;if(!pending.has(G+'config/settings'))S.cfg=normCfg(d.exists?d.data():null);S.loaded.cfg=true;gotData(d.metadata);render('remote')},()=>{S.loaded.cfg=true;render()})}
+function switchGroup(g){if(S.group===g)return;S.group=g;ls('tr.group',g);
+  S.brush=null;S.picker=null;S.undo=[];S.hist={};S.editId=null;S.confirmClear=S.confirmDel=false;S.confirmOpt=null;S.editBase=false;closePicker();
+  if(S.mode==='local'){loadGroupLocal(localDocs());render();loadHist()}else{S.cfg=normCfg(null);subGroup();subMonth();render()}}
 function gotData(meta){if(meta&&!meta.fromCache){clearTimeout(slowTimer);S.slow=false}}
 function subMonth(){S.undo=[];
   loadHist();
-  if(S.mode==='local'){S.month=normMonth(localDocs()['months/'+S.ym]);return}
-  if(unsubMonth)unsubMonth();S.loaded.month=false;const path='months/'+S.ym;S.month=normMonth(null);
-  unsubMonth=DB.doc(path).onSnapshot(d=>{if(!pending.has(path))S.month=normMonth(d.exists?d.data():null);S.loaded.month=true;gotData(d.metadata);render('remote')},()=>{S.loaded.month=true;render()})}
+  if(S.mode==='local'){S.month=normMonth(localDocs()[PX()+'months/'+S.ym]);return}
+  if(unsubMonth)unsubMonth();S.loaded.month=false;const path=PX()+'months/'+S.ym;S.month=normMonth(null);
+  unsubMonth=DB.doc(path).onSnapshot(d=>{if(path!==PX()+'months/'+S.ym)return;if(d.metadata&&d.metadata.fromCache&&!d.exists)return;if(!pending.has(path))S.month=normMonth(d.exists?d.data():null);S.loaded.month=true;gotData(d.metadata);render('remote')},()=>{S.loaded.month=true;render()})}
 async function loadHist(){const ym=S.ym;const h={};let got=0;for(let k=1;k<=12&&got<3;k++){const y2=shiftYm(ym,-k);const m=await readMonth(y2);if(m&&Object.keys(m.e).length){h[y2]=m;got++}}if(S.ym!==ym)return;S.hist=h;render()}
 async function readMonth(ym){
-  if(S.mode==='local')return normMonth(localDocs()['months/'+ym]);
-  try{const d=await DB.doc('months/'+ym).get();return normMonth(d.exists?d.data():null)}catch(e){return null}}
+  if(S.mode==='local')return normMonth(localDocs()[PX()+'months/'+ym]);
+  try{const d=await DB.doc(PX()+'months/'+ym).get();return normMonth(d.exists?d.data():null)}catch(e){return null}}
 
 /* ---------- derived ---------- */
-const staffList=()=>ordered().sort((a,b)=>(a.isMe-b.isMe)||a.code.localeCompare(b.code)||(a.order-b.order));
-const allOrdered=()=>Object.values(S.staff).sort((a,b)=>a.code.localeCompare(b.code)||(a.order-b.order));
+const staffList=()=>ordered().sort((a,b)=>(a.isMe-b.isMe)||(a.order-b.order)||a.code.localeCompare(b.code));
+const allOrdered=()=>Object.values(S.staff).sort((a,b)=>(a.order-b.order)||a.code.localeCompare(b.code));
 function hasEntries(id){for(const d in S.month.e){if(S.month.e[d][id])return true}return false}
 const ordered=()=>allOrdered().filter(p=>p.active||hasEntries(p.id));
 const others=()=>staffList().filter(p=>!p.isMe);
@@ -756,7 +783,7 @@ function status(p,r){
     if(r.tot<tg-1e-9)return {c:p.isMe?'me':'warn',t,g:`還差 ${fmtH(tg-r.tot)} 小時到應上時數（${fmtH(tg)}）`};
     if(r.tot>tg+1e-9)return {c:'warn',t,g:`超過應上時數 ${fmtH(r.tot-tg)} 小時（${fmtH(tg)}）`};return {c:'ok',t,g:'剛好等於應上時數'}}
   if(p.isMe){const cap=p.maxH||p.targetH;return {c:'me',t:'排班者',g:cap?`還可補 ${fmtH(Math.max(0,cap-r.tot))} 小時（上限 ${cap}）`:'未設上限時數'}}
-  if(!p.minH&&!p.targetH)return {c:'none',t:'沒有參考',g:p.auto?'還沒有過去的班表，可以到「治療師資料」自己填時數':'請到「治療師資料」填最低／需求時數'};
+  if(!p.minH&&!p.targetH)return {c:'none',t:'沒有參考',g:p.auto?`還沒有過去的班表，可以到「${S.group==='desk'?'櫃台人員':'治療師資料'}」自己填時數`:`請到「${S.group==='desk'?'櫃台人員':'治療師資料'}」填最低／需求時數`};
   if(p.minH&&r.tot<p.minH-1e-9)return {c:'bad',t:'未達最低',g:`還差 ${fmtH(p.minH-r.tot)} 小時到最低（${p.minH}）`};
   if(p.targetH&&r.tot<p.targetH-1e-9)return {c:'warn',t:'未達需求',g:`還差 ${fmtH(p.targetH-r.tot)} 小時到需求（${p.targetH}）`};
   return {c:'ok',t:'已達需求',g:p.maxH?`離上限還有 ${fmtH(p.maxH-r.tot)} 小時`:'已達需求時數'};
@@ -769,7 +796,7 @@ function defaultOpt(sid){const cnt={};let best=null,bc=0;for(const d in S.month.
 function pushUndo(){S.undo.push(JSON.stringify(S.month));if(S.undo.length>50)S.undo.shift()}
 function editMonth(fn,o={}){
   if(S.readonly){toast('你只有檢視權限，不能修改班表。');return false}
-  if(!o.noUndo)pushUndo();fn(S.month);queueWrite('months/'+S.ym,S.month);if(!o.noRender)render();return true}
+  if(!o.noUndo)pushUndo();fn(S.month);queueWrite(PX()+'months/'+S.ym,S.month);if(!o.noRender)render();return true}
 function writeE(m,date,sid,v){const d=m.e[date]||(m.e[date]={});if(v)d[sid]=v;else{delete d[sid];if(!Object.keys(d).length)delete m.e[date]}}
 function setEntry(date,sid,v,o={}){
   if(isHol(date)){toast('這天休診，不能排班');return false}
@@ -782,6 +809,8 @@ function setEntry(date,sid,v,o={}){
 function ready(){return S.loaded.staff&&S.loaded.cfg&&S.loaded.month}
 let HB={};
 function render(reason){
+  document.querySelectorAll('[data-act="group"]').forEach(b=>b.setAttribute('aria-pressed',String(S.group===b.dataset.v)));
+  {const t=GNAME()+'排班表';const h=$('#appTitle');if(h)h.textContent=t;document.title=t;const st=$('#staffTab');if(st)st.textContent=S.group==='desk'?'櫃台人員':'治療師資料'}
   computeHH();computeColors();HB=habits();
   document.querySelectorAll('[data-act="fs"]').forEach(b=>b.setAttribute('aria-pressed',String((document.documentElement.dataset.fs||'0')===b.dataset.v)));
   document.querySelectorAll('[data-act="tab"]').forEach(b=>b.setAttribute('aria-selected',String(S.tab===b.dataset.v)));
@@ -806,7 +835,8 @@ function render(reason){
 
 function schedHTML(){
   const staff=ordered();
-  if(!staff.length)return `<div class="emptybox"><h2>還沒有治療師</h2><p>先到「治療師資料」新增治療師，填好代號（A、B、C…）、時數需求和班表偏好。</p><button class="btn primary" data-act="add-staff">＋ 新增第一位治療師</button></div>`;
+  if(!staff.length&&!SEEDTXT)return lockHTML();
+  if(!staff.length)return S.group==='desk'?`<div class="emptybox"><h2>還沒有櫃台人員</h2><p>先到「櫃台人員」新增人員，填好代號、時數需求和班表偏好。</p><button class="btn primary" data-act="add-staff">＋ 新增第一位櫃台人員</button></div>`:`<div class="emptybox"><h2>還沒有治療師</h2><p>先到「治療師資料」新增治療師，填好代號（A、B、C…）、時數需求和班表偏好。</p><button class="btn primary" data-act="add-staff">＋ 新增第一位治療師</button></div>`;
   const dates=mDates();const tl=tally(S.cfg,staff,S.month,dates);const me=meP();
   const [y,m]=S.ym.split('-').map(Number);const pm=Number(shiftYm(S.ym,-1).split('-')[1]);
   const hasAny=Object.keys(S.month.e).length>0;
@@ -816,7 +846,7 @@ function schedHTML(){
     <div class="actions">
       <button class="btn primary" data-act="copy"><span class="step">1</span><span>照 ${pm} 月同星期套用<small>只填空白的格子</small></span></button>
       <button class="btn primary" data-act="autofill"><span class="step">2</span><span>自動補空缺<small>照每個人平常的班和時數補</small></span></button>
-      <button class="btn me" data-act="fillme" ${me?'':'disabled'}><span class="step">3</span><span>${me?`剩下由${esc(shortName(me))}補`:'剩下由排班者補'}<small>${me?'補還缺人的時段':'先設定排班者'}</small></span></button>
+      ${me?'':'<!--'}<button class="btn me" data-act="fillme"><span class="step">3</span><span>${me?`剩下由${esc(shortName(me))}補`:'剩下由排班者補'}<small>${me?'補還缺人的時段':'先設定排班者'}</small></span></button>${me?'':'-->'}
       <span class="sp"></span>
       <button class="btn sm" data-act="undo" ${S.undo.length?'':'disabled'}>↶ 復原</button>
       <button class="btn sm" data-act="preview">列印</button>
@@ -878,7 +908,7 @@ function panelHTML(tl,dates){
   h+=tl.shortN?`<div class="pn-gap bad">還缺：${SL.map(k=>`${SLN[k]} ${tl.short[k]}`).join('・')} 人次</div>`:`<div class="pn-gap ok">✓ 每個時段人力都夠</div>`;
   if(tl.overN){const days=dates.filter(d=>!S.month.hol[d.key]&&SL.some(k=>tl.cov[d.key][k]>limOf(d.wd,k)));
     h+=`<div class="pn-gap warn">多排：${SL.filter(k=>tl.over[k]).map(k=>`${SLN[k]} ${tl.over[k]}`).join('・')} 人次（${days.length} 天，日期上標「多」的格子）</div>`}
-  h+=`<p class="hint">點治療師的名字，選好班別後點日期；也可以按住名字拖到日期上。<br>名字顏色＝這個人最常上的時段（偏早班橘黃、午班青綠、晚班靛紫、早晚兩頭玫瑰）。</p></div>`;
+  h+=`<p class="hint">點人員的名字，選好班別後點日期；也可以按住名字拖到日期上。<br>名字顏色＝這個人最常上的時段（偏早班橘黃、午班青綠、晚班靛紫、早晚兩頭玫瑰）。</p></div>`;
   for(const p0 of [...others(),...(me?[me]:[])]){const p=eff(p0);const r=tl.T[p.id],st=status(p,r),sel=S.brush&&S.brush.sid===p.id;
     h+=`<button class="pcard${sel?' sel':''}${p.isMe?' me':''}" style="--pc:${colorOf(p)}" data-act="pick-person" data-sid="${p.id}" data-drag="person" aria-pressed="${!!sel}">
       <div class="pc-top"><span class="cd">${esc(p.code)}</span><b>${esc(p.name)}</b><span class="emp ${p.emp}">${empName(p)}</span><span class="pill ${st.c}">${st.t}</span></div>
@@ -1006,8 +1036,8 @@ function closePicker(){S.picker=null;$('#modal').hidden=true;$('#modal').innerHT
 function staffListHTML(){return allOrdered().map(p=>`<button class="sitem" data-act="edit" data-id="${p.id}" aria-current="${S.editId===p.id}" style="--pc:${colorOf(p)}"><span class="cd">${esc(p.code)}</span><span><span class="si-n">${esc(p.name)}${p.isMe?'（排班者）':''}${p.active?'':'（已離職）'}</span><br><span class="si-m">${p.isMe?`${empName(p)}`:(q=>`${empName(q)}・${q.emp==='ft'?`應上 ${fmtH(q.targetH)}`:`需求 ${q.targetH?fmtH(q.targetH):'—'}`} 小時${q.auto?'（浮動）':''}`)(eff(p))}</span></span></button>`).join('')}
 function staffHTML(){
   const list=allOrdered();if(!S.staff[S.editId])S.editId=list[0]?.id||null;const p=S.staff[S.editId];
-  let h=`<div class="two"><section class="box"><div class="box-h"><h2>治療師（${list.length}）</h2><button class="btn primary" data-act="add-staff">＋ 新增</button></div><div class="slist" id="staffList">${staffListHTML()}</div></section>`;
-  if(!p)return h+`<section class="box"><p>按「新增」加入第一位治療師。</p></section></div>`;
+  let h=`<div class="two"><section class="box"><div class="box-h"><h2>${S.group==='desk'?'櫃台人員':'治療師'}（${list.length}）</h2><button class="btn primary" data-act="add-staff">＋ 新增</button></div><div class="slist" id="staffList">${staffListHTML()}</div></section>`;
+  if(!p)return h+`<section class="box"><p>按「新增」加入第一位${S.group==='desk'?'櫃台人員':'治療師'}。</p></section></div>`;
   const tool=S.prefTool;
   h+=`<section class="box" aria-label="編輯 ${esc(p.name)}">
     <div class="box-h"><h2>編輯：<span id="edName">${esc(p.name)}</span></h2>${S.confirmDel?`<span class="rowbtns"><button class="btn danger solid" data-act="del-yes">確定刪除</button><button class="btn" data-act="del-no">不要刪</button></span>`:`<button class="btn danger" data-act="del">刪除</button>`}</div>
@@ -1037,7 +1067,7 @@ function staffHTML(){
   return h;
 }
 function numWarn(p){if(p.targetH&&p.minH>p.targetH)return '最低時數比需求時數還多，請確認。';if(p.maxH&&p.maxH<Math.max(p.minH,p.targetH))return '上限時數比最低或需求時數還少，請確認。';return ''}
-function saveStaff(p){if(S.readonly){toast('你只有檢視權限。');return}const o=Object.assign({},p);delete o.id;queueWrite('staff/'+p.id,o)}
+function saveStaff(p){if(S.readonly){toast('你只有檢視權限。');return}const o=Object.assign({},p);delete o.id;queueWrite(PX()+'staff/'+p.id,o)}
 
 /* ---------- settings page ---------- */
 function settingsHTML(){
@@ -1053,7 +1083,7 @@ function settingsHTML(){
         <label class="chk"><input type="checkbox" data-ofield="short" data-oid="${o.id}" ${o.short?'checked':''}>紙本上印代稱（如「全1」）</label></div>
       <div>${S.confirmOpt===o.id?`<button class="btn danger solid" data-act="odel-yes" data-oid="${o.id}">確定刪除</button>`:`<button class="btn danger" data-act="odel" data-oid="${o.id}">刪除</button>`}</div></div>`).join('')}
   </section>
-  <section class="box"><div class="box-h"><h2>每個時段需要幾位治療師</h2></div><div class="gridwrap"><div class="ngrid"><span></span>${SL.map(k=>`<span class="h">${SLN[k]}</span>`).join('')}
+  <section class="box"><div class="box-h"><h2>每個時段需要幾位${S.group==='desk'?'櫃台人員':'治療師'}</h2></div><div class="gridwrap"><div class="ngrid"><span></span>${SL.map(k=>`<span class="h">${SLN[k]}</span>`).join('')}
     ${[1,2,3,4,5,6,0].map(d=>`<span class="rh">週${WDN[d]}${d===0?'<br><small style="font-weight:500">加開時</small>':''}</span>${SL.map(k=>`<span class="stepper"><button data-act="need" data-key="${d}${k}" data-v="-1" aria-label="週${WDN[d]}${SLN[k]}減少">−</button><output>${c.need[d+k]??0}</output><button data-act="need" data-key="${d}${k}" data-v="1" aria-label="週${WDN[d]}${SLN[k]}增加">＋</button></span>`).join('')}`).join('')}</div></div></section>
   <section class="box"><div class="box-h"><h2>冷門時段</h2></div><p style="margin:0">點格子標記比較少人想上的時段。自動排班會把冷門時段平均分給大家。</p>
     <div class="gridwrap"><div class="ngrid" style="min-width:20rem;grid-template-columns:4.2rem repeat(3,minmax(5rem,1fr))"><span></span>${SL.map(k=>`<span class="h">${SLN[k]}</span>`).join('')}
@@ -1070,7 +1100,7 @@ function settingsHTML(){
     <p style="margin:0">上次備份：<b>${lastBackupText()}</b></p>
     <div class="rowbtns"><button class="btn primary" data-act="backup">備份成檔案</button><label class="btn" for="restoreFile">從備份檔還原…</label><input id="restoreFile" type="file" accept=".json,application/json" hidden></div>
     <h3 style="margin-top:6px">改亂了？恢復原始資料</h3>
-    <p style="margin:0">可以把某個月恢復成一開始內建、照紙本輸入的班表。只會換掉那個月的班表，其他月份和治療師資料都不動。</p>
+    <p style="margin:0">可以把某個月恢復成一開始內建、照紙本輸入的班表。只會換掉那個月的班表，其他月份和人員資料都不動。</p>
     <div class="rowbtns">${seedMonths().map(ym=>S.confirmSeed===ym?`<button class="btn danger solid" data-act="seed-month-yes" data-v="${ym}">確定恢復 ${Number(ym.slice(5))} 月</button><button class="btn" data-act="seed-no">取消</button>`:`<button class="btn" data-act="seed-month" data-v="${ym}">恢復 ${Number(ym.slice(5))} 月原始班表</button>`).join('')}</div>
     <div class="rowbtns">${S.confirmSeed==='all'?`<div class="note"><b>全部恢復成第一次打開時的樣子？</b><br>所有月份的班表、治療師資料、班別設定都會換回內建的原始資料，你之後做的修改都會消失。建議先按「備份成檔案」留一份。<div class="rowbtns" style="margin-top:8px"><button class="btn danger solid" data-act="seed-all-yes">確定全部恢復</button><button class="btn" data-act="seed-no">取消</button></div></div>`:`<button class="btn danger" data-act="seed-all">全部恢復成初始狀態…</button>`}</div>
     ${S.restore?`<div class="note"><b>要用這個備份取代目前所有資料嗎？</b><br>備份時間：${esc(S.restore.when)}，共 ${S.restore.staffN} 位治療師、${S.restore.monthN} 個月的班表。目前的資料會被蓋掉。<div class="rowbtns" style="margin-top:8px"><button class="btn danger solid" data-act="restore-yes">確定還原</button><button class="btn" data-act="restore-no">取消</button></div></div>`:''}
@@ -1078,10 +1108,30 @@ function settingsHTML(){
   <section class="box"><div class="box-h"><h2>每人每天最多幾個時段</h2></div><div><span class="stepper"><button data-act="maxday" data-v="-1" aria-label="減少">−</button><output>${c.maxPerDay}</output><button data-act="maxday" data-v="1" aria-label="增加">＋</button></span></div><span class="help">自動排班時不會超過。排班者不受這個限制。</span></section>
   </div>`;
 }
-function saveCfg(){if(S.readonly){toast('你只有檢視權限。');return}queueWrite('config/settings',S.cfg)}
+function saveCfg(){if(S.readonly){toast('你只有檢視權限。');return}queueWrite(PX()+'config/settings',S.cfg)}
 
 /* ---------- print file (same layout as the paper) ---------- */
+function slotHeadTime(k){const used=new Set();for(const d in S.month.e)for(const id in S.month.e[d])used.add(S.month.e[d][id]);
+  const def=ranges(slotTime(k))[0];const fmt=r=>`${Math.floor(r[0]/60)}:${String(r[0]%60).padStart(2,'0')}-${Math.floor(r[1]/60)}:${String(r[1]%60).padStart(2,'0')}`;
+  const single=S.cfg.opts.find(o=>used.has(o.id)&&o.cov===k);if(single)return single.text;
+  let best=null,bo=-1;for(const o of S.cfg.opts){if(!used.has(o.id)||!o.cov.includes(k))continue;for(const r of ranges(o.text)){const ov=def?Math.min(r[1],def[1])-Math.max(r[0],def[0]):0;if(ov>bo){bo=ov;best=r}}}
+  return best?fmt(best):slotTime(k)}
+function deskParts(){
+  const [y,m]=S.ym.split('-').map(Number);const dates=mDates();const staff=ordered();const tl=tally(S.cfg,staff,S.month,dates);const n=new Date(y,m,0).getDate();
+  const tE=slotHeadTime('E'),tM=slotHeadTime('M'),tL=slotHeadTime('L');const open=new Set(dates.map(d=>d.key));
+  let rows='';for(let d=1;d<=n;d++){const key=S.ym+'-'+String(d).padStart(2,'0');const wd=new Date(y,m-1,d).getDay();const hol=S.month.hol[key];
+    const wl=wd===6?`六(${esc(tE)})`:WDN[wd];let cells;
+    if(hol)cells=`<td>X</td><td></td><td></td>`;else if(!open.has(key))cells='<td></td><td></td><td></td>';
+    else{const dt={key,wd};cells=SL.map(k=>`<td>${esc(whoIn(dt,k,staff).map(p=>p.name).join('、'))}</td>`).join('')}
+    rows+=`<tr${wd===0?' class="sunr"':''}><td class="dn">${d}</td><td>${wl}</td>${cells}</tr>`}
+  const sum=staff.map(p=>{const r=tl.T[p.id];return `<div>${esc(p.name)}：${fmtH(r.tot)} 小時（平日 ${fmtH(r.wk)} ＋ 週六 ${fmtH(r.sat)}）</div>`}).join('');
+  const title=`${y-1911}/${String(m).padStart(2,'0')}`;const now=new Date();const stamp=`${now.getFullYear()-1911}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const inner=`<table class="desk"><colgroup><col style="width:9%"><col style="width:19%"><col style="width:24%"><col style="width:24%"><col style="width:24%"></colgroup>
+<tr><th>${title}</th><th></th><th>早 ${esc(tE)}</th><th>午(${esc(tM)})</th><th>晚(${esc(tL)})</th></tr>${rows}</table>
+<div class="sum"><div>${sum}</div></div><div class="stamp">產生時間 ${stamp}</div>`;
+  return {title:`${y-1911} 年 ${String(m).padStart(2,'0')} 月櫃台班表`,stamp,inner,portrait:true}}
 function printParts(){
+  if(S.group==='desk')return deskParts();
   const [y,m]=S.ym.split('-').map(Number);const dates=mDates();const staff=ordered();const tl=tally(S.cfg,staff,S.month,dates);
   const n=new Date(y,m,0).getDate();const cells=[];for(let d=1;d<=n;d++){const wd=new Date(y,m-1,d).getDay();cells.push({d,wd:wd===0?7:wd,key:S.ym+'-'+String(d).padStart(2,'0')})}
   const usedShort=new Set();
@@ -1114,6 +1164,9 @@ ${sc} td.sumcell{padding:4px 8px}
 ${sc} td.sumcell .sum{margin-top:0;gap:24px}
 ${sc} td.sumcell .sum div{line-height:1.75}
 ${sc} th{font-weight:normal}
+${sc} table.desk td,${sc} table.desk th{padding:2px 6px;height:1.55em;vertical-align:middle}
+${sc} table.desk td.dn{text-align:center}
+${sc} table.desk tr.sunr td{background:#f2f2f2}
 ${sc} tr{break-inside:avoid;page-break-inside:avoid}
 ${sc} .d{font-weight:bold}
 ${sc} .sum{display:flex;gap:40px;margin-top:8px;break-inside:avoid;page-break-inside:avoid}
@@ -1121,20 +1174,19 @@ ${sc} .sum div{line-height:1.9}
 ${sc} .stamp{margin-top:4px;font-size:8pt;color:#555;text-align:right}`}
 function buildPrint(){const P=printParts();
   return `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><title>${P.title}</title><style>
-@page{size:A4 landscape;margin:10mm}
+@page{size:A4 ${P.portrait?'portrait':'landscape'};margin:10mm}
 body{margin:0;padding:12px;background:#fff}
 ${paperCSS('.paper')}
 .bar{display:flex;gap:12px;align-items:center;padding:10px;margin-bottom:12px;background:#eef3ff;border:1px solid #9ab;border-radius:8px;font-family:sans-serif}
 .bar button{font-size:16px;padding:8px 18px}
 @media print{.bar{display:none}body{padding:0}}
 </style></head><body>
-<div class="bar"><button onclick="window.print()">列印</button><span>這份是 <b>${P.stamp}</b> 產生的版本。列印時請選「橫向」、A4。</span></div>
+<div class="bar"><button onclick="window.print()">列印</button><span>這份是 <b>${P.stamp}</b> 產生的版本。列印時請選「${P.portrait?'直向':'橫向'}」、A4。</span></div>
 <div class="paper">${P.inner}</div>
 </body></html>`;
 }
 /* in-page print preview: what you see is exactly what prints */
 (function(){const st=document.createElement('style');st.textContent=paperCSS('#printView .paper')+`
-@page{size:A4 landscape;margin:10mm}
 @media print{
   body.previewing>*:not(#printView){display:none!important}
   html,body.previewing{background:#fff!important;padding:0!important;margin:0!important}
@@ -1145,10 +1197,26 @@ ${paperCSS('.paper')}
 }`;document.head.appendChild(st)})();
 function openPreview(){
   const P=printParts();const pv=$('#printView');
-  pv.innerHTML=`<div class="pv-bar"><b class="pv-t">列印預覽・${esc(P.title)}</b><span class="sp"></span>${CAN_PRINT?`<button type="button" class="btn primary" data-pv="print">列印</button><button type="button" class="btn sm" data-pv="dl">另存成檔案</button>`:`<button type="button" class="btn primary" data-pv="dl">下載列印檔</button>`}<button type="button" class="btn" data-pv="close">關閉</button></div>
-    <div class="pv-note">${CAN_PRINT?'下面就是印出來的樣子。按「列印」後，印表機設定選<b>橫向</b>、紙張 <b>A4</b>。':'下面就是印出來的樣子。網頁版放在 claude.ai 裡面，不能直接叫出印表機：請按「下載列印檔」，打開下載的檔案再按「列印」。單機版可以直接在這裡列印。'}</div>
+  {let ps=document.getElementById('pageSize');if(!ps){ps=document.createElement('style');ps.id='pageSize';document.head.appendChild(ps)}ps.textContent=`@page{size:A4 ${P.portrait?'portrait':'landscape'};margin:10mm}`}
+  pv.classList.toggle('portrait',!!P.portrait);
+  pv.innerHTML=`<div class="pv-bar"><b class="pv-t">列印預覽・${esc(P.title)}</b><span class="sp"></span>${CAN_PRINT?`<button type="button" class="btn primary" data-pv="print">列印</button><button type="button" class="btn sm" data-pv="img">下載圖片</button><button type="button" class="btn sm" data-pv="dl">另存成檔案</button>`:`<button type="button" class="btn primary" data-pv="dl">下載列印檔</button><button type="button" class="btn sm" data-pv="img">下載圖片</button>`}<button type="button" class="btn" data-pv="close">關閉</button></div>
+    <div class="pv-note">${CAN_PRINT?'下面就是印出來的樣子。按「列印」後，印表機設定選<b>'+(P.portrait?'直向':'橫向')+'</b>、紙張 <b>A4</b>。':'下面就是印出來的樣子。網頁版放在 claude.ai 裡面，不能直接叫出印表機：請按「下載列印檔」，打開下載的檔案再按「列印」。單機版可以直接在這裡列印。'}</div>
     <div class="pv-scroll"><div class="paper">${P.inner}</div></div>`;
   pv.hidden=false;document.body.classList.add('previewing');const f=$('[data-pv]',pv);if(f)f.focus()}
+/* picture of the printed page (PNG), e.g. to send in LINE */
+let H2C=null;
+function loadH2C(){if(window.html2canvas)return Promise.resolve(window.html2canvas);if(H2C)return H2C;
+  H2C=new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';sc.onload=()=>ok(window.html2canvas);sc.onerror=()=>{H2C=null;no(new Error('load'))};document.head.appendChild(sc)});return H2C}
+async function saveBlobAny(name,blob){let dl=null;try{dl=await window.claude?.use?.('downloads')}catch(e){dl=null}
+  if(dl){await dl.save({filename:name,data:blob});return}
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000)}
+async function downloadImage(btn){const paper=$('#printView .paper');if(!paper)return;const old=btn.textContent;btn.disabled=true;btn.textContent='製作圖片中…';
+  try{const h2c=await loadH2C();const canvas=await h2c(paper,{scale:2,backgroundColor:'#ffffff',logging:false});
+    const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));const [y,m]=S.ym.split('-').map(Number);const n=new Date(),p2=x=>String(x).padStart(2,'0');
+    const name=`${y-1911}年${m}月${GNAME()}班表_${p2(n.getMonth()+1)}${p2(n.getDate())}-${p2(n.getHours())}${p2(n.getMinutes())}.png`;
+    await saveBlobAny(name,blob);toast(`已下載圖片「${name}」，在下載資料夾。`)}
+  catch(e){const c=e&&e.code;if(c==='declined'){}else if(e&&e.message==='load')toast('需要連上網路才能製作圖片，請確認網路後再試。');else toast('圖片沒有做成功，請再試一次。')}
+  finally{btn.disabled=false;btn.textContent=old}}
 function closePreview(){const pv=$('#printView');pv.hidden=true;pv.innerHTML='';document.body.classList.remove('previewing')}
 function saveFile(name,text,type){const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000)}
 function stampName(){const n=new Date(),p=x=>String(x).padStart(2,'0');return `${n.getFullYear()-1911}${p(n.getMonth()+1)}${p(n.getDate())}-${p(n.getHours())}${p(n.getMinutes())}`}
@@ -1156,16 +1224,15 @@ function doBackup(){const docs=localDocs();for(const [path,p] of pending){if(p.v
   const name=`治療師排班備份_${stampName()}.json`;saveFile(name,JSON.stringify({app:'therapist-roster',savedAt:new Date().toISOString(),docs},null,1),'application/json');
   ls('tr.lastBackup',new Date().toISOString());toast(`已備份成「${name}」，在下載資料夾。建議另外存到隨身碟或雲端。`);render()}
 const SEED=()=>JSON.parse((SEEDTXT||'{}'));
-function seedMonths(){const sd=SEED();return Object.keys(sd).filter(k=>k.startsWith('months/')&&Object.keys((sd[k]||{}).e||{}).length).map(k=>k.slice(7)).sort()}
+function seedMonths(){const sd=SEED();const pre=PX()+'months/';return Object.keys(sd).filter(k=>k.startsWith(pre)&&Object.keys((sd[k]||{}).e||{}).length).map(k=>k.slice(pre.length)).sort()}
 function lastBackupText(){const v=ls('tr.lastBackup');if(!v)return '還沒有備份過';const d=new Date(v);return `${d.getFullYear()-1911}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
 function applyDocs(docs){for(const [,p] of pending)clearTimeout(p.timer);pending.clear();
   try{localStorage.setItem('tr.docs',JSON.stringify(docs))}catch(e){toast('這台電腦的瀏覽器不能存資料，還原失敗。');return}
-  S.staff={};Object.keys(docs).forEach(p=>{if(p.startsWith('staff/')){const id=p.slice(6);S.staff[id]=normStaff(id,docs[p])}});
-  S.cfg=normCfg(docs['config/settings']);S.month=normMonth(docs['months/'+S.ym]);S.undo=[];S.brush=null;S.restore=null;S.editId=null;render();toast('已從備份還原。')}
+  loadGroupLocal(docs);S.undo=[];S.brush=null;S.restore=null;S.editId=null;render();toast('已從備份還原。')}
 async function downloadPrint(){
   if(S.editBase){const i=$('#baseInp');const n=i?Number(i.value):0;const cur=baseHours(S.month,mDates());if(n>0&&n!==cur){toast('「本月應上時數」改了還沒儲存，請先按「儲存」再下載。');return}}
   const html=buildPrint();const [y,m]=S.ym.split('-').map(Number);const now=new Date();const p2=n=>String(n).padStart(2,'0');
-  const name=`${y-1911}年${m}月治療師班表_${p2(now.getMonth()+1)}${p2(now.getDate())}-${p2(now.getHours())}${p2(now.getMinutes())}${p2(now.getSeconds())}.html`;
+  const name=`${y-1911}年${m}月${GNAME()}班表_${p2(now.getMonth()+1)}${p2(now.getDate())}-${p2(now.getHours())}${p2(now.getMinutes())}${p2(now.getSeconds())}.html`;
   let dl=null;try{dl=await window.claude?.use?.('downloads')}catch(e){dl=null}
   if(!dl){saveFile(name,html,'text/html');toast(`已下載「${name}」，在下載資料夾。打開後按「列印」。`);return}
   try{await dl.save({filename:name,data:html});toast(`已下載「${name}」。請打開這個最新的檔案再列印。`)}
@@ -1236,7 +1303,8 @@ function tourGo(i,dir){
   const T=TR.steps;while(i>=0&&i<T.length){const st=T[i];if(st.pre)st.pre();if(!st.sel||document.querySelector(st.sel))break;i+=dir}
   if(i<0)i=0;if(i>=T.length){tourEnd();return}
   TR.i=i;TR.dir=dir;const st=T[i];
-  $('#tourN').textContent=`${i+1} / ${T.length}`;$('#tourT').textContent=st.t;$('#tourB').textContent=st.b;
+  const W=x=>S.group==='desk'?x.replace(/治療師資料/g,'櫃台人員').replace(/治療師/g,'櫃台人員').replace(/橫向/g,'直向').replace(/A4 橫式/g,'A4 直式').replace(/，還有每個人的簽名欄，印出來就可以貼公告、讓大家簽名/g,'，印出來就可以貼公告'):x;
+  $('#tourN').textContent=`${i+1} / ${T.length}`;$('#tourT').textContent=W(st.t);$('#tourB').textContent=W(st.b);
   $('[data-tour="prev"]').disabled=i===0;$('[data-tour="next"]').textContent=i===T.length-1?'開始使用':'下一步';
   const el=st.sel&&document.querySelector(st.sel);if(el){const r=el.getBoundingClientRect();if(r.top<70||r.bottom>innerHeight-40)el.scrollIntoView({block:r.height>innerHeight*.6?'start':'center'})}
   requestAnimationFrame(tourPlace);setTimeout(()=>{const n=$('[data-tour="next"]');if(n)n.focus()},30)}
@@ -1253,7 +1321,7 @@ function tourPlace(){
   else if(L>cw+g*2){x=L-cw-g;y=T}
   else{x=(innerWidth-cw)/2;y=innerHeight-ch-g}
   card.style.left=Math.min(Math.max(g,x),innerWidth-cw-g)+'px';card.style.top=Math.min(Math.max(g,y),innerHeight-ch-g)+'px'}
-$('#printView').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-pv]');if(!b)return;const a=b.dataset.pv;if(a==='print')window.print();else if(a==='dl')downloadPrint();else closePreview()});
+$('#printView').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-pv]');if(!b)return;const a=b.dataset.pv;if(a==='print')window.print();else if(a==='dl')downloadPrint();else if(a==='img')downloadImage(b);else closePreview()});
 ['pointerdown','pointerup'].forEach(t=>$('#printView').addEventListener(t,e=>e.stopPropagation()));
 $('#tour').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-tour]');if(!b)return;const a=b.dataset.tour;
   if(a==='skip')tourEnd();else if(a==='prev')tourGo(TR.i-1,-1);else if(a==='next'){if(TR.i>=TR.steps.length-1)tourEnd();else tourGo(TR.i+1,1)}});
@@ -1283,6 +1351,7 @@ document.addEventListener('click',e=>{
   if(!el)return;const act=el.dataset.act,v=el.dataset.v;
   switch(act){
     case 'fullscreen':toggleFull();break;
+    case 'group':switchGroup(v);window.scrollTo({top:0});break;
     case 'tour':tourStart(S.tab==='staff'?'staff':'sched');break;
     case 'fs':document.documentElement.dataset.fs=v;ls('tr.fs',v);render();break;
     case 'tab':S.tab=v;S.confirmClear=S.confirmDel=false;S.confirmOpt=null;render();window.scrollTo({top:0});break;
@@ -1320,7 +1389,7 @@ document.addEventListener('click',e=>{
       const r=autoFill(S.cfg,ordered().map(eff),S.month,mDates(),{onlyMe:true,seed:3});
       if(!r.filled){toast(r.capped?`${me.name} 已到上限時數。`:(r.left?`${me.name} 沒有能補的時段（可能是不可或休假）。`:'目前沒有空缺。'));break}
       editMonth(m=>{m.e=r.e});toast(`${me.name} 補了 ${r.filled} 個時段。${r.left?`還缺 ${r.left} 人次，需要另外找人。`:'人力都夠了。'}`);break}
-    case 'undo':{const prev=S.undo.pop();if(!prev)break;S.month=JSON.parse(prev);queueWrite('months/'+S.ym,S.month);render();toast('已復原上一步');break}
+    case 'undo':{const prev=S.undo.pop();if(!prev)break;S.month=JSON.parse(prev);queueWrite(PX()+'months/'+S.ym,S.month);render();toast('已復原上一步');break}
     case 'print':downloadPrint();break;
     case 'backup':doBackup();break;
     case 'unlock':{const t=($('#keyInp')&&$('#keyInp').value.trim())||'';const m=/k=([A-Za-z0-9_-]+)/.exec(t);const k=m?m[1]:t.replace(/^#/,'');if(!k){toast('請貼上連結');break}
@@ -1328,9 +1397,9 @@ document.addEventListener('click',e=>{
     case 'seed-month':S.confirmSeed=v;render();break;
     case 'seed-all':S.confirmSeed='all';render();break;
     case 'seed-no':S.confirmSeed=null;render();break;
-    case 'seed-month-yes':{const seed=SEED();const docs=localDocs();docs['months/'+v]=seed['months/'+v];for(const [path,p] of pending){if(path==='months/'+v){clearTimeout(p.timer);pending.delete(path)}}
+    case 'seed-month-yes':{const seed=SEED();const docs=localDocs();docs[PX()+'months/'+v]=seed[PX()+'months/'+v];for(const [path,p] of pending){if(path===PX()+'months/'+v){clearTimeout(p.timer);pending.delete(path)}}
       try{localStorage.setItem('tr.docs',JSON.stringify(docs))}catch(e){toast('這台電腦的瀏覽器不能存資料。');break}
-      if(S.ym===v){S.month=normMonth(docs['months/'+v]);S.undo=[]}S.confirmSeed=null;loadHist();render();toast(`${Number(v.slice(5))} 月已恢復成原始班表。`);break}
+      if(S.ym===v){S.month=normMonth(docs[PX()+'months/'+v]);S.undo=[]}S.confirmSeed=null;loadHist();render();toast(`${Number(v.slice(5))} 月已恢復成原始班表。`);break}
     case 'seed-all-yes':S.confirmSeed=null;applyDocs(SEED());break;
     case 'restore-yes':if(S.restore)applyDocs(S.restore.docs);break;
     case 'restore-no':S.restore=null;render();break;
@@ -1340,12 +1409,12 @@ document.addEventListener('click',e=>{
     case 'clear-yes':S.confirmClear=false;editMonth(m=>{m.e={}});toast('已清空本月的班（休診日保留），可以按「復原」救回。');break;
     case 'add-staff':{if(S.readonly){toast('你只有檢視權限。');break}const id='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
       const used=new Set(Object.values(S.staff).map(p=>p.code));const code='ABCDEFGHIJKLMNOP'.split('').find(c=>!used.has(c))||'?';
-      const p=normStaff(id,{code,name:'新治療師',color:Object.keys(S.staff).length%COLORS.length,order:Date.now()});S.staff[id]=p;saveStaff(p);S.editId=id;S.tab='staff';S.confirmDel=false;render();
+      const p=normStaff(id,{code,name:S.group==='desk'?'新人員':'新治療師',color:Object.keys(S.staff).length%COLORS.length,order:Date.now()});S.staff[id]=p;saveStaff(p);S.editId=id;S.tab='staff';S.confirmDel=false;render();
       setTimeout(()=>{const f=$('#f-name');if(f){f.focus();f.select()}},30);break}
     case 'edit':S.editId=el.dataset.id;S.confirmDel=false;render();break;
     case 'del':S.confirmDel=true;render();break;
     case 'del-no':S.confirmDel=false;render();break;
-    case 'del-yes':{const id=S.editId;const name=S.staff[id].name;delete S.staff[id];queueWrite('staff/'+id,null,0);if(S.brush&&S.brush.sid===id)S.brush=null;S.editId=null;S.confirmDel=false;render();toast(`已刪除 ${name}`);break}
+    case 'del-yes':{const id=S.editId;const name=S.staff[id].name;delete S.staff[id];queueWrite(PX()+'staff/'+id,null,0);if(S.brush&&S.brush.sid===id)S.brush=null;S.editId=null;S.confirmDel=false;render();toast(`已刪除 ${name}`);break}
     case 'color':{const p=S.staff[S.editId];p.color=Number(v);saveStaff(p);render();break}
     case 'emp':{const p=S.staff[S.editId];p.emp=v;saveStaff(p);render();break}
     case 'hmode':{const p=S.staff[S.editId];if(v==='fixed'&&!p.minH&&!p.targetH&&!p.maxH){const q=eff(p);p.minH=q.minH||0;p.targetH=q.targetH||0}p.hoursMode=v;saveStaff(p);render();break}
