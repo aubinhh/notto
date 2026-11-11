@@ -1,0 +1,1464 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+<meta name="googlebot" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>治療師排班表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: the paper calendar (Mon–Sat, one line per therapist per day) on the left; a sticky "剩餘時數" panel on the right. Big type, 34–44px rows. */
+:root{
+  --bg:#EDF1F4; --sheet:#FFFFFF; --sheet2:#F2F5F8; --ink:#101B26; --muted:#3B4855; --rule:#C6D0DA; --rule2:#8D9BA9;
+  --accent:#1F4FB8; --accent-ink:#FFFFFF; --accent-soft:#DCE5F8;
+  --ok:#17683A; --ok-soft:#DDF0E3; --warn:#7E4C00; --warn-soft:#FBEACB; --bad:#AE231C; --bad-soft:#FADDD9;
+  --me:#6A2C9E; --me-soft:#F0E6FA;
+  --e:#B25F00; --m:#0B7461; --l:#4B3BA6; --chip-ink:#FFFFFF;
+  --hatch:rgba(16,27,38,.08);
+  --shadow:0 1px 2px rgba(16,27,38,.08),0 8px 24px rgba(16,27,38,.10);
+  --plb:37%;
+  --fs:17px;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1319; --sheet:#18212B; --sheet2:#202B37; --ink:#F2F6FA; --muted:#BAC6D2; --rule:#33414F; --rule2:#5D6D7E;
+  --accent:#9DB8FF; --accent-ink:#0E1925; --accent-soft:#25355A;
+  --ok:#7FD69E; --ok-soft:#173826; --warn:#F2C26B; --warn-soft:#3D2E10; --bad:#FF9A90; --bad-soft:#47201C;
+  --me:#D5AEFF; --me-soft:#33224A;
+  --e:#F0A84A; --m:#56CDB4; --l:#B3A8FF; --chip-ink:#0E1925;
+  --hatch:rgba(255,255,255,.07); --plb:67%;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0E1319; --sheet:#18212B; --sheet2:#202B37; --ink:#F2F6FA; --muted:#BAC6D2; --rule:#33414F; --rule2:#5D6D7E;
+  --accent:#9DB8FF; --accent-ink:#0E1925; --accent-soft:#25355A;
+  --ok:#7FD69E; --ok-soft:#173826; --warn:#F2C26B; --warn-soft:#3D2E10; --bad:#FF9A90; --bad-soft:#47201C;
+  --me:#D5AEFF; --me-soft:#33224A;
+  --e:#F0A84A; --m:#56CDB4; --l:#B3A8FF; --chip-ink:#0E1925;
+  --hatch:rgba(255,255,255,.07); --plb:67%;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark }
+html{font-size:var(--fs)}
+html[data-fs="1"]{--fs:19px}
+html[data-fs="2"]{--fs:21.5px}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:1rem;line-height:1.5;font-variant-numeric:tabular-nums}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+h1,h2,h3{margin:0;line-height:1.25;text-wrap:balance}
+.app{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 28px}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.top h1{font-size:1.45rem;font-weight:900;letter-spacing:.04em}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{min-height:48px;padding:.2rem 1.1rem;border:2px solid var(--rule2);background:var(--sheet);border-radius:12px;font-size:1.05rem;font-weight:700}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.fsgrp{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
+.hdr-r{margin-left:auto;display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px}
+.seg{display:inline-flex;border:2px solid var(--rule2);border-radius:10px;overflow:hidden;background:var(--sheet)}
+.seg button{border:0;background:none;padding:.25rem .8rem;min-height:44px;font-weight:500}
+.seg button+button{border-left:2px solid var(--rule2)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45em;min-height:50px;padding:.35rem 1rem;border-radius:12px;border:2px solid var(--rule2);background:var(--sheet);font-weight:700;line-height:1.2;text-align:left}
+.btn.sm{min-height:44px;padding:.25rem .75rem;font-size:.92rem}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.me{background:var(--me);border-color:var(--me);color:var(--sheet)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn.danger.solid{background:var(--bad);color:var(--sheet)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn .step{display:inline-grid;place-items:center;flex:0 0 auto;width:1.65em;height:1.65em;border-radius:50%;background:rgba(255,255,255,.25);font-size:.95em;font-weight:900}
+.btn:not(.primary):not(.me) .step{background:var(--sheet2);border:2px solid var(--rule2)}
+.btn small{display:block;font-weight:500;font-size:.78em;opacity:.92}
+.mini{min-height:40px;padding:.15rem .65rem;border-radius:9px;border:2px solid var(--rule);background:var(--sheet2);font-size:.88rem;font-weight:700}
+
+/* schedule layout */
+.sched{display:grid;grid-template-columns:minmax(0,1fr) 23rem;gap:16px;align-items:start;margin-top:12px}
+.calcol{min-width:0;display:flex;flex-direction:column;gap:10px}
+.monthbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.monthbar h2{font-size:1.75rem;font-weight:900;letter-spacing:.03em;min-width:7.5em;text-align:center}
+.monthbar h2 small{font-size:.5em;font-weight:500;color:var(--muted);margin-left:.4em}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.actions .sp{flex:1 1 0}
+.note{padding:10px 14px;border-radius:12px;border:2px dashed var(--accent);background:var(--accent-soft);font-size:.95rem}
+.brushbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:25;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:10px 14px;border-radius:12px;background:var(--ink);color:var(--bg);box-shadow:var(--shadow)}
+.brushbar b{font-size:1.1rem}
+.brushbar .btn{margin-left:auto;background:var(--bg);color:var(--ink);border-color:var(--bg);min-height:44px}
+.brushbar .ov{font-size:1rem}
+
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(6,minmax(0,1fr)) 3.6rem;gap:6px}
+.cal.with-sun{grid-template-columns:repeat(7,minmax(0,1fr))}
+.wdh.sun{color:var(--bad)}
+.sunc{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;border:1.5px dashed var(--rule);border-radius:10px;color:var(--muted);min-width:0}
+.sunc .dnum{font-size:1.05rem}
+.sunc .mini{min-height:38px;padding:.1rem .35rem;font-size:.8rem}
+.cal.with-sun .sunc{justify-content:flex-start}
+.day.sunday{border-color:var(--bad)}
+.day.sunday .dwd{color:var(--bad)}
+.wdh{font-weight:700;text-align:center;color:var(--muted);font-size:.95rem}
+.wdh.sat{color:var(--accent)}
+.day{background:var(--sheet);border:1.5px solid var(--rule);border-radius:10px;min-width:0;display:flex;flex-direction:column;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.day.today{border:2.5px solid var(--accent)}
+.dh{display:flex;flex-wrap:wrap;align-items:center;gap:2px 4px;padding:2px 4px 2px 2px;border-bottom:1px solid var(--rule)}
+.dbtn{display:flex;align-items:baseline;gap:5px;border:0;background:none;min-height:36px;padding:0 6px;border-radius:7px}
+.dbtn:hover{background:var(--sheet2)}
+.dnum{font-size:1.2rem;font-weight:900}
+.dwd{font-size:.82rem;font-weight:700;color:var(--muted)}
+.day.sat .dwd{color:var(--accent)}
+.cv{margin-left:auto;font-size:.78rem;font-weight:900;padding:.05em .45em;border-radius:6px;white-space:nowrap}
+.cv.ok{color:var(--ok)}
+.cv.bad{background:var(--bad-soft);color:var(--bad);border:1.5px solid var(--bad)}
+.cv.over{background:var(--warn-soft);color:var(--warn);border:1.5px solid var(--warn)}
+.cv+.cv{margin-left:3px}
+.lines{display:flex;flex-direction:column;gap:1px;padding:3px}
+.ln{display:flex;align-items:center;gap:5px;min-height:1.95rem;width:100%;border:0;border-radius:6px;background:none;padding:1px 4px;text-align:left;cursor:pointer;touch-action:pan-y}
+.ln:hover{background:var(--sheet2)}
+.cd{flex:0 0 auto;width:1.5rem;height:1.5rem;border-radius:6px;background:var(--pc,var(--ink));color:var(--chip-ink);font-weight:900;display:grid;place-items:center;font-size:.86rem}
+.nm{font-size:.86rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1 1 auto}
+.ov{margin-left:auto;flex:0 0 auto;font-weight:900;font-size:.95rem;padding:0 .42em;border-radius:6px;color:var(--chip-ink);line-height:1.6;white-space:nowrap}
+.ov.none{color:var(--rule2);font-weight:500}
+.ov.x{background:var(--sheet2);color:var(--muted);border:1.5px solid var(--rule)}
+.c-E{background:var(--e)} .c-M{background:var(--m)} .c-L{background:var(--l)}
+.c-EM{background:linear-gradient(90deg,var(--e) 50%,var(--m) 50%)}
+.c-EL{background:linear-gradient(90deg,var(--e) 50%,var(--l) 50%)}
+.c-ML{background:linear-gradient(90deg,var(--m) 50%,var(--l) 50%)}
+.c-EML{background:linear-gradient(90deg,var(--e) 33.3%,var(--m) 33.3% 66.6%,var(--l) 66.6%)}
+.c-{background:var(--rule2)}
+.ln.bad .ov{outline:2.5px solid var(--bad);outline-offset:1px}
+.ln .warn{color:var(--bad);font-weight:900;font-size:.85rem}
+.day.hol{background:var(--sheet2)}
+.holb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:14px 6px;text-align:center}
+.holb b{font-size:1.05rem;color:var(--bad)}
+.holb span{font-size:.85rem;color:var(--muted);font-weight:700}
+/* brush mode */
+body.brushing .day:not(.hol){cursor:copy}
+body.brushing .day:not(.hol):hover{border-color:var(--ink)}
+.ln.dim{opacity:.42}
+.ln.sel{background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
+.ln.sel.b-p{background:var(--ok-soft);box-shadow:inset 0 0 0 2px var(--ok)}
+.ln.sel.b-a{background:var(--warn-soft);box-shadow:inset 0 0 0 2px var(--warn)}
+.ln.sel.b-x{background:repeating-linear-gradient(135deg,var(--bad-soft) 0 5px,var(--sheet) 5px 10px);box-shadow:inset 0 0 0 2px var(--bad)}
+.ptg{font-size:.7rem;font-weight:900;padding:0 .3em;border-radius:4px;flex:0 0 auto}
+.ptg.p{color:var(--ok)} .ptg.a{color:var(--warn)} .ptg.x{color:var(--bad)}
+.day.drop-ok{outline:4px solid var(--accent);outline-offset:-2px;background:var(--accent-soft)}
+
+/* panel */
+.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);max-height:calc(100vh - 16px);overflow-y:auto;overscroll-behavior:contain;background:var(--sheet);border:2px solid var(--rule);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.panel h3{font-size:1.2rem;font-weight:900}
+.pn-sum{display:flex;flex-direction:column;gap:6px;padding-bottom:10px;border-bottom:2px solid var(--rule)}
+.pn-base{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px}
+.pn-base b{font-size:1.5rem;font-weight:900}
+.pn-gap{font-weight:700}
+.pn-gap.bad{color:var(--bad)} .pn-gap.ok{color:var(--ok)} .pn-gap.warn{color:var(--warn)}
+.hint{font-size:.86rem;color:var(--muted);margin:0}
+.pcard{display:block;width:100%;text-align:left;border:2px solid var(--rule);background:var(--sheet);border-radius:12px;padding:9px 11px;touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab}
+.pcard:hover{border-color:var(--rule2)}
+.pcard.sel{border-color:var(--ink);box-shadow:0 0 0 3px var(--ink)}
+.pcard.me{border-color:var(--me);background:var(--me-soft)}
+.pc-top{display:flex;align-items:center;gap:8px}
+.pc-top b{font-size:1.12rem}
+.pc-top .pill{margin-left:auto}
+.pc-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 10px;margin-top:4px}
+.pc-h .big{font-size:1.5rem;font-weight:900;line-height:1.1}
+.pc-h .split{font-size:.85rem;color:var(--muted);font-weight:700}
+.pc-g{font-weight:700;font-size:.95rem}
+.pc-g.bad{color:var(--bad)} .pc-g.warn{color:var(--warn)} .pc-g.ok{color:var(--ok)} .pc-g.me{color:var(--me)} .pc-g.none{color:var(--muted)}
+.meter{position:relative;height:12px;border-radius:6px;background:var(--sheet2);border:1.5px solid var(--rule2);margin:7px 0 3px}
+.meter i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--pc,var(--accent))}
+.meter .tick{position:absolute;top:-5px;bottom:-5px;width:3px;background:var(--ink);border-radius:2px}
+.meter .tick.t{background:var(--ok)} .meter .tick.mx{background:var(--bad)}
+.pc-meta{font-size:.8rem;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:.3em;padding:.08em .6em;border-radius:999px;font-size:.82rem;font-weight:900;border:2px solid transparent;white-space:nowrap}
+.pill.bad{background:var(--bad-soft);color:var(--bad);border-color:var(--bad)}
+.pill.warn{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.pill.ok{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.pill.me{background:var(--me-soft);color:var(--me);border-color:var(--me)}
+.pill.none{background:var(--sheet2);color:var(--muted);border-color:var(--rule2)}
+.palette{border:2px solid var(--ink);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;background:var(--sheet2);margin-top:-4px}
+.palette .pt{font-weight:900}
+.pgrid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.pb{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-height:52px;border:2px solid var(--rule2);background:var(--sheet);border-radius:10px;padding:5px 8px;text-align:left}
+.pb[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 3px var(--ink)}
+.pb .ov{margin-left:0}
+.pb small{font-size:.74rem;color:var(--muted);line-height:1.2}
+.legend{display:flex;flex-direction:column;gap:4px;font-size:.86rem;border-top:2px solid var(--rule);padding-top:10px}
+.legend div{display:flex;align-items:center;gap:8px}
+.legend .ov{margin-left:0;min-width:2.8em;text-align:center}
+
+/* advanced layer: who works each fixed time slot */
+.viewbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.viewbar .seg button{min-height:46px;font-weight:700;padding:.2rem 1rem}
+.viewbar .seg button[data-v="slot"][aria-pressed="true"]{background:var(--me);color:var(--sheet)}
+.slots{display:flex;flex-direction:column;gap:2px;padding:3px}
+.srow{position:relative;display:flex;align-items:center;gap:4px;min-height:2.25rem;padding:2px 4px 2px 6px;border-radius:6px;border-left:5px solid var(--c);cursor:pointer;touch-action:pan-y}
+.srow.k-E{--c:var(--e)} .srow.k-M{--c:var(--m)} .srow.k-L{--c:var(--l)}
+.srow:hover{background:var(--sheet2)}
+.srow.unp{background-image:repeating-linear-gradient(135deg,var(--hatch) 0 5px,transparent 5px 10px)}
+.srow.short{background-color:var(--bad-soft)}
+.srow.over{background-color:var(--warn-soft)}
+.sk{flex:0 0 auto;font-weight:900;color:var(--c);font-size:.95rem;width:1.1em}
+.who{flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;gap:3px}
+.sch{display:inline-flex;align-items:center;gap:3px;border-radius:6px;background:var(--pc,var(--ink));color:var(--chip-ink);font-size:.82rem;font-weight:900;padding:0 .35em;line-height:1.55;cursor:grab;user-select:none;-webkit-user-select:none}
+.sch i{font-style:normal;font-weight:700}
+.sch.me{box-shadow:inset 0 0 0 2px var(--me-soft)}
+.sch.bad{outline:2.5px solid var(--bad);outline-offset:1px}
+.sc{flex:0 0 auto;font-size:.76rem;font-weight:900;color:var(--ok)}
+.srow.short .sc{color:var(--bad)} .sc .extra{color:var(--muted);font-weight:700} .srow.over .sc{color:var(--warn)}
+.srow .bt{position:absolute;right:3px;top:-6px;font-size:.66rem;font-weight:900;padding:0 .3em;border-radius:4px;background:var(--ink);color:var(--bg)}
+body.brushing .srow{cursor:copy}
+.srow.b-on{box-shadow:inset 0 0 0 2.5px var(--ink)}
+.srow.b-p{box-shadow:inset 0 0 0 2.5px var(--ok)} .srow.b-a{box-shadow:inset 0 0 0 2.5px var(--warn)} .srow.b-x{opacity:.55}
+.srow.b-on.b-p,.srow.b-on.b-a{box-shadow:inset 0 0 0 3px var(--ink)}
+.srow.drop-ok{outline:3px solid var(--accent);outline-offset:-1px;background:var(--accent-soft)}
+@media (max-width:1250px){.sch i{display:none}}
+@media (pointer:coarse){.srow{min-height:2.7rem}}
+/* candidates */
+.msheet.wide{width:min(46rem,100%)}
+.grp-h{font-weight:900;font-size:.95rem;margin-top:2px;display:flex;align-items:center;gap:8px}
+.grp-h.ok{color:var(--ok)} .grp-h.warn{color:var(--warn)} .grp-h.no{color:var(--muted)} .grp-h.me{color:var(--me)} .grp-h.on{color:var(--ink)}
+.cands{display:flex;flex-direction:column;gap:6px}
+.cand{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:4px 10px;width:100%;min-height:58px;text-align:left;border:2px solid var(--rule);background:var(--sheet);border-radius:12px;padding:8px 12px}
+.cand:hover:not(:disabled){border-color:var(--ink)}
+.cand.ok{border-color:var(--ok)} .cand.top{box-shadow:0 0 0 3px var(--ok)}
+.cand.warn{border-color:var(--warn)} .cand.me{border-color:var(--me);background:var(--me-soft)}
+.cand.on{background:var(--sheet2);border-color:var(--ink)}
+.cand:disabled{opacity:.6;cursor:not-allowed;border-style:dashed}
+.cand .cn b{font-size:1.06rem}
+.cand .cn small{display:block;font-size:.84rem;color:var(--muted);line-height:1.35}
+.cand .ch{text-align:right;font-weight:900;font-size:1.02rem;white-space:nowrap}
+.cand .ch small{display:block;font-size:.75rem;font-weight:700;color:var(--muted)}
+.cand .act{font-size:.8rem;font-weight:900;padding:.1em .5em;border-radius:6px;background:var(--ink);color:var(--bg)}
+.star{font-size:.76rem;font-weight:900;color:var(--sheet);background:var(--ok);border-radius:5px;padding:0 .4em;margin-left:6px}
+.need{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+/* day timeline */
+.tl{display:flex;flex-direction:column;gap:4px;overflow-x:auto}
+.tl-row{display:grid;grid-template-columns:8.5rem minmax(18rem,1fr);gap:8px;align-items:center;min-height:2.3rem}
+.tl-name{display:flex;align-items:center;gap:6px;font-weight:700;font-size:.95rem;min-width:0}
+.tl-name small{color:var(--muted);font-weight:500;font-size:.8rem}
+.tl-track{position:relative;height:1.75rem;border-radius:6px;background:var(--sheet2);background-image:repeating-linear-gradient(90deg,var(--rule) 0 1px,transparent 1px calc(100%/14))}
+.tl-bar{position:absolute;top:3px;bottom:3px;border-radius:5px;background:var(--rule2);color:var(--chip-ink);font-size:.72rem;font-weight:700;padding:0 5px;white-space:nowrap;overflow:hidden;display:flex;align-items:center}
+.tl-bar.c-E{background:var(--e)} .tl-bar.c-M{background:var(--m)} .tl-bar.c-L{background:var(--l)}
+.tl-bar.c-EM{background:linear-gradient(90deg,var(--e) 50%,var(--m) 50%)} .tl-bar.c-EL{background:linear-gradient(90deg,var(--e) 50%,var(--l) 50%)}
+.tl-bar.c-ML{background:linear-gradient(90deg,var(--m) 50%,var(--l) 50%)} .tl-bar.c-EML{background:linear-gradient(90deg,var(--e) 33.3%,var(--m) 33.3% 66.6%,var(--l) 66.6%)}
+.field .seg{align-self:flex-start}
+.tl-band{position:absolute;top:0;bottom:0;border-radius:5px;background:var(--c);color:var(--chip-ink);font-size:.78rem;font-weight:900;display:flex;align-items:center;justify-content:center;opacity:.9}
+.tl-band.k-E{--c:var(--e)} .tl-band.k-M{--c:var(--m)} .tl-band.k-L{--c:var(--l)}
+.tl-axis{position:relative;height:1.1rem;font-size:.72rem;color:var(--muted)}
+.tl-axis span{position:absolute;transform:translateX(-50%)}
+.tl-axis span:first-child{transform:none}
+.tl-axis span:last-child{transform:translateX(-100%)}
+.tl-cov{display:flex;flex-wrap:wrap;gap:8px}
+.tl-cov .btn{min-height:46px}
+.offline{font-size:.9rem;color:var(--muted)}
+details.more summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}
+
+/* guided tour */
+#tour{position:fixed;inset:0;z-index:150}
+.tour-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 200vmax rgba(5,10,16,.62);outline:4px solid var(--accent);outline-offset:2px;pointer-events:none;transition:left .2s,top .2s,width .2s,height .2s}
+.tour-spot.none{box-shadow:0 0 0 200vmax rgba(5,10,16,.62);outline:0;width:0;height:0;left:50%;top:40%}
+.tour-card{position:fixed;width:min(27rem,calc(100vw - 32px));background:var(--sheet);color:var(--ink);border-radius:16px;box-shadow:var(--shadow);padding:18px 20px;display:flex;flex-direction:column;gap:10px;border:2px solid var(--accent)}
+.tour-card h3{font-size:1.35rem;font-weight:900}
+.tour-card p{margin:0;font-size:1.08rem;line-height:1.7;white-space:pre-line}
+.tour-n{font-size:.85rem;font-weight:700;color:var(--muted)}
+.tour-btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tour-btns .sp{flex:1}
+@media (max-width:700px){.tour-card{left:16px!important;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;top:auto!important}}
+@media (prefers-reduced-motion: reduce){.tour-spot{transition:none}}
+
+/* whole-month layout when the hours panel is hidden */
+.sidebtn{margin-left:auto}
+.toprow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.toprow .actions{flex:1 1 34rem}
+.sched.noside{grid-template-columns:minmax(0,1fr)}
+.sched.noside .ln{min-height:1.55rem;padding-block:0}
+.sched.noside .lines{padding:2px 3px}
+.sched.noside .viewbar{margin-top:-2px}
+.sched.noside .srow{min-height:1.95rem}
+.sched.noside .dbtn{min-height:28px}
+@media (min-width:900px){.sched.noside .nm{display:block}.sched.noside .sch i{display:inline}}
+@media (pointer:coarse){.sched.noside .ln{min-height:2.3rem}}
+
+/* print preview */
+#printView{position:fixed;inset:0;z-index:140;background:var(--bg);display:flex;flex-direction:column}
+.pv-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));padding-top:calc(10px + env(safe-area-inset-top,0px));background:var(--sheet);border-bottom:2px solid var(--rule)}
+.pv-bar .pv-t{font-size:1.2rem}
+.pv-bar .sp{flex:1}
+.pv-note{padding:8px max(16px,env(safe-area-inset-left,0px));font-size:.95rem;background:var(--accent-soft)}
+.pv-scroll{flex:1;overflow:auto;padding:18px 16px 40px}
+#printView .paper{width:1100px;max-width:none;margin:0 auto;padding:28px 30px;box-shadow:0 2px 14px rgba(0,0,0,.25);border-radius:2px}
+
+/* employment */
+.emp{display:inline-flex;align-items:center;font-size:.74rem;font-weight:900;padding:.02em .45em;border-radius:6px;border:1.5px solid var(--rule2);color:var(--muted);white-space:nowrap}
+.emp.ft{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pn-split{display:flex;flex-wrap:wrap;gap:4px 16px;font-weight:700}
+.pc-top .emp{margin-left:2px}
+
+/* drag */
+#ghost{position:fixed;left:0;top:0;z-index:100;pointer-events:none;padding:.4em .9em;border-radius:12px;background:var(--ink);color:var(--bg);font-weight:900;font-size:1.1rem;box-shadow:var(--shadow);border-left:8px solid var(--pc,var(--accent));white-space:nowrap}
+body.dragging,body.dragging *{cursor:grabbing!important}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:80;background:rgba(5,10,16,.5);display:flex;align-items:flex-end;justify-content:center}
+@media (min-width:700px){.modal{align-items:center;padding:24px}}
+.msheet{background:var(--sheet);width:min(38rem,100%);max-height:90vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+@media (min-width:700px){.msheet{border-radius:18px}}
+.msheet h3{font-size:1.3rem;display:flex;align-items:center;gap:8px}
+.msub{color:var(--muted);font-size:.95rem}
+.ogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(10.5rem,1fr));gap:8px}
+.ob{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:72px;border:2px solid var(--rule2);background:var(--sheet);border-radius:12px;padding:8px 10px;text-align:left}
+.ob[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 3px var(--ink)}
+.ob .ov{margin-left:0;font-size:1.05rem}
+.ob .t{font-size:.86rem;color:var(--muted);line-height:1.25}
+.ob .tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:.75rem;font-weight:900;padding:0 .4em;border-radius:5px;border:1.5px solid currentColor}
+.tag.p{color:var(--ok)} .tag.a{color:var(--warn)} .tag.x{color:var(--bad)} .tag.u{color:var(--muted)}
+.rowbtns{display:flex;flex-wrap:wrap;gap:8px}
+.inp{min-height:50px;border:2px solid var(--rule2);border-radius:10px;background:var(--sheet);padding:.3rem .7rem;font-size:1.05rem;width:100%}
+textarea.inp{min-height:4.5rem;resize:vertical}
+
+/* staff + settings */
+.two{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:12px}
+@media (min-width:980px){.two{grid-template-columns:minmax(0,21rem) minmax(0,1fr);align-items:start}}
+.stack{display:flex;flex-direction:column;gap:16px;margin-top:12px;max-width:62rem}
+.box{background:var(--sheet);border:2px solid var(--rule);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.box-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.box-h h2{font-size:1.3rem}
+.slist{display:flex;flex-direction:column;gap:8px}
+.sitem{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:2px solid var(--rule);background:var(--sheet);border-radius:12px;padding:10px 12px;min-height:58px}
+.sitem[aria-current="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)}
+.sitem .si-n{font-weight:700;font-size:1.06rem}
+.sitem .si-m{font-size:.85rem;color:var(--muted)}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label,.flabel{font-weight:700}
+.help{font-size:.85rem;color:var(--muted)}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));gap:12px}
+.unit{display:flex;align-items:center;gap:6px}
+.unit .inp{flex:1;min-width:0}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.sw{width:42px;height:42px;border-radius:50%;border:3px solid var(--sheet);box-shadow:0 0 0 2px var(--rule2);background:var(--pc)}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 4px var(--ink)}
+.switch{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:2px solid var(--me);background:var(--me-soft);border-radius:12px;padding:12px 14px}
+.switch .knob{flex:0 0 auto;width:3.4rem;height:2rem;border-radius:1rem;background:var(--rule2);position:relative}
+.switch .knob::after{content:"";position:absolute;top:.25rem;left:.25rem;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--sheet);transition:left .15s}
+.switch[aria-checked="true"] .knob{background:var(--me)}
+.switch[aria-checked="true"] .knob::after{left:1.65rem}
+.switch b{color:var(--me)}
+.switch.act{border-color:var(--rule2);background:var(--sheet2)}
+.switch.act b{color:var(--ink)}
+.switch.act[aria-checked="true"] .knob{background:var(--ok)}
+.switch span{font-size:.88rem}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.tool{min-height:48px;padding:.25rem .9rem;border-radius:12px;border:2px solid var(--rule2);background:var(--sheet);font-weight:700}
+.tool[aria-pressed="true"]{outline:4px solid var(--ink);outline-offset:1px}
+.pv-p{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.pv-{background:var(--sheet);color:var(--muted)}
+.pv-a{background:var(--warn-soft);color:var(--warn);border-color:var(--warn)}
+.pv-x{background:var(--bad-soft);color:var(--bad);border-color:var(--bad)}
+.gridwrap{overflow-x:auto}
+.pgrid{display:grid;grid-template-columns:4.2rem repeat(3,minmax(5rem,1fr));gap:6px;min-width:20rem}
+.pgrid .hd{min-height:46px;border-radius:10px;border:2px dashed var(--rule2);background:var(--sheet2);font-weight:700}
+.pgrid .cell{min-height:52px;border-radius:10px;border:2px solid var(--rule);font-weight:700}
+.unpopc{background-image:repeating-linear-gradient(135deg,var(--hatch) 0 6px,transparent 6px 12px)!important}
+.warnline{color:var(--bad);font-weight:700;font-size:.92rem}
+.orow{display:grid;grid-template-columns:6rem minmax(9rem,1.6fr) 6.5rem minmax(11rem,1fr) auto;gap:8px 10px;align-items:end;padding:10px;border:2px solid var(--rule);border-radius:12px}
+@media (max-width:900px){.orow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.covs{display:flex;gap:6px}
+.covs button{flex:1;min-height:50px;border-radius:10px;border:2px solid var(--rule2);background:var(--sheet);font-weight:900;color:var(--muted)}
+.covs button[aria-pressed="true"].k-E{background:var(--e);border-color:var(--e);color:var(--chip-ink)}
+.covs button[aria-pressed="true"].k-M{background:var(--m);border-color:var(--m);color:var(--chip-ink)}
+.covs button[aria-pressed="true"].k-L{background:var(--l);border-color:var(--l);color:var(--chip-ink)}
+.chk{display:flex;align-items:center;gap:8px;min-height:50px;font-weight:700;font-size:.9rem}
+.chk input{width:1.4rem;height:1.4rem}
+.stepper{display:inline-flex;align-items:center;border:2px solid var(--rule2);border-radius:12px;overflow:hidden;background:var(--sheet)}
+.stepper button{width:46px;min-height:46px;border:0;background:var(--sheet2);font-size:1.3rem;font-weight:900}
+.stepper output{min-width:2.4rem;text-align:center;font-weight:900;font-size:1.15rem}
+.ngrid{display:grid;grid-template-columns:4.2rem repeat(3,minmax(8.4rem,1fr));gap:8px;align-items:center;min-width:31rem}
+.ngrid .h{font-weight:700;text-align:center;color:var(--muted)}
+.ngrid .rh{font-weight:700}
+.ucell{min-height:50px;border-radius:10px;border:2px solid var(--rule);background:var(--sheet);font-weight:700;color:var(--muted)}
+.ucell[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);background-color:var(--sheet2)}
+
+.emptybox{background:var(--sheet);border:2px dashed var(--rule2);border-radius:14px;padding:28px 20px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:12px}
+.emptybox p{margin:0;max-width:32em}
+.foot{margin-top:16px;font-size:.85rem;color:var(--muted)}
+.loading{padding:40px 20px;text-align:center;font-size:1.1rem;color:var(--muted)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:120;background:var(--ink);color:var(--bg);padding:.75rem 1.2rem;border-radius:12px;font-weight:700;max-width:calc(100% - 32px);box-shadow:var(--shadow);text-align:center}
+
+/* narrower screens */
+@media (max-width:1250px){ .sched{grid-template-columns:minmax(0,1fr) 19.5rem} .nm{display:none} }
+@media (max-width:900px){
+  .sched{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static;max-height:none;order:-1}
+  .calscroll{overflow-x:auto;padding-bottom:6px}
+  .cal{min-width:44rem}
+  .monthbar h2{min-width:0;flex:1;font-size:1.4rem}
+}
+@media (pointer:coarse){ .ln{min-height:2.6rem} .dbtn{min-height:42px} }
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="app">
+  <header class="top">
+    <h1>治療師排班表</h1>
+    <nav class="tabs" role="tablist" aria-label="頁面">
+      <button type="button" role="tab" data-act="tab" data-v="sched">排班</button>
+      <button type="button" role="tab" data-act="tab" data-v="staff">治療師資料</button>
+      <button type="button" role="tab" data-act="tab" data-v="settings">班別與人力</button>
+    </nav>
+    <div class="hdr-r">
+    <button type="button" id="fsBtn" class="btn sm" data-act="fullscreen" hidden>⛶ 全螢幕</button>
+    <button type="button" id="tourBtn" class="btn sm" data-act="tour">使用教學</button>
+    <div class="fsgrp" role="group" aria-label="字體大小">
+      <span>字體</span>
+      <div class="seg">
+        <button type="button" data-act="fs" data-v="0">標準</button>
+        <button type="button" data-act="fs" data-v="1">大</button>
+        <button type="button" data-act="fs" data-v="2">特大</button>
+      </div>
+    </div>
+    </div>
+  </header>
+  <main id="main"><div class="loading">正在讀取班表…</div></main>
+  <p class="foot" id="foot"></p>
+</div>
+<div id="modal" class="modal" hidden></div>
+<div id="ghost" hidden></div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<div id="printView" hidden></div>
+<div id="tour" hidden><div class="tour-spot" aria-hidden="true"></div><div class="tour-card" role="dialog" aria-modal="true" aria-labelledby="tourT"><div class="tour-n" id="tourN"></div><h3 id="tourT"></h3><p id="tourB"></p><div class="tour-btns"><button type="button" class="btn sm" data-tour="skip">跳過教學</button><span class="sp"></span><button type="button" class="btn" data-tour="prev">上一步</button><button type="button" class="btn primary" data-tour="next">下一步</button></div></div></div>
+
+<script type="application/json" id="seedEnc">{"iv":"DXl9BS0j-Tl3bISt","ct":"3gUw9hQZgH0G6pyLVi7oZDQYRhruVR0QQgQDbyYyEwiBkJoRoJK0wsNue8lbizdtnJP6TeDEk2jbyfUQZxvMJ0cC-4iUbaYADUhcjaiVL1lmODQhlMH2n0vChqfKn4JqCw-Ydd0k7Jh6HDSauG7DlPJXgtQbkxBXPSrlwlg0APe673-nJjD8PrsDkhXnwnUGIUQzGht5pxZIay5ILC1OI3TAmoaR-TBc17_fg1tNrllDrsREtfXtNCCzcXYojpdR1n_gPO9ZKNGidfP5i1e7aszNnkiiCmgMgytXnqkJI25D8NhW2jIKp6NNqHw0AD2Ar-h7XkXK6CjZsaB88CkHXcP6r-GaiZme-kgMnPB7ydYc6jZFJSLmLNkqEXuELZr1ai6QaY-ALvqrp9DkKXdi10U9XfdsOlES2yB10Om1KFVD7wWNI5RufZ6kwvxcuuPq9J26BdFHJDBq2D62GQIixEKqS-i_YrRi-Ikks9zLke9T779o0Orz9OjvTpzU-IqDHjR3GZspxx43CKRvUKTNEfSrc3_l6XfrwLXoiPhGJoWrTvfpA1hIdz-NR2nYzHA6KrL-23vGitIHere8pOlsoGEAF9vGAvfrSArwqxVBBWi6eQD5ivygW8whRKCVMSupsJdrOW_qzd2zqwxDnROYelSn2tDh_WLpQCWGy10jeWYCqCkof9z0O9ZwUXSZNyufopGWHCyN7LIczqxsubyhPtVZmx425uc_dZsJoygXslXn0mZfheIYg6dQcapvTM3uywmVNFz39ftzC6-jTtXnqaODGORDJ8pYWyHhHtF8wvoaj8BfY7txSiiTqH0X57BuySVE52K_Mr9Up4II-n57Lw6X7FH1gYoe07K_1LF8k5q_WP4Wck3XvXAx3SD4dG-GwYqplkrLdy4lIj0oIkkAvyXBZzHyNvjDZRVhsV4Qdnnq4ii1Q3ibDtf1xVRTHxJ5r0bcnkr7Ws9dB0229H1rFZX7g7dQtAC_r0ryW8H0FRSPR-ZKWNWmY0e5pTXaOFytABfumoA8iluVl_h7i-StICzam4Nj8xLCoLqlFwXaExhSOUGGIfvnYa_3LHCK4B_FBT0PFJOlXrmrZJGUOQwJ1N2605GeyuOZ4OjsjG147qVdzqSwB0t8c9C0-e7MNDCK4TcONsSfn6ou0poNixAxkNi6PlW30tmufZdT2N_Mf2MVZ_WazLGqf-oaGp6-dIIODECA7Ilv16lnNlO2mXUZ7p-05uiLtLZfr2ClLDxK1R5JH5apBXVqF5R1IR1cRjBM8UnA8iEYyjBlws4chNt5_A6oA0eKFCaVAtcu6wjOaloxZeFFykjBeh_lAES6apv5rfiXCfr1co-135TbR2SAzp6iWGJr0hEqdXJNTvVtzd0-iLhCFL4-lVudC48tTVCD88OR1UOgHv9tykXJz06ZOFip5UX9V6VlksFq_wLoKDR1EtQpHUplePYnLLKocIn2YYVKPQIFHbdEHvKODjBrPH9vWMabho-vVsHWYkC4_FwIuHVyVIneM5hF0x2cbq0WcOzhUtWaa9kKYkVPw1XFyVaJ2XEYCaRJUOttY5RRvshDOjckAAuKAXxBxrMtyrV8o40QC-ECw7ZLLgMTdfLaostsy-41gmro0jcyKj8Pq_eTod-RZK4FjhlZWw5shqkeKHIyvxbT4VZ1V6U9nfnr2jEt-kbFvZDOTwRmsj9qVyeb5vS3Ljiqcum0rCrpgDZ8KHYCYar89kLFs_NT1q41JxMwNKrhuuEDLU3JCy-ITWl5Ds9EkSjqhDJqWquN0x0aWbKpXcRwtAsJ_jQxbZ5XuvGMcZExOHKXo2HPEVEmsxF9m2739xKl7VZ9hH9EoLiDTLRzWPPc9Z73kh0PtNQOvGJMyCxdExKTE9sRHAbrXQ_fi2RfQBUiGa278oCfZGVFPQfPIOtcTAQOyikajDtuokrJJDLz-RgniHiBqBAZe4218YBKEGkYCMqlJy2OwEQFkdSRhYT0HMXFX1o8s8PJxzbOoyl1Ma0_CW_NuQqW4aDfa0a6Lmee0rAkkplCCy-iHocv63OJTGOgOQHNZGs2jtyhqXW7jOJYc6pN64CMJ6U7aUhaYH5CFpElF2lpGU6cSe22taPFTTe9lO0Owlcl0odkM50MPFV7I9CRqIq6H9q-k7mnLAWajgF6tXqzj8mq74BBy8NRRWAMIyDlxbdWbqRJU92p_fNS18UYOiiAZVrTbzOwJq5muTpp1YVDMvk9d1wtU0vsauEPwso1n0yRriApoCxMqD6tWBFrzakjhXxFf7QyRFffepdwNsmiXBkZ_SntxJkIoiFpDXyZ8l5Z8PYlW3Qc6n0yUsEuC35GVks63QerRSmGA4F3sp7FvQ-gp1XX1dIkjQD2VPgSZYaWu-Ewe6FyeZ9IyXM6Xb_VLY79wCbIYhd10so0PYBWv2wnh_mIEMZvprt9bfkMuei9KqPRFx4bcWuEx6Fz9-B3hYZbvHC0nzPWlamvPOn9eZa0gnQL65VIrqPI2FZAraxOEfAuaoVtYoPr9m-y-ATGS6ymkBqkgtdYtNvhIheWVDXLTE6Tkb_bSrUWn0x-LgQ9qt5NqqUJcVpGR7xrnau_5Ge5V9cbEDBMXfxma8kPzLzcBJgfUd39v1Lepu08wGKJ0CTxzfIKpupAW3mpRG7r92JvV3frGwan-rUWJ3Z1qfIUcIH0ZYGPiXLFHUNUEfycpQDVPzreRSgvNIEP16ERpSAbypsZWMGyDwIP8J6xuMtfyWbf2yh42UDfBIXCNKPD74GoCp8vtG8-eA8b4aFJXLrZP9pM2LdLhetGSt4__RLqKsvwoamiBf68ko3-gelkwijFwu5OcgxVVmRhLKr813Vo9EplNfEzFbF9pnIlgpj3Rxw3jMRQgu-aptuChIRfzdKo3pVhfEgAQNhV4c9Y7x_lqH0qM5Pg7Vz3tXAeX1E6MOvdgaLtmWMaRkFv0uacHrV6nDtkY0OE-3Mp5vEv9FR_gpycGn6_qQpde1BQA4bZS6B9gQJwRZPltDy3uygA-jxCFUrYsM5GY6ZxrHSmb12FJI_0xepoJn8KZuCBsl4AWJghMmNOiSULekmb9GNEvCnkimlGE7IhdXRYkCoGGlEsxLRrXugBAE2CwHx8QoQTRCdiUfJESLNs4oT10tn8xilUZaKfLLlpuJhG26-wPMgmp0Yq2jozSZlS-n3lX7v5lLf5vUOZBvWD4E9owVwpkmAR_dE8T6RKYl3Z7AdtQ5VgW2QUHFhVWYS0l-drrxwiZ0K6DXKHBX82EkTrEB0lJKHpSqSeLjcyJzlRe0Sa0VKAsdk5y5jEkJ5lr_gpY1EXZxNSRwpRr1SB3rIOjxIw4huqaUZxYo1uXUIYw_y-OyvMOAU3skcAXRgQuaguEn9lwTJPZNsnjZXVvPR0b_mosYop8qDXmTukhIOw7IZwmDhM78ESCKW7sPdst-UrXnipLNZa3MucxxAMQzoTlMJZ0dBztCaRX2CeCT4-y2V6lkEuGMtfEP52D0uudaYwO3g6gQ6KF6n0yPvbeLI3X82tDnP4ou8cdYzliJyYYj_B638FfMM5MMajWnbCMDA05lH9lI0gBzWAGjrnf-yVowfVHd6M3leq2DDdU8QDgRZAIlXDAdwtmY_RnN7Qn68HznY4GsOVygaCpFkUCsNckS6IdTjVbTEHKWtDR0SUXeVhTMvAbytGSyXGnK1hacJgA_MBPVi3CQzo9bLA-Cjf-57QGZQYGp510DRea6vJaYmZA_phB9Inm861RlO2o7H_uKuarHgJruKHz1W9xlrg70pd8l4M_ThqxUMI4Oo-vHqVym0XaiMROIZn9PZb5PYMFoX0a4plguvTTUkMRr3JoQhRexjCffjfkLbAsZ-IutagdI_L5LHDkRULMtQWl2Xj6sAgxzG6JnVw1w9ogMr_Obr4thJb5oT9yF62ftYdQDhuKx7CauqoYMqd88-LWY7d4p_lCT2xnsBgN4MgpGeKQKMZEIu6YfvDOyMSzuCkaNuLxCWm0eqv3xSslRkv7D85OpIhGq3LJp9GSDS2TVNOeylwc-yGKZX9Gp6QReQ8efCtkiiMR39E07MJfglkELmzIzvrtv3pGV7g71N5KZUctlo3DtG4OQPLgN97otLySzxlCjxlQwhUH0NnNyU6p-bT3BlKtbAAX3nv6WioDFzaPhrf8EfdiVdGztMPzyTRSVVyND_GKhRgnWu3JWILN_Ql5zwEAb53L0ltwCg_neK4SvUP99Naqh3NZ4gwWZVpUagn3nvWAjnjot-QiVwKD63PcghHd4MIRUzq94IOIHn9bC0RcDGf9XoFU0q-0MtvdWqVSY76WTjUeG3aliRdTix5o7LUnDuEQM9pBFx54Bf483hF0FTBnmedfxl5O9DeKnb70naFRNBHSItkBYP661RatD5af9Txju6VtJXpM9jYQuBAMMM-47QKR-dVy_TvcixHPodscnQAGEU0CSO0K5W4ymTe7hU-nQme2GZB4_VsnC3z2db4fsvs3o8-6c5kv9KBxG8dt-O-_TMpQK-o3SSCawYfGf7WhMcIj1Epd1mPejLliP9XAuzL9GM8ZRtjuFucQ5eF2DA0lzC5ua7UA2r7CcTEB8Y0DYOcf5pEKPBgb6FuPck6qRk5ZBWLsmlynz_xPesojPZdp1vj5UY0zRkwyMQbtzYC_broZMs0pLw3ark39xOuCwwLLH1_N-ZHWbZ8bKJ9qdolP9UumqzWFSxTdSvLXPSBFy_miql2aDBLJ_2IMYkecw3yDZvrf9RJOj0tZarddsTnIby4CDr7TiKNR8QCyw9SVKL6nf3Zxnegpq3daR_Pqy3woN3ImrC72M0CcJG6Qhb-x8cscL5YnQQfAnsk0dTAXDWs1MK9NaQYiKL-hI2p2rzzT_a_cUgw5G4ZP62CF_89RhyQDI4R2Br3nGgeoz9MK_hwis9dyNO_ry6ufLxngBwC1qKMJM2SzApmpuo5HJtRzu2jbG7MPfemRBhxyDvCqtNN107-q5-cU19eKB7OkgOAD5jRJZrfti_X4Lhk6xVyrx_pDscBJPqy9pQopiH_7x2tWOzsm-9vOT6tdKx-V8ceBPAvMS_e0gIZCoBq9j0HB5GN_A9-BrsK7R_7zV2CJyHXiYoRrI9RQ7Z1T1Q3FHKeksgTdTruieS33YKryQCU9gR77lTZ3XjIF0jWfuby4v4n940oQHWhAavXkcsCyQNAphplIu6Tl8Et9uByvz8IUukM5AJn17ZRUZVBIyyBDF0KCAWUgW7XKq36d0N5OqZKC_Y3nHXZuzYkn-NeQdUX9FDCoWEHq0vNYSoBwGru1PLlsxp33hxQAbIuG0dm_mkVeraEqNgl-hhrBSlW_o9Pig5GSUt1WiNRkM7yQpfwR-y9_zwNbfdoUv39vrwiXrt8zBP6YuYypwhu44tc1yuKsMZNDf2rUcH29cnUjindyhpU6V95-GIpNIbqH9UMv5ae0FJ_l8KfhSORBgIOexud13v1X79OF9wvbKxnttclEhoH-Fel_dr-S3xFOB6XCDotP2B6gVgjRmCJpXBO3um3WnN08jIu8zlKS5CxMfvY2Ca2tCMz-1zcTqr7mvOClaq4rhEpi3wNi7IK30BJIB2IaD43ZoIZPdbmPvWMcq2j98w9TMT7bj1vtqcPT3GTm24zNlHP5OFSOa0_V3geoNdnGIL32EwaO8AC9yGuFXZxtzUVMjucP_f9EzGW7NNOOutrOI4JCz4QhpCxVsJXSPakDJ83veaKhRTpFKPET5pnhU3r9MwsGdu6HIVKDLOBOZ34pu0UWpZTk0yeKK537jzRMfUir58kaG5wd2MYTKfk1OPqiYlg1xPI4e9d3YYQ4dNFOiIaV7LYmkZCggBaZEC6INCnuhrEzGWPyhddsVfUT-4ihNzIknhbcLRIpxQBUn9ygJL7qag0rZySAKIwCQmmPQjDXggwCQOyUIn80w-SlNeMaoj3Q2leCRK9hC9DGPlg_ePNWiBU-TvkstxJinMtpu1NsoJ0eQQy8DGg4mW_RUyE4_klzgxrO9aDEwrBODE_wxtT_jtB4ppkc_ZcO6po4fzuGImbWP_SCdas9Q_CmSNHEU83wx2sU07eElLFfXlSbUKi02RPo44lSoqEYf3lOk1-o1a5nCSVymxq-5ntQRQqwJZ-RojkFg-UbRwmoQkaOrwvaNCVV1F53fItRY9w1hD0UO0wCsYDDz0i4FmFnepxBXM7lRPtrW4xvBL4gWBx1YaSEx0N03DU4E-iQvYrTsLIJOIW7bZ8ft2RQ0wgkqV37l1MH58JbncK4ejwaWzvNTasGC-k2n-8XCcPC7ZcxV0yFT2-8LvwxFdtVLkXYkwmVU62GCNKgEtbuJr0lF3klLwLUgC54r-GcDNLmDOjaBo2V1OwQSjQb3L0iOQsBXs79H34CkhQS71UNIcAUkW3Gjz000bubUKz-0a6zigR0aQSC-Q2G0iS7X6jyXB9kVfGnOJTaHl3ZNtF2cK8LlsT5qj8e1wJnNfJAKxaJuaWZgkSZeMS3KwjyvH38w9BCQsM6DXp37k6LjUhwpSp8cAJsCAd_Iwx3KTgYkgUckxAhyGbkGi6w-Dq1b47J-Rz9_k8N4NoRog3cCWtjzNiC2AHTqizGjitaSJGMky-OdxXXaVL-zRd5M95w9PRdJHeXbmsorWoO9PEShL6E0tIH2zbEnUiXfEPPweFHnfrLDrgN--i8C4wJG3okFkxySpfGX66U9h5rr_0Oqr3qJa-Q-Jz3UB5XBQiKzhmi7wWNvCjzHnaY7M3DVzXI94vBV0v_kwvfJ0PU-oVmQIDTWWi5uPvZKiUuizWDmiyYVEtrh1tsu0eCLwOysmXWX-vGy_F8g3EKCjfSccLv_fyuxug8p3CZQfoCBswNEzVOz04OmTvx4VHatUkEmM26eLX-f9oaypMBMlGGfTwvJFRCfiHkPPphGzpe8kDCvzBQREQ5npTJGrhzI_Fb0G1E0JHbSA1l23gBHnDRmRPsySUu9S52824F-bAUC5N8PQo4CyMZ9yORD4u89bklFs1qBDbt1QQjpEOEc-Gr0PnantkQeBXRsIXm7DNBpLu-a1grsuBauMHllRnYoFM5seHLAhkR2iwv8mJaXYrLe-5_ike1gEncmd93FeEyt15utIWPCOUgR1M4DavE-v38Q5dRqYs9GfwDoiFPgzWng7NGR6pnko56FNN7b8HIPC2JDSdYnTDqXO5qV6BEzPz2iOOGPeCfHbZqsjXLvKQQFQI9F3fWVGGWVRt1PAdtx5cQwuwPt2ElOX81NjAbiQfvoqI6TS7Ym2pHQ5-tDyBAZ8Yd5zrRXZ-i1L6yUTxV-wsoyJ33QiwqV1wrLP4p8un6-MgvBLsOzCwj0QXf-r8e443fUAqPtsxz2PLTndXrRjOYnSJoqU57bbR4OE_-Hbvv7Cd7bjfijc"}</script>
+<script>
+/*CORE-START*/
+const SL=['E','M','L'];
+function monthDates(ym,sun){const [y,m]=ym.split('-').map(Number);const n=new Date(y,m,0).getDate();const out=[];
+  for(let d=1;d<=n;d++){const wd=new Date(y,m-1,d).getDay();const key=ym+'-'+String(d).padStart(2,'0');if(wd===0&&!(sun&&sun.includes(key)))continue;out.push({key,d,m,wd})}return out}
+function shiftYm(ym,k){const [y,m]=ym.split('-').map(Number);const d=new Date(y,m-1+k,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+function sortCov(s){return SL.filter(c=>s.includes(c)).join('')}
+function optById(cfg,id){return (cfg.opts||[]).find(o=>o.id===id)||null}
+function covOfV(cfg,v){if(!v||v==='X')return '';const o=optById(cfg,v);return o?o.cov:''}
+function hOfV(cfg,v){if(!v||v==='X')return 0;const o=optById(cfg,v);return o?(+o.h||0):0}
+function optForCov(cfg,cov){if(!cov)return null;return (cfg.opts||[]).find(o=>o.cov===cov)||null}
+function prefOf(p,wd,c){return (p&&p.pref&&p.pref[wd+c])||''}
+function baseHours(month,dates){if(month.base>0)return month.base;const hol=month.hol||{};return dates.filter(d=>d.wd>=1&&d.wd<=5&&!hol[d.key]).length*8}
+function tally(cfg,staff,month,dates){
+  const T={};staff.forEach(p=>T[p.id]={wk:0,sat:0,tot:0,days:0,unpop:0,bad:0});
+  const cov={},short={E:0,M:0,L:0},over={E:0,M:0,L:0};let shortN=0,overN=0;const unpop=new Set(cfg.unpopular||[]);const hol=month.hol||{};
+  for(const dt of dates){if(hol[dt.key])continue;const day=(month.e||{})[dt.key]||{};const c={E:0,M:0,L:0};
+    for(const p of staff){const v=day[p.id];if(!v||v==='X')continue;const o=optById(cfg,v);if(!o)continue;const t=T[p.id];const h=+o.h||0;
+      if(dt.wd===6||dt.wd===0)t.sat+=h;else t.wk+=h;t.tot+=h;t.days++;
+      for(const s of o.cov){c[s]++;if(unpop.has(dt.wd+s))t.unpop++;if(prefOf(p,dt.wd,s)==='x')t.bad++}}
+    cov[dt.key]=c;for(const s of SL){const nd=(cfg.need||{})[dt.wd+s]||0;const n=nd-c[s];const lim=Math.max(nd,cfg.maxOk||2);if(n>0){short[s]+=n;shortN+=n}else if(c[s]>lim){over[s]+=c[s]-lim;overN+=c[s]-lim}}}
+  return {T,cov,short,shortN,over,overN};
+}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function canAdd(cfg,p,e,st,dt,c,maxSlots,useCap){
+  const v=(e[dt.key]||{})[p.id];if(v==='X')return null;
+  const cur=covOfV(cfg,v);if(cur.includes(c))return null;
+  if(prefOf(p,dt.wd,c)==='x')return null;
+  const nc=sortCov(cur+c);if(nc.length>maxSlots)return null;
+  const o=optForCov(cfg,nc);if(!o)return null;
+  const delta=(+o.h||0)-hOfV(cfg,v);
+  let cap=p.isMe?(p.maxH||p.targetH||0):(p.maxH||0);
+  if(useCap&&p.capH>0)cap=cap?Math.min(cap,p.capH):p.capH;
+  if(cap>0&&st[p.id]+delta>cap+1e-9)return null;
+  return {o,delta};
+}
+/* onlyMe=false: fill open slots with everyone, each up to their usual hours (capH), preferring the slots they normally work (opt.habit);
+   the scheduler takes part too but only up to her usual load. onlyMe=true: the scheduler covers whatever is still open. */
+function autoFill(cfg,staff,month,dates,opt){
+  const e=JSON.parse(JSON.stringify(month.e||{}));const hol=month.hol||{};const unpop=new Set(cfg.unpopular||[]);
+  const tl=tally(cfg,staff,{e,hol},dates);const st={},up={};staff.forEach(p=>{st[p.id]=tl.T[p.id].tot;up[p.id]=tl.T[p.id].unpop});
+  const people=staff.filter(p=>p.active!==false&&(opt.onlyMe?p.isMe:true));const hb=opt.habit||{};const useCap=!opt.onlyMe;if(!people.length)return {e,filled:0,left:tl.shortN,capped:false};
+  const rnd=mulberry32(opt.seed||7);const maxS=p=>p.isMe?3:(cfg.maxPerDay||2);const slots=[];
+  for(const dt of dates){if(hol[dt.key])continue;for(const c of SL){const open=((cfg.need||{})[dt.wd+c]||0)-tl.cov[dt.key][c];if(open>0)slots.push({dt,c,open,un:unpop.has(dt.wd+c),r:rnd()})}}
+  if(opt.onlyMe){const me=people[0];const rk={p:0,'':1,a:2};slots.sort((x,y)=>((rk[prefOf(me,x.dt.wd,x.c)]??3)-(rk[prefOf(me,y.dt.wd,y.c)]??3))||(x.r-y.r))}
+  else{slots.forEach(s=>s.k=people.filter(p=>canAdd(cfg,p,e,st,s.dt,s.c,maxS(p),useCap)).length);slots.sort((x,y)=>(x.k-y.k)||((y.un?1:0)-(x.un?1:0))||(x.r-y.r))}
+  let filled=0,capped=false;
+  for(const s of slots){for(let i=0;i<s.open;i++){
+    let best=null,bs=-Infinity,bo=null;
+    for(const p of people){const r=canAdd(cfg,p,e,st,s.dt,s.c,maxS(p),useCap);
+      if(!r){if(p.isMe){const cap=p.maxH||p.targetH||0;if(cap>0&&st[p.id]>=cap-1e-9)capped=true}continue}
+      let sc=0;const pr=prefOf(p,s.dt.wd,s.c);if(pr==='p')sc+=4;else if(pr==='a')sc-=7;
+      const min=p.minH||0,tg=p.targetH||min;
+      if(st[p.id]<min)sc+=10+(min-st[p.id])/Math.max(r.delta,1);
+      if(tg>0){sc+=6*(tg-st[p.id])/tg;if(st[p.id]+r.delta>tg+1e-9)sc-=9}
+      if(s.un)sc-=3*up[p.id];
+      const hv=(hb[p.id]||{})[s.dt.wd+s.c]||0;sc+=8*hv;
+      if(p.isMe&&!opt.onlyMe)sc-=3;
+      sc-=0.15*r.delta;sc+=rnd()*0.6;
+      if(sc>bs){bs=sc;best=p;bo=r}}
+    if(!best)break;
+    (e[s.dt.key]||(e[s.dt.key]={}))[best.id]=bo.o.id;st[best.id]+=bo.delta;if(s.un)up[best.id]++;filled++;}}
+  const after=tally(cfg,staff,{e,hol},dates);
+  return {e,filled,left:after.shortN,capped};
+}
+/* Same weekday, last month. A person who always does the same thing on that weekday keeps it on every such day this month.
+   A weekday that rotates (e.g. Saturdays shared in turns) is copied in order: 1st Saturday from last month's 1st, 2nd from 2nd, wrapping around. Only empty days are filled. */
+function copyPattern(staff,prev,prevDates,month,dates,cfg){
+  const e=JSON.parse(JSON.stringify(month.e||{}));const hol=month.hol||{};const ph=prev.hol||{};let n=0;
+  for(const p of staff){if(p.active===false)continue;for(let wd=1;wd<=6;wd++){
+    const src=prevDates.filter(dt=>dt.wd===wd&&!ph[dt.key]).map(dt=>((prev.e||{})[dt.key]||{})[p.id]||'');
+    if(!src.some(Boolean))continue;
+    const vals=[...new Set(src.filter(Boolean))];const fixed=vals.length===1&&src.every(Boolean);
+    const tgt=dates.filter(dt=>dt.wd===wd&&!hol[dt.key]);
+    tgt.forEach((dt,i)=>{const day=e[dt.key]||(e[dt.key]={});if(day[p.id])return;const v=fixed?vals[0]:src[i%src.length];if(!v){if(!Object.keys(day).length)delete e[dt.key];return}
+      if(cfg&&v!=='X'){const c=covOfV(cfg,v);if(c){const cnt={E:0,M:0,L:0};for(const id in day)for(const k of covOfV(cfg,day[id]))cnt[k]++;
+        if([...c].every(k=>cnt[k]>=((cfg.need||{})[dt.wd+k]||0))){if(!Object.keys(day).length)delete e[dt.key];return}}}
+      day[p.id]=v;n++})}}
+  return {e,n};
+}
+/* Search-based fill: tries many complete arrangements and keeps the one with the lowest total cost.
+   Only empty cells are filled (or an existing shift is extended); nothing the user entered is removed.
+   staff fields used: id, isMe, emp, active, pref, minH, targetH, maxH (hard), capH (usual max), usual (scheduler's usual hours). */
+const FILL_W={short:1000,over:250,min:40,below:6,above:9,cap:30,hard:500,meAbove:12,meBelow:3,split:{EL:90,EML:140,EM:35},solo:{M:6,L:10},prefA:25,prefP:-6,habit:-14,unpop:3,wk:5,soft:60};
+function optimizeFill(cfg,staff,month,dates,opt){
+  opt=opt||{};const W=FILL_W;const hol=month.hol||{};const e=JSON.parse(JSON.stringify(month.e||{}));
+  const act=staff.filter(p=>p.active!==false&&(!opt.onlyMe||p.isMe));const unpop=new Set(cfg.unpopular||[]);const hb=opt.habit||{};
+  const ds=dates.filter(d=>!hol[d.key]);const need=ds.map(d=>SL.map(k=>(cfg.need||{})[d.wd+k]||0));
+  const cov=ds.map(()=>[0,0,0]);const H={},U={},WK={};staff.forEach(p=>{H[p.id]=0;U[p.id]=0;WK[p.id]=0});const isWk=d=>d.wd===6||d.wd===0;
+  const SI={E:0,M:1,L:2};
+  const cellCost=(p,d,c)=>{let x=0;if(!p.isMe){x+=W.split[c]||0;if(c==='M')x+=W.solo.M;if(c==='L')x+=W.solo.L}
+    for(const k of c){const pr=prefOf(p,d.wd,k);if(pr==='a')x+=W.prefA;else if(pr==='p')x+=W.prefP;x+=W.habit*((hb[p.id]||{})[d.wd+k]||0)}return x};
+  const vars=[];
+  ds.forEach((d,di)=>{const day=e[d.key]||{};
+    for(const p of staff){const v=day[p.id];const c=covOfV(cfg,v);if(c){const o=optById(cfg,v);H[p.id]+=+o.h||0;if(isWk(d))WK[p.id]+=c.length;for(const k of c){cov[di][SI[k]]++;if(unpop.has(d.wd+k))U[p.id]++}}}
+    for(const p of act){const v=day[p.id]||'';if(v==='X'||v==='LV')continue;const c=covOfV(cfg,v);const h0=hOfV(cfg,v);
+      const maxS=p.isMe?3:Math.max(cfg.maxPerDay||2,c.length);
+      const cands=[{v,c,h:h0,u:[...c].filter(k=>unpop.has(d.wd+k)).length,w:isWk(d)?c.length:0,cost:c?cellCost(p,d,c):0}];
+      const seen=new Set([c]);
+      for(const o of cfg.opts){if(seen.has(o.cov))continue;if(c&&![...c].every(k=>o.cov.includes(k)))continue;if(o.cov.length>maxS)continue;
+        if([...o.cov].some(k=>prefOf(p,d.wd,k)==='x'))continue;seen.add(o.cov);
+        cands.push({v:o.id,c:o.cov,h:+o.h||0,u:[...o.cov].filter(k=>unpop.has(d.wd+k)).length,w:isWk(d)?o.cov.length:0,cost:cellCost(p,d,o.cov)})}
+      if(cands.length>1)vars.push({di,p,d,cands,cur:0,base:0})}});
+  const pCost=(p,h,u,w)=>{let x=(w||0)*(w||0)*W.wk;
+    if(p.isMe){const us=p.usual||0;if(us)x+=h>us?(h-us)*W.meAbove:(us-h)*W.meBelow}
+    else{const mn=p.minH||0,tg=p.targetH||mn;if(mn&&h<mn)x+=(mn-h)*W.min;if(tg)x+=h<tg?(tg-h)*W.below:(h-tg)*W.above;if(p.capH&&h>p.capH)x+=(h-p.capH)*W.cap}
+    if(p.maxH&&h>p.maxH)x+=(h-p.maxH)*W.hard;return x+U2(u)};
+  const U2=u=>u*u*W.unpop;
+  const lim=n=>Math.max(n,cfg.maxOk||2);const sCost=(n,c)=>c<n?(n-c)*W.short:c<=lim(n)?(c-n)*W.soft:(c-lim(n))*W.over+(lim(n)-n)*W.soft;
+  const delta=(vr,b)=>{const A=vr.cands[vr.cur],B=vr.cands[b];if(A===B)return 0;const di=vr.di,p=vr.p;let x=B.cost-A.cost;
+    for(const k of SL){const a=A.c.includes(k),bb=B.c.includes(k);if(a===bb)continue;const i=SI[k],n=need[di][i],c=cov[di][i];x+=sCost(n,c+(bb?1:-1))-sCost(n,c)}
+    x+=pCost(p,H[p.id]-A.h+B.h,U[p.id]-A.u+B.u,WK[p.id]-A.w+B.w)-pCost(p,H[p.id],U[p.id],WK[p.id]);return x};
+  const apply=(vr,b)=>{const A=vr.cands[vr.cur],B=vr.cands[b];for(const k of SL){const a=A.c.includes(k),bb=B.c.includes(k);if(a!==bb)cov[vr.di][SI[k]]+=bb?1:-1}
+    H[vr.p.id]+=B.h-A.h;U[vr.p.id]+=B.u-A.u;WK[vr.p.id]+=B.w-A.w;vr.cur=b};
+  const total=()=>{let x=0;ds.forEach((d,di)=>SL.forEach((k,i)=>x+=sCost(need[di][i],cov[di][i])));for(const p of act)x+=pCost(p,H[p.id],U[p.id],WK[p.id]);for(const vr of vars)x+=vr.cands[vr.cur].cost;return x};
+  if(!vars.length)return {e,filled:0,left:tally(cfg,staff,{e,hol},dates).shortN};
+  const byDay=ds.map(()=>[]);vars.forEach(v=>byDay[v.di].push(v));
+  const findC=(vr,c)=>{for(let b=0;b<vr.cands.length;b++)if(vr.cands[b].c===c)return b;return -1};
+  /* compound move: person X gives slot k to person Y on the same day (keeps coverage, so it can cross the shortage barrier) */
+  const tryHand=(rnd,T)=>{const vr=vars[(rnd()*vars.length)|0];const A=vr.cands[vr.cur];if(!A.c)return 0;const k=A.c[(rnd()*A.c.length)|0];
+    const b1=findC(vr,A.c.replace(k,''));if(b1<0)return 0;const others=byDay[vr.di];const v2=others[(rnd()*others.length)|0];if(v2===vr)return 0;
+    const C=v2.cands[v2.cur];if(C.c.includes(k))return 0;const b2=findC(v2,sortCov(C.c+k));if(b2<0)return 0;
+    const o1=vr.cur,o2=v2.cur;const d1=delta(vr,b1);apply(vr,b1);const d2=delta(v2,b2);const dx=d1+d2;
+    if(dx<=0||(T>0&&rnd()<Math.exp(-dx/T))){apply(v2,b2);return {dx}}apply(vr,o1);return 0};
+  /* compound move: two people on the same day trade one time slot each (e.g. B's 晚 for D's 早) */
+  const tryTrade=(rnd,T)=>{const vr=vars[(rnd()*vars.length)|0];const others=byDay[vr.di];const v2=others[(rnd()*others.length)|0];if(v2===vr)return 0;
+    const A=vr.cands[vr.cur].c,B=v2.cands[v2.cur].c;const ka=[...A].filter(k=>!B.includes(k)),kb=[...B].filter(k=>!A.includes(k));if(!ka.length||!kb.length)return 0;
+    const k1=ka[(rnd()*ka.length)|0],k2=kb[(rnd()*kb.length)|0];const b1=findC(vr,sortCov(A.replace(k1,'')+k2)),b2=findC(v2,sortCov(B.replace(k2,'')+k1));if(b1<0||b2<0)return 0;
+    const o1=vr.cur;const d1=delta(vr,b1);apply(vr,b1);const d2=delta(v2,b2);const dx=d1+d2;
+    if(dx<=0||(T>0&&rnd()<Math.exp(-dx/T))){apply(v2,b2);return {dx}}apply(vr,o1);return 0};
+  const start=vars.map(v=>v.cur);
+  let best=null,bestCost=Infinity;const restarts=opt.restarts||6,iters=opt.iters||90000;
+  for(let r=0;r<restarts;r++){
+    vars.forEach((v,i)=>{if(v.cur!==start[i])apply(v,start[i])});
+    const rnd=mulberry32((opt.seed||7)+r*7919);
+    /* greedy start: repeatedly take the single change that lowers cost most (random tie-break) */
+    for(let g=0;g<4;g++){let moved=false;const order=vars.map((v,i)=>i).sort(()=>rnd()-.5);
+      for(const i of order){const vr=vars[i];let bi=vr.cur,bd=-1e-9;for(let b=0;b<vr.cands.length;b++){const dx=delta(vr,b)+rnd()*0.5;if(dx<bd){bd=dx;bi=b}}if(bi!==vr.cur){apply(vr,bi);moved=true}}
+      if(!moved)break}
+    /* simulated annealing */
+    let cur=total(),T=40;const Tend=0.3,k=Math.pow(Tend/T,1/iters);let rb=cur,rbs=vars.map(v=>v.cur);
+    for(let it=0;it<iters;it++,T*=k){
+      const mv=rnd();if(mv<0.55){const m=mv<0.3?tryHand(rnd,T):tryTrade(rnd,T);if(m){cur+=m.dx;if(cur<rb-1e-9){rb=cur;rbs=vars.map(v=>v.cur)}}continue}
+      const vr=vars[(rnd()*vars.length)|0];const b=(rnd()*vr.cands.length)|0;if(b===vr.cur)continue;
+      const dx=delta(vr,b);if(dx<=0||rnd()<Math.exp(-dx/T)){apply(vr,b);cur+=dx;if(cur<rb-1e-9){rb=cur;rbs=vars.map(v=>v.cur)}}}
+    /* polish: from the best state, keep taking improving moves of both kinds until none is left */
+    vars.forEach((v,i)=>{if(v.cur!==rbs[i])apply(v,rbs[i])});cur=rb;
+    for(let pass=0;pass<30;pass++){let imp=false;
+      for(const vr of vars)for(let b=0;b<vr.cands.length;b++){if(b===vr.cur)continue;const dx=delta(vr,b);if(dx<-1e-9){apply(vr,b);cur+=dx;imp=true}}
+      for(let t=0;t<vars.length*10;t++){const m=(t&1)?tryTrade(rnd,0):tryHand(rnd,0);if(m){cur+=m.dx;if(m.dx<-1e-9)imp=true}}
+      if(!imp)break}
+    rb=cur;rbs=vars.map(v=>v.cur);
+    if(rb<bestCost){bestCost=rb;best=rbs}}
+  vars.forEach((v,i)=>apply(v,best[i]));
+  let filled=0;for(const vr of vars){const C=vr.cands[vr.cur];if(vr.cur!==0){filled++;(e[vr.d.key]||(e[vr.d.key]={}))[vr.p.id]=C.v}}
+  return {e,filled,left:tally(cfg,staff,{e,hol},dates).shortN,cost:bestCost};
+}
+/*CORE-END*/
+
+(function(){
+const $=(s,el=document)=>el.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const CAN_PRINT=true;
+const WDN=['日','一','二','三','四','五','六'];
+const SLN={E:'早',M:'午',L:'晚'};
+const PREF_LABEL={'':'可以','p':'偏好','a':'盡量不要','x':'不可'};
+const COLORS=['#2F64C8','#C2551F','#16875A','#9447B8','#C23864','#11808C','#7E6A0E','#5257C4','#A9472A','#3B7F33'];
+const fmtH=h=>(Math.round(h*10)/10).toString();
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function todayKey(){const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')}
+function nextYm(){const n=new Date();return shiftYm(n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0'),1)}
+const rocLabel=ym=>{const [y,m]=ym.split('-').map(Number);return `${y-1911}年${m}月`};
+
+const DEF_CFG={
+  opts:[
+    {id:'oE',label:'早',text:'8:30-12:30',h:4,cov:'E',short:false},
+    {id:'oM',label:'午',text:'14:00-18:00',h:4,cov:'M',short:false},
+    {id:'oL',label:'晚',text:'17:30-21:30',h:4,cov:'L',short:false},
+    {id:'oEM',label:'早午',text:'8:30-12:30 14:00-18:00',h:8,cov:'EM',short:false},
+    {id:'oEL',label:'早晚',text:'8:30-12:30 17:30-21:30',h:8,cov:'EL',short:false},
+    {id:'oML',label:'午晚',text:'14:00-21:30',h:7,cov:'ML',short:false},
+    {id:'oEML',label:'全1',text:'8:30-12:00 14:30-21:30',h:10.5,cov:'EML',short:true}],
+  need:{}, unpopular:[], maxPerDay:2, ptMinPct:70, maxOk:2};
+[1,2,3,4,5].forEach(d=>{DEF_CFG.need[d+'E']=2;DEF_CFG.need[d+'M']=1;DEF_CFG.need[d+'L']=2});
+DEF_CFG.need['6E']=2;DEF_CFG.need['6M']=0;DEF_CFG.need['6L']=0;
+DEF_CFG.need['0E']=2;DEF_CFG.need['0M']=0;DEF_CFG.need['0L']=0;
+
+const S={cfg:clone(DEF_CFG),staff:{},month:{e:{},hol:{},base:null},ym:ls('tr.ym')||nextYm(),tab:'sched',
+  brush:null,picker:null,undo:[],readonly:false,mode:'loading',slow:false,editBase:false,confirmClear:false,confirmDel:false,confirmOpt:null,
+  view:ls('tr.view')==='slot'?'slot':'person',side:ls('tr.side')!=='off',hist:{},editId:null,prefTool:'p',loaded:{staff:false,cfg:false,month:false}};
+const fsv=ls('tr.fs');if(fsv)document.documentElement.dataset.fs=fsv;
+
+function normStaff(id,d){d=d||{};return {id,code:d.code||'?',name:d.name||'未命名',short:d.short||'',color:d.color??0,minH:+d.minH||0,targetH:+d.targetH||0,maxH:+d.maxH||0,isMe:!!d.isMe,active:d.active!==false,emp:(d.emp==='ft'||d.emp==='pt')?d.emp:(d.isMe?'ft':'pt'),hoursMode:d.hoursMode||((+d.minH||+d.targetH||+d.maxH)?'fixed':'auto'),pref:d.pref||{},note:d.note||'',order:+d.order||0}}
+function normCfg(d){const c=clone(DEF_CFG);if(!d)return c;if(Array.isArray(d.opts))c.opts=d.opts.map(o=>({id:o.id,label:o.label||'',text:o.text||'',h:+o.h||0,cov:sortCov(o.cov||''),short:!!o.short}));
+  if(d.need){Object.assign(c.need,d.need);SL.forEach(k=>{if(d.need['0'+k]===undefined)c.need['0'+k]=c.need['6'+k]??0})}if(Array.isArray(d.unpopular))c.unpopular=d.unpopular;if(d.maxPerDay)c.maxPerDay=d.maxPerDay;c.ptMinPct=d.ptMinPct>0?+d.ptMinPct:70;c.maxOk=d.maxOk>0?+d.maxOk:2;return c}
+function normMonth(d){d=d?clone(d):{};const o={e:d.e||{},hol:d.hol||{},base:d.base>0?+d.base:null};if(Array.isArray(d.sun)&&d.sun.length)o.sun=d.sun;return o}
+
+/* ---------- storage: shared db when available, this browser otherwise ---------- */
+let DB=null,unsubMonth=null,slowTimer=null;const pending=new Map();
+function localDocs(){try{return JSON.parse(localStorage.getItem('tr.docs')||'{}')}catch(e){return {}}}
+function localWrite(path,v){const d=localDocs();if(v===null)delete d[path];else d[path]=v;try{localStorage.setItem('tr.docs',JSON.stringify(d))}catch(e){}}
+function queueWrite(path,val,delay=450){let p=pending.get(path);if(!p){p={busy:false,dirty:false};pending.set(path,p)}
+  p.val=val===null?null:clone(val);p.dirty=true;clearTimeout(p.timer);p.timer=setTimeout(()=>flush(path),delay)}
+async function flush(path){const p=pending.get(path);if(!p||p.busy)return;p.busy=true;
+  while(p.dirty){p.dirty=false;const v=p.val;
+    try{if(DB){if(v===null)await DB.doc(path).delete();else await DB.doc(path).set(v)}else localWrite(path,v)}
+    catch(e){writeErr(e);if(e&&e.code==='unavailable'&&(p.retry=(p.retry||0)+1)<=2){await new Promise(r=>setTimeout(r,800+Math.random()*800));p.dirty=true}else if(e&&e.code==='unavailable')toast('目前連不上，剛才的變更還沒存好，請稍後再試。')}}
+  p.busy=false;if(!p.dirty)pending.delete(path)}
+function writeErr(e){const c=e&&e.code;
+  if(c==='invalid_argument'){S.readonly=true;toast('你只有檢視權限，不能修改班表。');render()}
+  else if(c==='quota_exceeded')toast('資料空間已滿，請刪除舊月份後再試。');
+  else if(c==='resource_exhausted')toast('動作太快了，請稍等幾秒再試。')}
+let SEEDTXT=null;
+const b64u=x=>Uint8Array.from(atob(x.replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((x.length+3)%4)),c=>c.charCodeAt(0));
+async function unlockSeed(){const box=document.getElementById('seedEnc');if(!box)return;
+  let k=null;const m=/[#&]k=([A-Za-z0-9_-]+)/.exec(location.hash);if(m)k=m[1];if(!k){try{k=localStorage.getItem('tr.key')}catch(e){}}if(!k)return;
+  try{const {iv,ct}=JSON.parse(box.textContent);const key=await crypto.subtle.importKey('raw',b64u(k),'AES-GCM',false,['decrypt']);
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u(iv)},key,b64u(ct));SEEDTXT=new TextDecoder().decode(pt);try{localStorage.setItem('tr.key',k)}catch(e){}}
+  catch(e){SEEDTXT=null;S.badKey=true}}
+function lockHTML(){return `<div class="emptybox"><h2>請用診所給你的完整連結打開</h2><p>${S.badKey?'這個連結的密碼不對，請確認連結是否完整。':'這個班表的資料有加密，需要用完整的連結（最後有一段 #k=…）打開。之後就算沒有那一段，這台電腦也能直接開。'}</p>
+  <div class="rowbtns" style="width:100%;max-width:34rem"><input id="keyInp" class="inp" placeholder="貼上完整連結，或只貼 #k= 後面那段" style="flex:1"><button class="btn primary" data-act="unlock">打開</button></div></div>`}
+async function initStore(){
+  let db=null;try{if(window.claude&&window.claude.use)db=await window.claude.use('db')}catch(e){db=null}
+  if(db){DB=db;S.mode='db';
+    try{const user=await window.claude.use('user');const c=user&&user.can?await user.can('data.write'):null;if(c===false)S.readonly=true}catch(e){}
+    slowTimer=setTimeout(()=>{S.slow=true;render()},10000);
+    DB.collection('staff').onSnapshot(snap=>{const next={};
+      snap.docs.forEach(d=>{const pd=pending.get('staff/'+d.id);if(pd){if(pd.val)next[d.id]=S.staff[d.id]||normStaff(d.id,pd.val)}else next[d.id]=normStaff(d.id,d.data())});
+      for(const [path,pd] of pending){if(path.startsWith('staff/')&&pd.val){const id=path.slice(6);if(!next[id]&&S.staff[id])next[id]=S.staff[id]}}
+      S.staff=next;S.loaded.staff=true;gotData(snap.metadata);render('remote')},()=>{S.loaded.staff=true;render()});
+    DB.doc('config/settings').onSnapshot(d=>{if(!pending.has('config/settings'))S.cfg=normCfg(d.exists?d.data():null);S.loaded.cfg=true;gotData(d.metadata);render('remote')},()=>{S.loaded.cfg=true;render()});
+    subMonth();
+  }else{S.mode='local';
+    await unlockSeed();
+    {let had=null;try{had=localStorage.getItem('tr.docs')}catch(e){}if(!had&&!SEEDTXT){S.locked=true;render();return}}
+    try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+    let has=null;try{has=localStorage.getItem('tr.docs')}catch(e){S.noStore=true}
+    if(!has&&!S.noStore){try{localStorage.setItem('tr.docs',(SEEDTXT||'{}'))}catch(e){S.noStore=true}}
+    const docs=S.noStore?JSON.parse((SEEDTXT||'{}')):localDocs();
+    if(!S.noStore){try{const seed=JSON.parse((SEEDTXT||'{}'));let ch=false;for(const k in docs){if(k.startsWith('staff/')&&docs[k]&&docs[k].emp===undefined&&seed[k]&&seed[k].emp){docs[k].emp=seed[k].emp;ch=true}}if(ch)localStorage.setItem('tr.docs',JSON.stringify(docs))}catch(e){}}
+    Object.keys(docs).forEach(p=>{if(p.startsWith('staff/')){const id=p.slice(6);S.staff[id]=normStaff(id,docs[p])}});
+    S.cfg=normCfg(docs['config/settings']);S.month=normMonth(docs['months/'+S.ym]);S.loaded={staff:true,cfg:true,month:true};render();loadHist()}
+}
+function gotData(meta){if(meta&&!meta.fromCache){clearTimeout(slowTimer);S.slow=false}}
+function subMonth(){S.undo=[];
+  loadHist();
+  if(S.mode==='local'){S.month=normMonth(localDocs()['months/'+S.ym]);return}
+  if(unsubMonth)unsubMonth();S.loaded.month=false;const path='months/'+S.ym;S.month=normMonth(null);
+  unsubMonth=DB.doc(path).onSnapshot(d=>{if(!pending.has(path))S.month=normMonth(d.exists?d.data():null);S.loaded.month=true;gotData(d.metadata);render('remote')},()=>{S.loaded.month=true;render()})}
+async function loadHist(){const ym=S.ym;const h={};let got=0;for(let k=1;k<=12&&got<3;k++){const y2=shiftYm(ym,-k);const m=await readMonth(y2);if(m&&Object.keys(m.e).length){h[y2]=m;got++}}if(S.ym!==ym)return;S.hist=h;render()}
+async function readMonth(ym){
+  if(S.mode==='local')return normMonth(localDocs()['months/'+ym]);
+  try{const d=await DB.doc('months/'+ym).get();return normMonth(d.exists?d.data():null)}catch(e){return null}}
+
+/* ---------- derived ---------- */
+const staffList=()=>ordered().sort((a,b)=>(a.isMe-b.isMe)||a.code.localeCompare(b.code)||(a.order-b.order));
+const allOrdered=()=>Object.values(S.staff).sort((a,b)=>a.code.localeCompare(b.code)||(a.order-b.order));
+function hasEntries(id){for(const d in S.month.e){if(S.month.e[d][id])return true}return false}
+const ordered=()=>allOrdered().filter(p=>p.active||hasEntries(p.id));
+const others=()=>staffList().filter(p=>!p.isMe);
+const meP=()=>staffList().find(p=>p.isMe)||null;
+const SIG_HUE={E:34,EM:92,M:166,ML:206,L:250,EL:322,EML:2};
+const SIG_NAME={E:'早班',EM:'早午',M:'午班',ML:'午晚',L:'晚班',EL:'早晚',EML:'全天'};
+let PCOL={},PSIG={};
+function computeColors(){PCOL={};PSIG={};const cnt={};const add=m=>{for(const d in (m&&m.e)||{}){const day=m.e[d];for(const id in day){const c=covOfV(S.cfg,day[id]);if(!c)continue;(cnt[id]||(cnt[id]={}))[c]=(cnt[id][c]||0)+1}}};
+  add(S.month);for(const ym in S.hist)add(S.hist[ym]);
+  const groups={};const all=allOrdered();
+  for(const p of all){const c=cnt[p.id]||{};let best='',bn=0;for(const k in c){if(c[k]>bn){bn=c[k];best=k}}PSIG[p.id]=best;(groups[best]||(groups[best]=[])).push(p)}
+  for(const sig in groups){const g=groups[sig];g.forEach((p,i)=>{
+    if(!sig){PCOL[p.id]=`hsl(${(20+i*67)%360} 64% var(--plb))`;return}
+    const n=g.length,spread=n===1?0:Math.min(32,16+n*4);const off=n===1?0:-spread+(2*spread)*i/(n-1);const dl=(i%2?-3:2);
+    PCOL[p.id]=`hsl(${(SIG_HUE[sig]+off+360)%360} 72% calc(var(--plb) + ${dl}%))`})}}
+const colorOf=p=>(p&&PCOL[p.id])||'var(--ink)';
+const shortName=p=>p.short||p.name.slice(-2);
+const getE=(date,sid)=>((S.month.e[date]||{})[sid])||'';
+const isHol=date=>!!S.month.hol[date];
+const mDates=()=>monthDates(S.ym,S.month.sun);
+const limOf=(wd,k)=>Math.max(S.cfg.need[wd+k]||0,S.cfg.maxOk||2);
+const hasSun=()=>!!(S.month.sun&&S.month.sun.length);
+const dtOf=date=>mDates().find(x=>x.key===date);
+function vLabel(v){if(!v)return '未排';if(v==='X')return '休';const o=optById(S.cfg,v);return o?o.label:'?'}
+function ovHTML(v){if(!v)return '<span class="ov none">—</span>';if(v==='X')return '<span class="ov x">休</span>';const o=optById(S.cfg,v);return o?`<span class="ov c-${o.cov}">${esc(o.label)}</span>`:'<span class="ov none">?</span>'}
+function worstPref(p,wd,cov){let w='';for(const c of cov){const r=prefOf(p,wd,c);if(r==='x')return 'x';if(r==='a')w='a';else if(r==='p'&&!w)w='p'}return w}
+let HH={};
+function computeHH(){HH={};const all=allOrdered();for(const ym in S.hist){const m=S.hist[ym];const t=tally(S.cfg,all,m,monthDates(ym,m.sun));for(const p of all){const r=t.T[p.id];if(r&&r.days>0)(HH[p.id]||(HH[p.id]=[])).push({ym,h:r.tot})}}}
+function eff(p){
+  const base=baseHours(S.month,mDates());const q=Object.assign({},p);q.auto=p.hoursMode!=='fixed';q.ref='';
+  if(p.isMe){q.minH=q.targetH=q.maxH=0;q.auto=false;q.ref='';return q}
+  if(p.emp==='ft'){if(q.auto){q.minH=base;q.targetH=base;q.maxH=0;q.ref=`跟著本月應上時數 ${fmtH(base)} 小時`}else if(!q.targetH)q.targetH=base}
+  else if(q.auto){const hs=(HH[p.id]||[]).slice().sort((a,b)=>a.ym<b.ym?-1:1);
+    if(hs.length){const v=hs.map(x=>x.h);q.minH=Math.round(Math.min(...v)*(S.cfg.ptMinPct||70)/100);q.targetH=Math.round(v.reduce((a,b)=>a+b,0)/v.length);q.maxH=0;q.ref=`依過去 ${hs.length} 個月：${hs.map(x=>`${Number(x.ym.slice(5))}月 ${fmtH(x.h)}`).join('、')} 小時`}
+    else{q.minH=q.targetH=q.maxH=0;q.ref='還沒有過去的班表可以參考'}}
+  return q}
+const empName=p=>p.emp==='ft'?'正職':'兼職';
+function habits(){const out={};for(const ym in S.hist){const m=S.hist[ym];const ds=monthDates(ym,m.sun).filter(d=>!(m.hol||{})[d.key]);const occ={};ds.forEach(d=>occ[d.wd]=(occ[d.wd]||0)+1);
+  for(const d of ds){const day=(m.e||{})[d.key]||{};for(const id in day){const c=covOfV(S.cfg,day[id]);for(const k of c){const o=out[id]||(out[id]={});o[d.wd+k]=(o[d.wd+k]||0)+1/occ[d.wd]}}}}
+  const n=Object.keys(S.hist).length||1;for(const id in out)for(const k in out[id])out[id][k]/=n;return out}
+function usualStaff(){
+  /* each person's usual monthly hours, scaled to how many working days this month has */
+  const daysOf=(ym,m)=>monthDates(ym,m&&m.sun).filter(d=>!((m&&m.hol)||{})[d.key]).length;const now=mDates().filter(d=>!S.month.hol[d.key]).length;
+  const base=baseHours(S.month,mDates());
+  return ordered().map(p=>{const q=eff(p);const hs=(HH[p.id]||[]).map(x=>x.h*now/Math.max(1,daysOf(x.ym,S.hist[x.ym])));
+    const avg=hs.length?hs.reduce((a,b)=>a+b,0)/hs.length:0;const mx=hs.length?Math.max(...hs):0;
+    if(p.isMe){q.usual=Math.round(avg);q.targetH=0;q.maxH=0}
+    else if(p.hoursMode==='fixed'){q.capH=0}
+    else if(p.emp==='ft'){q.minH=0;q.targetH=avg?Math.round(avg):base;q.capH=base+8}
+    else if(hs.length){q.targetH=Math.round(avg);q.capH=Math.round(mx)+4}
+    return q})}
+function status(p,r){
+  if(p.isMe)return {c:'me',t:'排班者',g:''};
+  if(p.maxH>0&&r.tot>p.maxH+1e-9)return {c:'bad',t:'超過上限',g:`超過上限 ${fmtH(r.tot-p.maxH)} 小時`};
+  if(p.emp==='ft'){const tg=p.targetH,t=p.isMe?'排班者・正職':'正職';
+    if(r.tot<tg-1e-9)return {c:p.isMe?'me':'warn',t,g:`還差 ${fmtH(tg-r.tot)} 小時到應上時數（${fmtH(tg)}）`};
+    if(r.tot>tg+1e-9)return {c:'warn',t,g:`超過應上時數 ${fmtH(r.tot-tg)} 小時（${fmtH(tg)}）`};return {c:'ok',t,g:'剛好等於應上時數'}}
+  if(p.isMe){const cap=p.maxH||p.targetH;return {c:'me',t:'排班者',g:cap?`還可補 ${fmtH(Math.max(0,cap-r.tot))} 小時（上限 ${cap}）`:'未設上限時數'}}
+  if(!p.minH&&!p.targetH)return {c:'none',t:'沒有參考',g:p.auto?'還沒有過去的班表，可以到「治療師資料」自己填時數':'請到「治療師資料」填最低／需求時數'};
+  if(p.minH&&r.tot<p.minH-1e-9)return {c:'bad',t:'未達最低',g:`還差 ${fmtH(p.minH-r.tot)} 小時到最低（${p.minH}）`};
+  if(p.targetH&&r.tot<p.targetH-1e-9)return {c:'warn',t:'未達需求',g:`還差 ${fmtH(p.targetH-r.tot)} 小時到需求（${p.targetH}）`};
+  return {c:'ok',t:'已達需求',g:p.maxH?`離上限還有 ${fmtH(p.maxH-r.tot)} 小時`:'已達需求時數'};
+}
+function meterHTML(p,r){const top=Math.max(p.maxH||0,p.targetH||0,p.minH||0,r.tot,1)*1.08;const pct=v=>Math.min(100,v/top*100).toFixed(1)+'%';
+  return `<div class="meter" aria-hidden="true"><i style="width:${pct(r.tot)}"></i>${p.minH?`<span class="tick" style="left:${pct(p.minH)}"></span>`:''}${p.targetH?`<span class="tick t" style="left:${pct(p.targetH)}"></span>`:''}${p.maxH?`<span class="tick mx" style="left:${pct(p.maxH)}"></span>`:''}</div>`}
+function defaultOpt(sid){const cnt={};let best=null,bc=0;for(const d in S.month.e){const v=S.month.e[d][sid];if(v&&v!=='X'){cnt[v]=(cnt[v]||0)+1;if(cnt[v]>bc){bc=cnt[v];best=v}}}return best||(S.cfg.opts[0]&&S.cfg.opts[0].id)}
+
+/* ---------- edits ---------- */
+function pushUndo(){S.undo.push(JSON.stringify(S.month));if(S.undo.length>50)S.undo.shift()}
+function editMonth(fn,o={}){
+  if(S.readonly){toast('你只有檢視權限，不能修改班表。');return false}
+  if(!o.noUndo)pushUndo();fn(S.month);queueWrite('months/'+S.ym,S.month);if(!o.noRender)render();return true}
+function writeE(m,date,sid,v){const d=m.e[date]||(m.e[date]={});if(v)d[sid]=v;else{delete d[sid];if(!Object.keys(d).length)delete m.e[date]}}
+function setEntry(date,sid,v,o={}){
+  if(isHol(date)){toast('這天休診，不能排班');return false}
+  const ok=editMonth(m=>writeE(m,date,sid,v),o);
+  if(ok&&!o.quiet&&v&&v!=='X'){const p=S.staff[sid],dt=dtOf(date),opt=optById(S.cfg,v);
+    if(p&&dt&&opt){const w=worstPref(p,dt.wd,opt.cov);if(w==='x')toast(`注意：${p.name} 週${WDN[dt.wd]}這個時段標示「不可」`);else if(w==='a')toast(`已排入。${p.name} 標示「盡量不要」這個時段`)}}
+  return ok}
+
+/* ---------- render ---------- */
+function ready(){return S.loaded.staff&&S.loaded.cfg&&S.loaded.month}
+let HB={};
+function render(reason){
+  computeHH();computeColors();HB=habits();
+  document.querySelectorAll('[data-act="fs"]').forEach(b=>b.setAttribute('aria-pressed',String((document.documentElement.dataset.fs||'0')===b.dataset.v)));
+  document.querySelectorAll('[data-act="tab"]').forEach(b=>b.setAttribute('aria-selected',String(S.tab===b.dataset.v)));
+  document.body.classList.toggle('brushing',!!S.brush&&S.tab==='sched');
+  const main=$('#main');const ae=document.activeElement;
+  const typing=reason==='remote'&&ae&&/INPUT|TEXTAREA/.test(ae.tagName)&&main.contains(ae);
+  if(!typing){
+    const pnl=$('.panel',main);const pst=pnl?pnl.scrollTop:0;const csc=$('.calscroll',main);const cx=csc?csc.scrollLeft:0;
+    if(S.locked)main.innerHTML=lockHTML();
+    else if(!ready())main.innerHTML=`<div class="loading">${S.slow?'暫時連不上班表資料，請稍後再開一次。':'正在讀取班表…'}</div>`;
+    else if(S.tab==='sched')main.innerHTML=schedHTML();
+    else if(S.tab==='staff')main.innerHTML=staffHTML();
+    else main.innerHTML=settingsHTML();
+    const p2=$('.panel',main);if(p2)p2.scrollTop=pst;const c2=$('.calscroll',main);if(c2)c2.scrollLeft=cx;
+  }else if(S.tab==='staff'){const l=$('#staffList');if(l)l.innerHTML=staffListHTML()}
+  if(S.picker)renderPicker();
+  if(TR.on)requestAnimationFrame(tourPlace);
+  else if(ready()&&$('#modal').hidden){const k=S.tab==='sched'&&ordered().length?'sched':S.tab==='staff'&&allOrdered().length?'staff':null;
+    if(k&&!TR.auto[k]&&!ls(TOUR_FLAG[k])){TR.auto[k]=true;setTimeout(()=>{if(!TR.on&&S.tab===k&&!ls(TOUR_FLAG[k]))tourStart(k)},500)}}
+  $('#foot').textContent=S.mode==='local'?(S.noStore?'這個瀏覽器不能存資料，關掉視窗後變更會消失。請改用 Chrome 或 Edge 打開。':`班表存在這台電腦的瀏覽器裡。上次備份：${lastBackupText()}。`):(S.readonly?'你目前只能檢視班表。':(S.slow?'資料可能不是最新的，正在重新連線。':''));
+}
+
+function schedHTML(){
+  const staff=ordered();
+  if(!staff.length)return `<div class="emptybox"><h2>還沒有治療師</h2><p>先到「治療師資料」新增治療師，填好代號（A、B、C…）、時數需求和班表偏好。</p><button class="btn primary" data-act="add-staff">＋ 新增第一位治療師</button></div>`;
+  const dates=mDates();const tl=tally(S.cfg,staff,S.month,dates);const me=meP();
+  const [y,m]=S.ym.split('-').map(Number);const pm=Number(shiftYm(S.ym,-1).split('-')[1]);
+  const hasAny=Object.keys(S.month.e).length>0;
+  const meR=me?tl.T[me.id]:null;const meE=me?eff(me):null;const meCap=me?(meE.maxH||meE.targetH||0):0;
+  let h=`<div class="sched${S.side?'':' noside'}"><section class="calcol" aria-label="班表">
+    <div class="toprow"><div class="monthbar"><button class="btn" data-act="month" data-v="-1">‹ 上個月</button><h2>${rocLabel(S.ym)}<small>${y}</small></h2><button class="btn" data-act="month" data-v="1">下個月 ›</button></div>
+    <div class="actions">
+      <button class="btn primary" data-act="copy"><span class="step">1</span><span>照 ${pm} 月同星期套用<small>只填空白的格子</small></span></button>
+      <button class="btn primary" data-act="autofill"><span class="step">2</span><span>自動補空缺<small>照每個人平常的班和時數補</small></span></button>
+      <button class="btn me" data-act="fillme" ${me?'':'disabled'}><span class="step">3</span><span>${me?`剩下由${esc(shortName(me))}補`:'剩下由排班者補'}<small>${me?'補還缺人的時段':'先設定排班者'}</small></span></button>
+      <span class="sp"></span>
+      <button class="btn sm" data-act="undo" ${S.undo.length?'':'disabled'}>↶ 復原</button>
+      <button class="btn sm" data-act="preview">列印</button>
+      <button class="btn sm" data-act="backup">備份</button>
+      ${S.confirmClear?`<button class="btn sm danger solid" data-act="clear-yes">確定清空</button><button class="btn sm" data-act="clear-no">不要</button>`:`<button class="btn sm danger" data-act="clear">清空本月</button>`}
+    </div></div>`;
+  h+=`<div class="viewbar"><div class="seg" role="group" aria-label="顯示方式"><button data-act="view" data-v="person" aria-pressed="${S.view==='person'}">紙本格式</button><button data-act="view" data-v="slot" aria-pressed="${S.view==='slot'}">進階：誰來上班</button></div>
+    <span class="help">${S.view==='slot'?'每天依早、午、晚列出誰上班。點時段看推薦人選，點日期看當天時間軸。':'跟紙本一樣，每天列出每個人上什麼班。'}</span><button class="btn sm sidebtn" data-act="side">${S.side?'收起剩餘時數 ›':'‹ 顯示剩餘時數'}</button></div>`;
+  if(!hasAny)h+=`<div class="note"><b>${m} 月還沒有排班。</b>先按「① 照 ${pm} 月同星期套用」，把上個月每週固定的班帶進來，再微調；也可以直接點格子排。</div>`;
+  if(S.brush&&S.staff[S.brush.sid]&&S.view==='slot'){const p=S.staff[S.brush.sid];
+    h+=`<div class="brushbar" role="status"><span class="cd" style="--pc:${colorOf(p)}">${esc(p.code)}</span><div><b>正在排 ${esc(p.name)}</b><br><span style="font-size:.88rem">點月曆上的「早／午／晚」就加入，再點一次移除；同一天的時段會自動合併（例如早＋晚＝早晚）。按住滑鼠可以拖過多個時段。</span></div><button class="btn" data-act="brush-off">排好了</button></div>`}
+  else if(S.brush&&S.staff[S.brush.sid]){const p=S.staff[S.brush.sid];const v=S.brush.opt;const o=optById(S.cfg,v);
+    h+=`<div class="brushbar" role="status"><span class="cd" style="--pc:${colorOf(p)}">${esc(p.code)}</span><div><b>正在排 ${esc(p.name)}：</b>${ovHTML(v)} ${o?esc(o.text):(v==='X'?'休假':'清除')}<br><span style="font-size:.88rem">點日期就填入，再點一次取消；按住滑鼠拖過多天，一次填好。</span></div><button class="btn" data-act="brush-off">排好了</button></div>`}
+  h+=`<div class="calscroll"><div class="cal${hasSun()?' with-sun':''}">${[1,2,3,4,5,6,0].map(d=>`<div class="wdh${d===6?' sat':''}${d===0?' sun':''}">週${WDN[d]}</div>`).join('')}`;
+  {const n=new Date(y,m,0).getDate();const w1=new Date(y,m-1,1).getDay()||7;const byKey={};dates.forEach(dt=>byKey[dt.key]=dt);
+   const flat=[];for(let i=1;i<w1;i++)flat.push(null);for(let d=1;d<=n;d++)flat.push(d);while(flat.length%7)flat.push(null);
+   const weeks=[];for(let i=0;i<flat.length;i+=7)weeks.push(flat.slice(i,i+7));
+   /* like the paper: a 6th row that only has a few days moves up into the empty cells of the first row */
+   if(weeks.length>5){const f=weeks[0],l=weeks[weeks.length-1];if(l.every((d,i)=>d===null||f[i]===null)){l.forEach((d,i)=>{if(d!==null)f[i]=d});weeks.pop()}}
+   for(const w of weeks)for(const d of w){if(d===null){h+='<div></div>';continue}const key=S.ym+'-'+String(d).padStart(2,'0');const dt=byKey[key];
+     if(dt)h+=dayHTML(dt,staff,tl);else h+=`<div class="sunc"><span class="dnum">${d}</span><span class="dwd">日</span><button class="mini" data-act="sun" data-date="${key}" title="這個週日也要上班">加開</button></div>`}}
+  h+=`</div></div></section>`;
+  h+=(S.side?panelHTML(tl,dates):'')+`</div>`;
+  return h;
+}
+function dayHTML(dt,staff,tl){
+  const hol=S.month.hol[dt.key];let cv='';
+  if(!hol){const c=tl.cov[dt.key];const s=SL.map(k=>{const n=(S.cfg.need[dt.wd+k]||0)-c[k];return n>0?`${SLN[k]}${n}`:''}).filter(Boolean);
+    const o=SL.map(k=>{const n=c[k]-limOf(dt.wd,k);return n>0?`${SLN[k]}${n}`:''}).filter(Boolean);
+    cv=(s.length?`<span class="cv bad">缺${s.join(' ')}</span>`:'')+(o.length?`<span class="cv over" title="比需要的人多">多${o.join(' ')}</span>`:'')||`<span class="cv ok" title="人力足夠">✓</span>`}
+  const cls=['day'];if(dt.wd===6)cls.push('sat');if(dt.wd===0)cls.push('sunday');if(hol)cls.push('hol');if(dt.key===todayKey())cls.push('today');
+  return `<article class="${cls.join(' ')}" data-date="${dt.key}" aria-label="${dt.m}月${dt.d}日 週${WDN[dt.wd]}${hol?'，'+esc(hol)+'休診':''}">
+    <div class="dh"><button class="dbtn" data-act="day" data-date="${dt.key}" title="看當天誰上班、設定休診"><span class="dnum">${dt.d}</span><span class="dwd">${WDN[dt.wd]}</span></button>${cv}</div>
+    ${hol?`<div class="holb"><b>${esc(hol)}</b><span>休診</span></div>`:S.view==='slot'?slotsHTML(dt,staff):`<div class="lines">${staff.map(p=>lineHTML(p,dt)).join('')}</div>`}</article>`;
+}
+function slotTime(k){const o=optForCov(S.cfg,k);return o?o.text:''}
+function whoIn(dt,k,staff){return (staff||ordered()).filter(p=>covOfV(S.cfg,getE(dt.key,p.id)).includes(k))}
+function slotsHTML(dt,staff){
+  return `<div class="slots">${SL.map(k=>{const need=S.cfg.need[dt.wd+k]||0;const ids=whoIn(dt,k,staff);if(!need&&!ids.length)return '';
+    const st=ids.length<need?'short':ids.length>limOf(dt.wd,k)?'over':'ok';let cls=`srow k-${k} ${st}`;if((S.cfg.unpopular||[]).includes(dt.wd+k))cls+=' unp';let tag='';
+    if(S.brush&&S.staff[S.brush.sid]){const b=S.staff[S.brush.sid];const on=ids.includes(b);const pr=prefOf(b,dt.wd,k);if(on)cls+=' b-on';if(pr){cls+=' b-'+pr;tag=`<span class="bt">${pr==='x'?'不可':pr==='a'?'不要':'偏好'}</span>`}if(getE(dt.key,b.id)==='X'){cls+=' b-x';tag='<span class="bt">休假</span>'}}
+    const chips=ids.map(p=>{const bad=prefOf(p,dt.wd,k)==='x';return `<span class="sch${p.isMe?' me':''}${bad?' bad':''}" style="--pc:${colorOf(p)}" data-drag="chip" data-sid="${p.id}" data-date="${dt.key}" data-k="${k}" title="${esc(p.name)}・${esc(vLabel(getE(dt.key,p.id)))}">${esc(p.code)}<i>${esc(shortName(p))}</i></span>`}).join('');
+    const cnt=st==='short'?`缺${need-ids.length}`:st==='over'?`多${ids.length-limOf(dt.wd,k)}`:ids.length>need?`<span class="extra" title="比平常多 ${ids.length-need} 人，可以接受">+${ids.length-need}</span>`:'✓';
+    return `<div class="${cls}" data-act="slot" data-date="${dt.key}" data-k="${k}" role="button" tabindex="0" aria-label="${dt.m}月${dt.d}日${SLN[k]}班：${ids.map(p=>p.name).join('、')||'沒有人'}，需要${need}人"><span class="sk">${SLN[k]}</span><span class="who">${chips}</span><span class="sc">${cnt}</span>${tag}</div>`}).join('')}</div>`;
+}
+function lineHTML(p,dt){
+  const v=getE(dt.key,p.id);let cls='ln';let tag='';
+  const o=v&&v!=='X'?optById(S.cfg,v):null;const bad=o&&worstPref(p,dt.wd,o.cov)==='x';if(bad)cls+=' bad';
+  if(S.brush){if(S.brush.sid===p.id){cls+=' sel';const bo=optById(S.cfg,S.brush.opt);if(bo){const w=worstPref(p,dt.wd,bo.cov);if(w){cls+=' b-'+w;tag=`<span class="ptg ${w}">${w==='x'?'不可':w==='a'?'不要':'偏好'}</span>`}}}else cls+=' dim'}
+  return `<button class="${cls}" style="--pc:${colorOf(p)}" data-act="line" data-sid="${p.id}" data-date="${dt.key}" data-drag="line" aria-label="${esc(p.code+' '+p.name)} ${dt.m}月${dt.d}日：${esc(vLabel(v))}${o?' '+esc(o.text):''}"><span class="cd">${esc(p.code)}</span><span class="nm">${esc(shortName(p))}</span>${tag}${bad?'<span class="warn">⚠</span>':''}${ovHTML(v)}</button>`;
+}
+function panelHTML(tl,dates){
+  const base=baseHours(S.month,dates);const me=meP();
+  let h=`<aside class="panel" aria-label="剩餘時數"><div class="pn-sum"><h3>剩餘時數</h3>
+    <div class="pn-base"><span>本月應上時數</span><b>${fmtH(base)}</b><span>小時</span>${S.month.base?'<span class="help">（手動）</span>':'<span class="help">（平日 × 8）</span>'}<button class="mini" data-act="base">${S.editBase?'收起':'修改'}</button></div>`;
+  if(S.editBase)h+=`<div class="rowbtns"><input id="baseInp" class="inp" type="number" inputmode="numeric" min="0" value="${base}" style="width:7rem"><button class="btn primary" data-act="base-save">儲存</button><button class="btn" data-act="base-auto">用平日 × 8</button></div>`;
+  {let ft=0,pt=0;for(const p of ordered()){const r=tl.T[p.id];if(!r)continue;if(p.emp==='ft')ft+=r.tot;else pt+=r.tot}
+   h+=`<div class="pn-split"><span><span class="emp ft">正職</span> ${fmtH(ft)} 小時</span><span><span class="emp pt">兼職</span> ${fmtH(pt)} 小時</span></div>`}
+  h+=tl.shortN?`<div class="pn-gap bad">還缺：${SL.map(k=>`${SLN[k]} ${tl.short[k]}`).join('・')} 人次</div>`:`<div class="pn-gap ok">✓ 每個時段人力都夠</div>`;
+  if(tl.overN){const days=dates.filter(d=>!S.month.hol[d.key]&&SL.some(k=>tl.cov[d.key][k]>limOf(d.wd,k)));
+    h+=`<div class="pn-gap warn">多排：${SL.filter(k=>tl.over[k]).map(k=>`${SLN[k]} ${tl.over[k]}`).join('・')} 人次（${days.length} 天，日期上標「多」的格子）</div>`}
+  h+=`<p class="hint">點治療師的名字，選好班別後點日期；也可以按住名字拖到日期上。<br>名字顏色＝這個人最常上的時段（偏早班橘黃、午班青綠、晚班靛紫、早晚兩頭玫瑰）。</p></div>`;
+  for(const p0 of [...others(),...(me?[me]:[])]){const p=eff(p0);const r=tl.T[p.id],st=status(p,r),sel=S.brush&&S.brush.sid===p.id;
+    h+=`<button class="pcard${sel?' sel':''}${p.isMe?' me':''}" style="--pc:${colorOf(p)}" data-act="pick-person" data-sid="${p.id}" data-drag="person" aria-pressed="${!!sel}">
+      <div class="pc-top"><span class="cd">${esc(p.code)}</span><b>${esc(p.name)}</b><span class="emp ${p.emp}">${empName(p)}</span><span class="pill ${st.c}">${st.t}</span></div>
+      <div class="pc-h"><span><span class="big">${fmtH(r.tot)}</span> 小時</span><span class="split">平日 ${fmtH(r.wk)} ＋ ${hasSun()?'六日':'週六'} ${fmtH(r.sat)}</span></div>
+      ${p.isMe?'':`<div class="pc-g ${st.c}">${esc(st.g)}</div>${meterHTML(p,r)}`}
+      <div class="pc-meta">${PSIG[p.id]?`常上${SIG_NAME[PSIG[p.id]]}・`:''}${p.isMe?'':`${p.emp==='ft'?`應上 ${fmtH(p.targetH)}`:`最低 ${p.minH?fmtH(p.minH):'—'}・需求 ${p.targetH?fmtH(p.targetH):'—'}`}・上限 ${p.maxH||'—'}${p.auto?'（浮動）':''}｜`}${r.days} 天${r.unpop?`・冷門 ${r.unpop}`:''}${r.bad?`・<b style="color:var(--bad)">排到不可 ${r.bad}</b>`:''}</div></button>`;
+    if(sel)h+=paletteHTML(p0);
+  }
+  h+=`<div class="legend"><b>班別說明</b>${S.cfg.opts.map(o=>`<div>${ovHTML(o.id)}<span>${esc(o.text)}（${fmtH(o.h)} 小時）</span></div>`).join('')}<div>${ovHTML('X')}<span>休假（自動排班不會動）</span></div></div>`;
+  return h+`</aside>`;
+}
+function paletteHTML(p){const cur=S.brush.opt;
+  if(S.view==='slot')return `<div class="palette"><span class="pt">點月曆上的「早／午／晚」，把 ${esc(p.name)} 加進去或移出。</span><span class="help">也可以把這張卡片拖到某個時段上。</span><button class="btn" data-act="brush-off">取消選取</button></div>`;
+  return `<div class="palette"><span class="pt">幫 ${esc(p.name)} 排哪一種班？</span><div class="pgrid2">
+    ${S.cfg.opts.map(o=>`<button class="pb" data-act="brush-opt" data-v="${o.id}" aria-pressed="${cur===o.id}">${ovHTML(o.id)}<small>${esc(o.text)}</small></button>`).join('')}
+    <button class="pb" data-act="brush-opt" data-v="X" aria-pressed="${cur==='X'}">${ovHTML('X')}<small>這天休假</small></button>
+    <button class="pb" data-act="brush-opt" data-v="" aria-pressed="${cur===''}"><span class="ov none">清除</span><small>變回未排</small></button></div>
+    <button class="btn" data-act="brush-off">取消選取</button></div>`}
+
+/* ---------- pop-up panels ---------- */
+function renderPicker(){
+  const P=S.picker;const dt=dtOf(P.date);if(!dt){closePicker();return}
+  const tl=tally(S.cfg,ordered(),S.month,mDates());let body='';
+  if(P.type==='entry'){
+    const p=S.staff[P.sid];if(!p){closePicker();return}const v=getE(P.date,p.id);const r=tl.T[p.id],st=status(eff(p),r);
+    body=`<h3><span class="cd" style="--pc:${colorOf(p)}">${esc(p.code)}</span>${esc(p.name)}・${dt.m}月${dt.d}日（${WDN[dt.wd]}）</h3>
+      <div class="msub">目前：${esc(vLabel(v))}・本月已排 ${fmtH(r.tot)} 小時・${esc(st.g)}</div>
+      <div class="ogrid">${S.cfg.opts.map(o=>{const tags=o.cov.split('').map(c=>{const pr=prefOf(p,dt.wd,c);const u=(S.cfg.unpopular||[]).includes(dt.wd+c);
+          return (pr?`<span class="tag ${pr}">${SLN[c]}${PREF_LABEL[pr]}</span>`:'')+(u?`<span class="tag u">${SLN[c]}冷門</span>`:'')}).join('');
+        return `<button class="ob" data-act="set" data-v="${o.id}" aria-pressed="${v===o.id}">${ovHTML(o.id)}<span class="t">${esc(o.text)}・${fmtH(o.h)} 小時</span>${tags?`<span class="tags">${tags}</span>`:''}</button>`}).join('')}
+        <button class="ob" data-act="set" data-v="X" aria-pressed="${v==='X'}">${ovHTML('X')}<span class="t">這天休假</span></button>
+        <button class="ob" data-act="set" data-v="" aria-pressed="${!v}"><span class="ov none">清除</span><span class="t">變回未排</span></button></div>
+      ${v?`<button class="btn" data-act="fillwd">把「${esc(vLabel(v))}」填到本月其他週${WDN[dt.wd]}（只填空白的）</button>`:''}`;
+  }else if(P.type==='slot'){
+    body=slotPickerHTML(dt,P.k,tl);
+  }else{
+    const hol=S.month.hol[P.date];const c=tl.cov[P.date];
+    body=`<h3>${dt.m}月${dt.d}日（${WDN[dt.wd]}）${hol?'':'・當天誰上班'}</h3>`;
+    if(dt.wd===0)body+=`<div class="rowbtns"><span class="pill bad">週日加開</span><button class="btn sm" data-act="sun" data-date="${P.date}">取消加開（這個週日不上班）</button></div>`;
+    if(!hol)body+=timelineHTML(dt)+`<div class="tl-cov">${SL.filter(k=>(S.cfg.need[dt.wd+k]||0)>0||c[k]).map(k=>{const n=S.cfg.need[dt.wd+k]||0;return `<button class="btn${c[k]<n?' danger':''}" data-act="openslot" data-k="${k}">${SLN[k]}班 ${c[k]}／${n} 人${c[k]<n?'・補人':'・調整'}</button>`}).join('')}</div>`;
+    if(hol)body+=`<div class="msub">這天設為休診：<b>${esc(hol)}</b></div><button class="btn primary" data-act="hol-clear">取消休診，恢復排班</button>`;
+    else{body+=`<details class="more"><summary>休診、清除這天…</summary><div style="display:flex;flex-direction:column;gap:10px">
+      <div class="flabel">設為休診（國定假日、診所休息）</div>
+      <div class="rowbtns">${['國定假日','休診','颱風假'].map(t=>`<button class="btn" data-act="hol-set" data-v="${t}">${t}</button>`).join('')}</div>
+      <div class="rowbtns"><input id="holInp" class="inp" placeholder="其他名稱，例如：中秋節" style="flex:1;min-width:10rem"><button class="btn primary" data-act="hol-set">設定</button></div>
+      <button class="btn danger" data-act="day-clear">清除這天所有人的班</button></div></details>`}
+  }
+  $('#modal').innerHTML=`<div class="msheet${P.type==='entry'?'':' wide'}" role="dialog" aria-modal="true">${body}<button class="btn" data-act="pick-close">關閉</button></div>`;
+  $('#modal').hidden=false;
+}
+function covName(c){return c.split('').map(x=>SLN[x]).join('')}
+function evalCand(p,dt,k,T){
+  const q=eff(p);const v=getE(dt.key,p.id),cur=covOfV(S.cfg,v),t=T[p.id].tot;const r={p,q,v,cur,t,on:cur.includes(k),why:[],level:'ok',score:0,after:t};
+  if(r.on){const nc=cur.replace(k,'');const o=nc?optForCov(S.cfg,nc):null;r.after=t-hOfV(S.cfg,v)+(o?+o.h:0);r.why.push(nc?`移除後剩「${o?o.label:covName(nc)}」`:'移除後這天不上班');return r}
+  if(v==='X'){r.level='no';r.why.push('這天休假');return r}
+  const pr=prefOf(p,dt.wd,k);if(pr==='x'){r.level='no';r.why.push(`週${WDN[dt.wd]}${SLN[k]}班標示「不可」`);return r}
+  const nc=sortCov(cur+k);const o=optForCov(S.cfg,nc);if(!o){r.level='no';r.why.push(`沒有「${covName(nc)}」這種班別`);return r}
+  r.delta=(+o.h||0)-hOfV(S.cfg,v);r.after=t+r.delta;r.o=o;
+  const cap=p.isMe?(q.maxH||q.targetH||0):(q.maxH||0);
+  if(cap&&r.after>cap+1e-9){r.level='no';r.why.push(p.isMe&&!q.maxH?`會超過應上 ${fmtH(cap)} 小時`:`會超過上限 ${fmtH(cap)} 小時`);return r}
+  if(cur)r.why.push(`當天已上${vLabel(v)}，會變成「${o.label}」`);
+  if(!p.isMe&&(nc==='EL'||nc==='EML')){r.score-=12;r.level='warn';r.why.push('會變成早晚兩頭班，平常只有排班者這樣上')}
+  if(!p.isMe&&nc.length>(S.cfg.maxPerDay||2)){r.level='warn';r.why.push(`一天會上 ${nc.length} 個時段`)}
+  {const hv=(HB[p.id]||{})[dt.wd+k]||0;if(hv>=0.5){r.score+=8*hv;r.why.push(`平常週${WDN[dt.wd]}就常上${SLN[k]}班`)}}
+  if(pr==='p'){r.score+=4;r.why.push('偏好這個時段')}else if(pr==='a'){r.score-=7;r.level='warn';r.why.push('標示「盡量不要」')}
+  const min=q.minH||0,tg=q.targetH||min;
+  if(min&&t<min){r.score+=10+(min-t)/Math.max(r.delta,1);r.why.push(`還差 ${fmtH(min-t)} 小時到最低`)}
+  else if(tg&&t<tg){r.score+=6*(tg-t)/tg;r.why.push(`還差 ${fmtH(tg-t)} 小時到需求`)}
+  else if(tg&&t>=tg){r.score-=9;if(r.level==='ok')r.level='warn';r.why.push('已達需求時數')}
+  if((S.cfg.unpopular||[]).includes(dt.wd+k)){r.score-=3*T[p.id].unpop;r.why.push(`冷門時段，本月已上 ${T[p.id].unpop} 次`)}
+  if(cur&&r.level!=='no')r.score+=0.5;
+  if(p.isMe){r.score-=20;if(r.level==='ok')r.level='me';r.why.push('排班者，建議最後再補')}
+  if(!r.why.length)r.why.push('可以排');
+  return r;
+}
+function slotPickerHTML(dt,k,tl){
+  const need=S.cfg.need[dt.wd+k]||0;const staff=ordered();const T=tl.T;const n=tl.cov[dt.key][k];
+  const all=staff.filter(p=>p.active||getE(dt.key,p.id)).map(p=>evalCand(p,dt,k,T));
+  const on=all.filter(r=>r.on),ok=all.filter(r=>!r.on&&r.level==='ok').sort((a,b)=>b.score-a.score),me=all.filter(r=>!r.on&&r.level==='me'),warn=all.filter(r=>!r.on&&r.level==='warn').sort((a,b)=>b.score-a.score),no=all.filter(r=>!r.on&&r.level==='no');
+  const hrs=r=>`<span class="ch">${fmtH(r.t)} → ${fmtH(r.after)}<small>小時${r.q&&r.q.targetH?`（${r.p.emp==='ft'?'應上':'需求'} ${fmtH(r.q.targetH)}）`:''}</small></span>`;
+  const btn=(r,cls,top)=>`<button class="cand ${cls}${top?' top':''}" data-act="cand" data-sid="${r.p.id}" ${cls==='no'?'disabled':''}><span class="cd" style="--pc:${colorOf(r.p)}">${esc(r.p.code)}</span><span class="cn"><b>${esc(r.p.name)}</b> <span class="emp ${r.p.emp}">${empName(r.p)}</span>${top?'<span class="star">最推薦</span>':''}${cls==='on'?' <span class="act">點一下移除</span>':''}<small>${esc(r.why.join('・'))}</small></span>${cls==='no'?'':hrs(r)}</button>`;
+  const unp=(S.cfg.unpopular||[]).includes(dt.wd+k);
+  let h=`<h3>${dt.m}月${dt.d}日（${WDN[dt.wd]}）${SLN[k]}班　誰來上？</h3>
+    <div class="need"><span class="msub">${esc(slotTime(k))}${unp?'・冷門時段':''}</span>${n<need?`<span class="pill bad">還缺 ${need-n} 人</span>`:n>limOf(dt.wd,k)?`<span class="pill warn">需要 ${need} 人，已排 ${n} 人，太多了</span>`:`<span class="pill ok">✓ 需要 ${need} 人，已排 ${n} 人</span>`}</div>`;
+  if(on.length)h+=`<div class="grp-h on">已排</div><div class="cands">${on.map(r=>btn(r,'on')).join('')}</div>`;
+  if(ok.length)h+=`<div class="grp-h ok">推薦（點一下加入）</div><div class="cands">${ok.map((r,i)=>btn(r,'ok',i===0&&n<need)).join('')}</div>`;
+  if(warn.length)h+=`<div class="grp-h warn">可以，但要注意</div><div class="cands">${warn.map(r=>btn(r,'warn')).join('')}</div>`;
+  if(me.length)h+=`<div class="grp-h me">排班者</div><div class="cands">${me.map(r=>btn(r,'me')).join('')}</div>`;
+  if(no.length)h+=`<div class="grp-h no">不能排</div><div class="cands">${no.map(r=>btn(r,'no')).join('')}</div>`;
+  return h;
+}
+function ranges(text){const out=[];const re=/(\d{1,2}):(\d{2})\s*[-–~]\s*(\d{1,2}):(\d{2})/g;let m;while((m=re.exec(text||''))){out.push([+m[1]*60+ +m[2],+m[3]*60+ +m[4]])}return out}
+function barCov(r){return SL.filter(k=>{const sr=ranges(slotTime(k))[0];if(!sr)return false;return Math.min(r[1],sr[1])-Math.max(r[0],sr[0])>=45}).join('')}
+function timelineHTML(dt){
+  const T0=8*60,T1=22*60,W=T1-T0;const pc=v=>(Math.max(0,Math.min(1,(v-T0)/W))*100).toFixed(2)+'%';const wd=(a,b)=>(Math.max(0,Math.min(b,T1)-Math.max(a,T0))/W*100).toFixed(2)+'%';
+  const staff=ordered();const rows=[],off=[],none=[];
+  for(const p of staff){const v=getE(dt.key,p.id);if(v==='X'){off.push(p);continue}const o=v?optById(S.cfg,v):null;if(!o){if(p.active)none.push(p);continue}rows.push({p,o})}
+  let h=`<div class="tl"><div class="tl-row"><span></span><div class="tl-axis">${[8,10,12,14,16,18,20,22].map(x=>`<span style="left:${pc(x*60)}">${x}:00</span>`).join('')}</div></div>
+    <div class="tl-row"><span class="tl-name"><small>時段</small></span><div class="tl-track">${SL.map(k=>{const r=ranges(slotTime(k))[0];return r?`<span class="tl-band k-${k}" style="left:${pc(r[0])};width:${wd(r[0],r[1])}">${SLN[k]}</span>`:''}).join('')}</div></div>`;
+  for(const {p,o} of rows)h+=`<div class="tl-row"><span class="tl-name"><span class="cd" style="--pc:${colorOf(p)}">${esc(p.code)}</span>${esc(shortName(p))}<small>${esc(o.label)}・${fmtH(o.h)}h</small></span><div class="tl-track">${ranges(o.text).map(r=>`<span class="tl-bar c-${barCov(r)}" style="left:${pc(r[0])};width:${wd(r[0],r[1])}">${String(Math.floor(r[0]/60))}:${String(r[0]%60).padStart(2,'0')}-${String(Math.floor(r[1]/60))}:${String(r[1]%60).padStart(2,'0')}</span>`).join('')}</div></div>`;
+  if(!rows.length)h+=`<p class="offline">這天還沒有人排班。</p>`;
+  h+=`</div>`;
+  if(off.length||none.length)h+=`<p class="offline">${off.length?`休假：${off.map(p=>esc(p.code+' '+p.name)).join('、')}`:''}${off.length&&none.length?'　':''}${none.length?`未排：${none.map(p=>esc(p.code+' '+p.name)).join('、')}`:''}</p>`;
+  return h;
+}
+function slotNewV(v,k,add){const cur=v==='X'?'':covOfV(S.cfg,v);const has=cur.includes(k);if(add&&has)return {same:true};if(!add&&!has)return {same:true};
+  const nc=add?sortCov(cur+k):cur.replace(k,'');if(!nc)return {nv:''};const o=optForCov(S.cfg,nc);if(!o)return {err:`沒有「${covName(nc)}」這種班別，請到「班別與人力」新增`};return {nv:o.id}}
+function slotToggle(sid,date,k,mode,o={}){
+  if(isHol(date)){toast('這天休診');return null}
+  const p=S.staff[sid];const v=getE(date,sid);const has=covOfV(S.cfg,v).includes(k);if(!mode)mode=has?'remove':'add';
+  const r=slotNewV(v,k,mode==='add');if(r.same)return mode;if(r.err){toast(r.err);return null}
+  editMonth(m=>writeE(m,date,sid,r.nv),o);
+  if(mode==='add'&&!o.quiet&&p){const dt=dtOf(date);const pr=prefOf(p,dt.wd,k);if(v==='X')toast(`注意：${p.name} 這天原本標「休假」`);else if(pr==='x')toast(`注意：${p.name} 週${WDN[dt.wd]}${SLN[k]}班標示「不可」`);else if(pr==='a')toast(`已排入。${p.name} 標示「盡量不要」這個時段`)}
+  return mode}
+function slotMove(sid,from,to){
+  if(isHol(to.date)){toast('這天休診');return}if(from.date===to.date&&from.k===to.k)return;
+  const v0=getE(from.date,sid);const a=slotNewV(v0,from.k,false);if(a.err){toast(a.err);return}
+  const base=from.date===to.date?(a.same?v0:a.nv):getE(to.date,sid);const b=slotNewV(base,to.k,true);
+  if(b.same){toast(`${S.staff[sid].name} 那個時段已經有排了`);return}if(b.err){toast(b.err);return}
+  editMonth(m=>{if(from.date!==to.date&&!a.same)writeE(m,from.date,sid,a.nv);writeE(m,to.date,sid,b.nv)});
+  const dt=dtOf(to.date);toast(`已把 ${S.staff[sid].name} 移到 ${dt.m}/${dt.d} ${SLN[to.k]}班`)}
+function closePicker(){S.picker=null;$('#modal').hidden=true;$('#modal').innerHTML=''}
+
+/* ---------- staff page ---------- */
+function staffListHTML(){return allOrdered().map(p=>`<button class="sitem" data-act="edit" data-id="${p.id}" aria-current="${S.editId===p.id}" style="--pc:${colorOf(p)}"><span class="cd">${esc(p.code)}</span><span><span class="si-n">${esc(p.name)}${p.isMe?'（排班者）':''}${p.active?'':'（已離職）'}</span><br><span class="si-m">${p.isMe?`${empName(p)}`:(q=>`${empName(q)}・${q.emp==='ft'?`應上 ${fmtH(q.targetH)}`:`需求 ${q.targetH?fmtH(q.targetH):'—'}`} 小時${q.auto?'（浮動）':''}`)(eff(p))}</span></span></button>`).join('')}
+function staffHTML(){
+  const list=allOrdered();if(!S.staff[S.editId])S.editId=list[0]?.id||null;const p=S.staff[S.editId];
+  let h=`<div class="two"><section class="box"><div class="box-h"><h2>治療師（${list.length}）</h2><button class="btn primary" data-act="add-staff">＋ 新增</button></div><div class="slist" id="staffList">${staffListHTML()}</div></section>`;
+  if(!p)return h+`<section class="box"><p>按「新增」加入第一位治療師。</p></section></div>`;
+  const tool=S.prefTool;
+  h+=`<section class="box" aria-label="編輯 ${esc(p.name)}">
+    <div class="box-h"><h2>編輯：<span id="edName">${esc(p.name)}</span></h2>${S.confirmDel?`<span class="rowbtns"><button class="btn danger solid" data-act="del-yes">確定刪除</button><button class="btn" data-act="del-no">不要刪</button></span>`:`<button class="btn danger" data-act="del">刪除</button>`}</div>
+    <div class="nums">
+      <div class="field"><label for="f-code">代號</label><input id="f-code" class="inp" data-field="code" value="${esc(p.code)}" maxlength="2" autocomplete="off"><span class="help">紙本上的 A、B、C…</span></div>
+      <div class="field"><label for="f-name">姓名</label><input id="f-name" class="inp" data-field="name" value="${esc(p.name)}" autocomplete="off"></div>
+      <div class="field"><label for="f-short">班表上顯示</label><input id="f-short" class="inp" data-field="short" value="${esc(p.short)}" placeholder="${esc(p.name.slice(-2))}" maxlength="4" autocomplete="off"><span class="help">空白就用名字後兩字</span></div>
+    </div>
+    <div class="nums">
+      <div class="field"><span class="flabel">身分</span><div class="seg"><button data-act="emp" data-v="ft" aria-pressed="${p.emp==='ft'}">正職</button><button data-act="emp" data-v="pt" aria-pressed="${p.emp==='pt'}">兼職</button></div></div>
+      ${p.isMe?'':`<div class="field"><span class="flabel">時數</span><div class="seg"><button data-act="hmode" data-v="auto" aria-pressed="${p.hoursMode!=='fixed'}">浮動（自動算）</button><button data-act="hmode" data-v="fixed" aria-pressed="${p.hoursMode==='fixed'}">自己填</button></div></div>`}
+    </div>
+    ${p.isMe?'':p.hoursMode!=='fixed'?(q=>`<div class="note"><b>${q.emp==='ft'?`應上 ${fmtH(q.targetH)} 小時`:(q.targetH?`最低 ${fmtH(q.minH)}・需求 ${fmtH(q.targetH)} 小時`:'目前沒有參考資料')}</b>（${esc(q.ref)}）<br><span class="help">${q.emp==='ft'?'正職的時數每個月跟著「本月應上時數」變動。':`兼職的時數用最近 3 個有排班的月份自動算：最低＝最少那個月的 ${S.cfg.ptMinPct||70}%（可在「班別與人力」調整），需求＝平均。`}換月份時會自動更新。</span></div>`)(eff(p)):`<div class="nums">
+      <div class="field"><label for="f-min">最低時數</label><div class="unit"><input id="f-min" class="inp" type="number" inputmode="numeric" min="0" data-field="minH" value="${p.minH||''}" placeholder="0"><span>小時</span></div><span class="help">每月至少要排到</span></div>
+      <div class="field"><label for="f-target">需求時數</label><div class="unit"><input id="f-target" class="inp" type="number" inputmode="numeric" min="0" data-field="targetH" value="${p.targetH||''}" placeholder="0"><span>小時</span></div><span class="help">希望排到</span></div>
+      <div class="field"><label for="f-max">上限時數</label><div class="unit"><input id="f-max" class="inp" type="number" inputmode="numeric" min="0" data-field="maxH" value="${p.maxH||''}" placeholder="不限"><span>小時</span></div><span class="help">最多不超過</span></div>
+    </div>`}
+    <div id="numWarn" class="warnline">${p.hoursMode==='fixed'?numWarn(p):''}</div>
+    <button class="switch act" role="switch" data-act="active" aria-checked="${p.active}"><span class="knob"></span><span><b>目前在職</b><br><span>關掉後，這位只會出現在他有排班的月份，也不會被自動排班。</span></span></button>
+    <button class="switch" role="switch" data-act="isme" aria-checked="${p.isMe}"><span class="knob"></span><span><b>這位是排班者本人</b><br><span>自動排班時先排其他人，剩下的空缺最後才由這位補。全組只能有一位。</span></span></button>
+    <div class="field"><span class="flabel">班表偏好</span><span class="help">先選一種，再點格子；點「週一」或「早」可以整列、整欄一起改。斜線格是冷門時段。</span>
+      <div class="tools">${['p','','a','x'].map(v=>`<button class="tool pv-${v}" data-act="ptool" data-v="${v}" aria-pressed="${tool===v}">${PREF_LABEL[v]}</button>`).join('')}</div></div>
+    <div class="gridwrap"><div class="pgrid"><span></span>${SL.map(k=>`<button class="hd" data-act="pcol" data-k="${k}">${SLN[k]}</button>`).join('')}
+      ${[1,2,3,4,5,6,0].map(d=>`<button class="hd" data-act="prow" data-d="${d}">週${WDN[d]}</button>${SL.map(k=>{const v=prefOf(p,d,k);return `<button class="cell pv-${v}${(S.cfg.unpopular||[]).includes(d+k)?' unpopc':''}" data-act="pcell" data-key="${d}${k}" aria-label="週${WDN[d]}${SLN[k]}：${PREF_LABEL[v]}">${PREF_LABEL[v]}</button>`}).join('')}`).join('')}</div></div>
+    <div class="field"><label for="f-note">備註</label><textarea id="f-note" class="inp" data-field="note" placeholder="例如：週三下午要上課">${esc(p.note)}</textarea></div>
+  </section></div>`;
+  return h;
+}
+function numWarn(p){if(p.targetH&&p.minH>p.targetH)return '最低時數比需求時數還多，請確認。';if(p.maxH&&p.maxH<Math.max(p.minH,p.targetH))return '上限時數比最低或需求時數還少，請確認。';return ''}
+function saveStaff(p){if(S.readonly){toast('你只有檢視權限。');return}const o=Object.assign({},p);delete o.id;queueWrite('staff/'+p.id,o)}
+
+/* ---------- settings page ---------- */
+function settingsHTML(){
+  const c=S.cfg;
+  return `<div class="stack">
+  <section class="box"><div class="box-h"><h2>班別</h2><button class="btn primary" data-act="oadd">＋ 新增班別</button></div>
+    <p class="help" style="margin:0">「涵蓋時段」決定這個班算哪幾個時段的人力；時數用來累計每個人的時數。</p>
+    ${c.opts.map(o=>`<div class="orow">
+      <div class="field"><label for="ol-${o.id}">代稱</label><input id="ol-${o.id}" class="inp" data-ofield="label" data-oid="${o.id}" value="${esc(o.label)}" maxlength="4"></div>
+      <div class="field"><label for="ot-${o.id}">時間（印在紙本上）</label><input id="ot-${o.id}" class="inp" data-ofield="text" data-oid="${o.id}" value="${esc(o.text)}"></div>
+      <div class="field"><label for="oh-${o.id}">時數</label><input id="oh-${o.id}" class="inp" type="number" step="0.5" min="0" data-ofield="h" data-oid="${o.id}" value="${o.h}"></div>
+      <div class="field"><span class="flabel">涵蓋時段</span><div class="covs">${SL.map(k=>`<button class="k-${k}" data-act="ocov" data-oid="${o.id}" data-k="${k}" aria-pressed="${o.cov.includes(k)}">${SLN[k]}</button>`).join('')}</div>
+        <label class="chk"><input type="checkbox" data-ofield="short" data-oid="${o.id}" ${o.short?'checked':''}>紙本上印代稱（如「全1」）</label></div>
+      <div>${S.confirmOpt===o.id?`<button class="btn danger solid" data-act="odel-yes" data-oid="${o.id}">確定刪除</button>`:`<button class="btn danger" data-act="odel" data-oid="${o.id}">刪除</button>`}</div></div>`).join('')}
+  </section>
+  <section class="box"><div class="box-h"><h2>每個時段需要幾位治療師</h2></div><div class="gridwrap"><div class="ngrid"><span></span>${SL.map(k=>`<span class="h">${SLN[k]}</span>`).join('')}
+    ${[1,2,3,4,5,6,0].map(d=>`<span class="rh">週${WDN[d]}${d===0?'<br><small style="font-weight:500">加開時</small>':''}</span>${SL.map(k=>`<span class="stepper"><button data-act="need" data-key="${d}${k}" data-v="-1" aria-label="週${WDN[d]}${SLN[k]}減少">−</button><output>${c.need[d+k]??0}</output><button data-act="need" data-key="${d}${k}" data-v="1" aria-label="週${WDN[d]}${SLN[k]}增加">＋</button></span>`).join('')}`).join('')}</div></div></section>
+  <section class="box"><div class="box-h"><h2>冷門時段</h2></div><p style="margin:0">點格子標記比較少人想上的時段。自動排班會把冷門時段平均分給大家。</p>
+    <div class="gridwrap"><div class="ngrid" style="min-width:20rem;grid-template-columns:4.2rem repeat(3,minmax(5rem,1fr))"><span></span>${SL.map(k=>`<span class="h">${SLN[k]}</span>`).join('')}
+    ${[1,2,3,4,5,6,0].map(d=>`<span class="rh">週${WDN[d]}</span>${SL.map(k=>{const on=(c.unpopular||[]).includes(d+k);return `<button class="ucell${on?' unpopc':''}" data-act="unpop" data-key="${d}${k}" aria-pressed="${on}">${on?'冷門':'一般'}</button>`}).join('')}`).join('')}</div></div></section>
+  <section class="box"><div class="box-h"><h2>兼職的浮動最低時數</h2></div>
+    <p style="margin:0">兼職選「浮動」時，最低時數＝過去 3 個月裡最少那個月的幾成。數字越小越寬鬆，比較不會一直跳「未達最低」。</p>
+    <div><span class="stepper"><button data-act="ptmin" data-v="-10" aria-label="放寬">−</button><output>${c.ptMinPct||70}%</output><button data-act="ptmin" data-v="10" aria-label="收緊">＋</button></span></div>
+    <span class="help">例如過去最少的月份是 44 小時，設 ${c.ptMinPct||70}% 時最低就是 ${Math.round(44*(c.ptMinPct||70)/100)} 小時。</span></section>
+  <section class="box"><div class="box-h"><h2>一個時段最多幾人（超過才提醒）</h2></div>
+    <div><span class="stepper"><button data-act="maxok" data-v="-1" aria-label="減少">−</button><output>${c.maxOk||2}</output><button data-act="maxok" data-v="1" aria-label="增加">＋</button></span></div>
+    <span class="help">例如設 2：午班需要 1 人、排了 2 人不會提醒；任何時段排到 3 人以上才會標「多」。自動排班仍然以「需要幾位」為準，不會故意多排。</span></section>
+  <section class="box"><div class="box-h"><h2>資料備份</h2></div>
+    <p style="margin:0">班表只存在<b>這台電腦的這個瀏覽器</b>裡。清除瀏覽器資料、換電腦或換瀏覽器都會看不到，所以每個月排完請按「備份」，把備份檔另外存到隨身碟或雲端。</p>
+    <p style="margin:0">上次備份：<b>${lastBackupText()}</b></p>
+    <div class="rowbtns"><button class="btn primary" data-act="backup">備份成檔案</button><label class="btn" for="restoreFile">從備份檔還原…</label><input id="restoreFile" type="file" accept=".json,application/json" hidden></div>
+    <h3 style="margin-top:6px">改亂了？恢復原始資料</h3>
+    <p style="margin:0">可以把某個月恢復成一開始內建、照紙本輸入的班表。只會換掉那個月的班表，其他月份和治療師資料都不動。</p>
+    <div class="rowbtns">${seedMonths().map(ym=>S.confirmSeed===ym?`<button class="btn danger solid" data-act="seed-month-yes" data-v="${ym}">確定恢復 ${Number(ym.slice(5))} 月</button><button class="btn" data-act="seed-no">取消</button>`:`<button class="btn" data-act="seed-month" data-v="${ym}">恢復 ${Number(ym.slice(5))} 月原始班表</button>`).join('')}</div>
+    <div class="rowbtns">${S.confirmSeed==='all'?`<div class="note"><b>全部恢復成第一次打開時的樣子？</b><br>所有月份的班表、治療師資料、班別設定都會換回內建的原始資料，你之後做的修改都會消失。建議先按「備份成檔案」留一份。<div class="rowbtns" style="margin-top:8px"><button class="btn danger solid" data-act="seed-all-yes">確定全部恢復</button><button class="btn" data-act="seed-no">取消</button></div></div>`:`<button class="btn danger" data-act="seed-all">全部恢復成初始狀態…</button>`}</div>
+    ${S.restore?`<div class="note"><b>要用這個備份取代目前所有資料嗎？</b><br>備份時間：${esc(S.restore.when)}，共 ${S.restore.staffN} 位治療師、${S.restore.monthN} 個月的班表。目前的資料會被蓋掉。<div class="rowbtns" style="margin-top:8px"><button class="btn danger solid" data-act="restore-yes">確定還原</button><button class="btn" data-act="restore-no">取消</button></div></div>`:''}
+  </section>
+  <section class="box"><div class="box-h"><h2>每人每天最多幾個時段</h2></div><div><span class="stepper"><button data-act="maxday" data-v="-1" aria-label="減少">−</button><output>${c.maxPerDay}</output><button data-act="maxday" data-v="1" aria-label="增加">＋</button></span></div><span class="help">自動排班時不會超過。排班者不受這個限制。</span></section>
+  </div>`;
+}
+function saveCfg(){if(S.readonly){toast('你只有檢視權限。');return}queueWrite('config/settings',S.cfg)}
+
+/* ---------- print file (same layout as the paper) ---------- */
+function printParts(){
+  const [y,m]=S.ym.split('-').map(Number);const dates=mDates();const staff=ordered();const tl=tally(S.cfg,staff,S.month,dates);
+  const n=new Date(y,m,0).getDate();const cells=[];for(let d=1;d<=n;d++){const wd=new Date(y,m-1,d).getDay();cells.push({d,wd:wd===0?7:wd,key:S.ym+'-'+String(d).padStart(2,'0')})}
+  const usedShort=new Set();
+  const txt=(p,key)=>{const v=getE(key,p.id);if(!v||v==='X')return 'X';const o=optById(S.cfg,v);if(!o)return 'X';if(o.short){usedShort.add(o.id);return o.label}return o.text};
+  const weeks=[];let w=new Array(7).fill(null);
+  for(const c of cells){w[c.wd-1]=c;if(c.wd===7){weeks.push(w);w=new Array(7).fill(null)}}if(w.some(Boolean))weeks.push(w);
+  if(weeks.length>5){const f=weeks[0],l=weeks[weeks.length-1];if(l.every((c,i)=>!c||!f[i])){l.forEach((c,i)=>{if(c)f[i]=c});weeks.pop()}}
+  const cellHTML=c=>{if(!c)return '<td></td>';if(c.wd===7&&!(S.month.sun||[]).includes(c.key))return `<td><div class="d">${c.d}</div></td>`;
+    const hol=S.month.hol[c.key];if(hol)return `<td><div class="d">${c.d}</div>${staff.map((p,i)=>`<div>${esc(p.code)}: ${i===0?esc(hol):'X'}</div>`).join('')}</td>`;
+    return `<td><div class="d">${c.d}</div>${staff.map(p=>`<div>${esc(p.code)}: ${esc(txt(p,c.key))}</div>`).join('')}</td>`};
+  const run=w=>{let best=[0,0],i=0;while(i<7){if(!w[i]){let j=i;while(j<7&&!w[j])j++;if(j-i>best[1])best=[i,j-i];i=j}else i++}return best};
+  let spot=null;for(const wi of [0,weeks.length-1]){const r=run(weeks[wi]);if(r[1]>=3&&(!spot||r[1]>spot.n))spot={wi,at:r[0],n:r[1]}}
+  const sum=staff.map(p=>{const r=tl.T[p.id];const hrs=p.isMe?'':`（${r.sat?`${fmtH(r.wk)} + ${fmtH(r.sat)}`:fmtH(r.wk)} 小時）`;return `<div>${esc(p.code)}: ${esc(p.name)}${hrs}　簽名：</div>`}).join('');
+  const legend=S.cfg.opts.filter(o=>usedShort.has(o.id)).map(o=>`<div>${esc(o.label)}: ${esc(o.text)}</div>`).join('');
+  const sumHTML=`<div class="sum"><div><b>本月應上時數 ${fmtH(baseHours(S.month,dates))} 小時</b>${sum}</div>${legend?`<div>${legend}</div>`:''}</div>`;
+  const body=weeks.map((w,wi)=>{let h='';for(let i=0;i<7;i++){if(spot&&spot.wi===wi&&i===spot.at){h+=`<td colspan="${spot.n}" class="sumcell">${sumHTML}</td>`;i+=spot.n-1}else h+=cellHTML(w[i])}return `<tr>${h}</tr>`}).join('');
+  const title=`${y-1911} 年 ${String(m).padStart(2,'0')} 月班表`;
+  const now=new Date();const stamp=`${now.getFullYear()-1911}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const inner=`<h1>${title}</h1><table class="${staff.length>=5?'dense':''}"><colgroup>${hasSun()?'<col style="width:14.28%">'.repeat(7):'<col style="width:15.5%">'.repeat(6)+'<col style="width:7%">'}</colgroup><tr>${['週一','週二','週三','週四','週五','週六','週日'].map(t=>`<th>${t}</th>`).join('')}</tr>${body}</table>
+${spot?'':sumHTML}<div class="stamp">產生時間 ${stamp}</div>`;
+  return {title,stamp,inner};
+}
+function paperCSS(sc){return `${sc}{font-family:"PMingLiU","新細明體","Noto Serif TC","Times New Roman",serif;font-size:10pt;color:#000;background:#fff;line-height:1.35}
+${sc} h1{font-size:14pt;margin:0 0 5px;color:#000}
+${sc} table{border-collapse:collapse;width:100%;table-layout:fixed}
+${sc} th,${sc} td{border:1px solid #000;vertical-align:top;padding:1px 4px;text-align:left;line-height:1.35;color:#000;background:#fff}
+${sc} table.dense{font-size:9.2pt}
+${sc} table.dense td{line-height:1.28}
+${sc} td.sumcell{padding:4px 8px}
+${sc} td.sumcell .sum{margin-top:0;gap:24px}
+${sc} td.sumcell .sum div{line-height:1.75}
+${sc} th{font-weight:normal}
+${sc} tr{break-inside:avoid;page-break-inside:avoid}
+${sc} .d{font-weight:bold}
+${sc} .sum{display:flex;gap:40px;margin-top:8px;break-inside:avoid;page-break-inside:avoid}
+${sc} .sum div{line-height:1.9}
+${sc} .stamp{margin-top:4px;font-size:8pt;color:#555;text-align:right}`}
+function buildPrint(){const P=printParts();
+  return `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><title>${P.title}</title><style>
+@page{size:A4 landscape;margin:10mm}
+body{margin:0;padding:12px;background:#fff}
+${paperCSS('.paper')}
+.bar{display:flex;gap:12px;align-items:center;padding:10px;margin-bottom:12px;background:#eef3ff;border:1px solid #9ab;border-radius:8px;font-family:sans-serif}
+.bar button{font-size:16px;padding:8px 18px}
+@media print{.bar{display:none}body{padding:0}}
+</style></head><body>
+<div class="bar"><button onclick="window.print()">列印</button><span>這份是 <b>${P.stamp}</b> 產生的版本。列印時請選「橫向」、A4。</span></div>
+<div class="paper">${P.inner}</div>
+</body></html>`;
+}
+/* in-page print preview: what you see is exactly what prints */
+(function(){const st=document.createElement('style');st.textContent=paperCSS('#printView .paper')+`
+@page{size:A4 landscape;margin:10mm}
+@media print{
+  body.previewing>*:not(#printView){display:none!important}
+  html,body.previewing{background:#fff!important;padding:0!important;margin:0!important}
+  #printView{position:static!important;display:block!important;background:#fff!important;inset:auto!important}
+  #printView .pv-bar,#printView .pv-note{display:none!important}
+  #printView .pv-scroll{overflow:visible!important;padding:0!important}
+  #printView .paper{box-shadow:none!important;margin:0!important;padding:0!important;width:auto!important;min-width:0!important}
+}`;document.head.appendChild(st)})();
+function openPreview(){
+  const P=printParts();const pv=$('#printView');
+  pv.innerHTML=`<div class="pv-bar"><b class="pv-t">列印預覽・${esc(P.title)}</b><span class="sp"></span>${CAN_PRINT?`<button type="button" class="btn primary" data-pv="print">列印</button><button type="button" class="btn sm" data-pv="dl">另存成檔案</button>`:`<button type="button" class="btn primary" data-pv="dl">下載列印檔</button>`}<button type="button" class="btn" data-pv="close">關閉</button></div>
+    <div class="pv-note">${CAN_PRINT?'下面就是印出來的樣子。按「列印」後，印表機設定選<b>橫向</b>、紙張 <b>A4</b>。':'下面就是印出來的樣子。網頁版放在 claude.ai 裡面，不能直接叫出印表機：請按「下載列印檔」，打開下載的檔案再按「列印」。單機版可以直接在這裡列印。'}</div>
+    <div class="pv-scroll"><div class="paper">${P.inner}</div></div>`;
+  pv.hidden=false;document.body.classList.add('previewing');const f=$('[data-pv]',pv);if(f)f.focus()}
+function closePreview(){const pv=$('#printView');pv.hidden=true;pv.innerHTML='';document.body.classList.remove('previewing')}
+function saveFile(name,text,type){const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000)}
+function stampName(){const n=new Date(),p=x=>String(x).padStart(2,'0');return `${n.getFullYear()-1911}${p(n.getMonth()+1)}${p(n.getDate())}-${p(n.getHours())}${p(n.getMinutes())}`}
+function doBackup(){const docs=localDocs();for(const [path,p] of pending){if(p.val===null)delete docs[path];else docs[path]=p.val}
+  const name=`治療師排班備份_${stampName()}.json`;saveFile(name,JSON.stringify({app:'therapist-roster',savedAt:new Date().toISOString(),docs},null,1),'application/json');
+  ls('tr.lastBackup',new Date().toISOString());toast(`已備份成「${name}」，在下載資料夾。建議另外存到隨身碟或雲端。`);render()}
+const SEED=()=>JSON.parse((SEEDTXT||'{}'));
+function seedMonths(){const sd=SEED();return Object.keys(sd).filter(k=>k.startsWith('months/')&&Object.keys((sd[k]||{}).e||{}).length).map(k=>k.slice(7)).sort()}
+function lastBackupText(){const v=ls('tr.lastBackup');if(!v)return '還沒有備份過';const d=new Date(v);return `${d.getFullYear()-1911}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
+function applyDocs(docs){for(const [,p] of pending)clearTimeout(p.timer);pending.clear();
+  try{localStorage.setItem('tr.docs',JSON.stringify(docs))}catch(e){toast('這台電腦的瀏覽器不能存資料，還原失敗。');return}
+  S.staff={};Object.keys(docs).forEach(p=>{if(p.startsWith('staff/')){const id=p.slice(6);S.staff[id]=normStaff(id,docs[p])}});
+  S.cfg=normCfg(docs['config/settings']);S.month=normMonth(docs['months/'+S.ym]);S.undo=[];S.brush=null;S.restore=null;S.editId=null;render();toast('已從備份還原。')}
+async function downloadPrint(){
+  if(S.editBase){const i=$('#baseInp');const n=i?Number(i.value):0;const cur=baseHours(S.month,mDates());if(n>0&&n!==cur){toast('「本月應上時數」改了還沒儲存，請先按「儲存」再下載。');return}}
+  const html=buildPrint();const [y,m]=S.ym.split('-').map(Number);const now=new Date();const p2=n=>String(n).padStart(2,'0');
+  const name=`${y-1911}年${m}月治療師班表_${p2(now.getMonth()+1)}${p2(now.getDate())}-${p2(now.getHours())}${p2(now.getMinutes())}${p2(now.getSeconds())}.html`;
+  let dl=null;try{dl=await window.claude?.use?.('downloads')}catch(e){dl=null}
+  if(!dl){saveFile(name,html,'text/html');toast(`已下載「${name}」，在下載資料夾。打開後按「列印」。`);return}
+  try{await dl.save({filename:name,data:html});toast(`已下載「${name}」。請打開這個最新的檔案再列印。`)}
+  catch(e){const c=e&&e.code;if(c==='declined'){toast('這次沒有下載（下載確認被關掉了）。');return}if(c==='rate_limited')toast('上一個下載還在進行，請稍等一下。');else toast('下載沒有成功，請再試一次。')}
+}
+
+/* ---------- full screen (desktop, tablets, Android phones; phones also turn sideways) ---------- */
+const FS={el:()=>document.fullscreenElement||document.webkitFullscreenElement,
+  can:()=>!!(document.fullscreenEnabled||document.webkitFullscreenEnabled||document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen)};
+async function toggleFull(){
+  try{
+    if(FS.el()){if(document.exitFullscreen)await document.exitFullscreen();else if(document.webkitExitFullscreen)document.webkitExitFullscreen();return}
+    const de=document.documentElement;if(de.requestFullscreen)await de.requestFullscreen();else if(de.webkitRequestFullscreen)de.webkitRequestFullscreen();else throw 0;
+    const phone=matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<600;
+    if(phone){try{await screen.orientation.lock('landscape')}catch(e){toast('請把手機轉成橫放。')}}
+  }catch(e){toast('這個瀏覽器不能切換全螢幕。手機可以直接把螢幕轉橫放；電腦可以按鍵盤的 F11。')}}
+function fsLabel(){const b=$('#fsBtn');if(!b)return;b.hidden=!FS.can();b.textContent=FS.el()?'✕ 結束全螢幕':'⛶ 全螢幕'}
+['fullscreenchange','webkitfullscreenchange'].forEach(t=>document.addEventListener(t,()=>{fsLabel();if(!FS.el()){try{screen.orientation&&screen.orientation.unlock&&screen.orientation.unlock()}catch(e){}}if(TR.on)tourPlace()}));
+fsLabel();
+
+/* ---------- guided tour ---------- */
+const TR={on:false,auto:{},i:0,dir:1,orig:'person',key:'sched',steps:[]};
+const TOUR_FLAG={sched:'tr.tour',staff:'tr.tour.staff'};
+const setView=v=>{if(S.view!==v){S.view=v;render()}};
+const TOUR=[
+ {t:'歡迎使用治療師排班表',b:'畫面跟你們的紙本班表一樣，是週一到週六的月曆，每天列出每位治療師上什麼班。不一樣的是：每個人排了幾小時、還差多少，都會馬上算好。接下來花 1 分鐘帶你看一遍。'},
+ {sel:'.monthbar',t:'切換月份',b:'按「上個月」「下個月」切換月份。標題是民國年月，跟紙本一樣。'},
+ {sel:'.cal .day:not(.hol)',pre:()=>setView('person'),t:'一天一格，跟紙本一樣',b:'每一列是一位治療師：左邊是代號和名字，右邊是他這天的班，例如「早」「午晚」「早晚」「全1」。「休」是休假，「—」是還沒排。顏色代表時段：早班橘黃、午班青綠、晚班靛紫。'},
+ {sel:'.cal .day:not(.hol) .ln',t:'點一下就能改',b:'點任何一列，會跳出大按鈕讓你選班別。選好後，還可以一鍵填到這個月其他同一天，例如所有的週二。'},
+ {sel:'.cal .day:not(.hol) .dbtn',t:'點日期',b:'點日期數字，可以看當天從早到晚誰在上班的時間軸，也可以把這天設成休診，例如國定假日、颱風假。'},
+ {sel:'.panel .pn-sum',t:'右邊是剩餘時數',b:'這裡顯示本月應上時數、正職和兼職各排了多少，以及還有沒有時段缺人。'},
+ {sel:'.panel .pcard',t:'每個人的時數',b:'每張卡片是一個人：本月已排幾小時（平日＋週六），還差多少。正職跟「本月應上時數」比，兼職跟他過去幾個月的平均比。名字的顏色是他最常上的時段。'},
+ {sel:'.panel .pcard',t:'一次排很多天',b:'點某個人的卡片，選好班別，再點日期就填進去；用滑鼠按住拖過好幾天，可以一次填完。也可以按住卡片，直接拖到某一天。'},
+ {sel:'.actions [data-act="copy"]',t:'① 照上個月套用',b:'每個人每週固定的班，會照上個月同一個星期幾自動帶進來，只填空白的格子。排新的月份，從這裡開始最快。'},
+ {sel:'.actions [data-act="autofill"]',t:'② 自動補空缺',b:'電腦會比較幾千種排法，挑出最合適的一種：每個時段人力補滿、每個人接近平常的時數、照平常上的班（例如有人固定午晚、有人固定早晚），而且除了排班者，盡量不排早晚兩頭班。已經排好的格子不會被改動。'},
+ {sel:'.actions [data-act="fillme"]',t:'③ 剩下由排班者補',b:'最後還補不滿的時段，才由排班者自己補。'},
+ {sel:'.viewbar .seg',t:'進階：誰來上班',b:'按右邊的「進階：誰來上班」，每天改成依早、午、晚列出誰上班，缺人的時段是紅底。按「紙本格式」就回到原本的樣子。'},
+ {sel:'.cal .srow',pre:()=>setView('slot'),t:'點時段，看誰能來',b:'在進階畫面點一個時段，會列出推薦人選、可以但要注意的人，以及不能排的人和原因（休假、不可、會超時）。點名字就排進去。'},
+ {sel:'.actions [data-act="preview"]',pre:()=>setView(TR.orig),t:'列印班表',b:'排好之後按「列印」，會先打開列印預覽，看到的就是印出來的樣子：跟紙本一模一樣的 A4 橫式班表。\n上面有：每天每位治療師的上班時間、本月應上時數、每個人這個月的時數（平日＋週六），還有每個人的簽名欄，印出來就可以貼公告、讓大家簽名。'},
+ {sel:'.actions [data-act="preview"]',t:'怎麼印出來',b:CAN_PRINT?'① 按「列印」，打開列印預覽，確認內容。\n② 按預覽上方的「列印」。\n③ 印表機設定選「橫向」、紙張 A4，按列印就好。\n不需要另外下載檔案。想留一份電子檔，可以按預覽上方的「另存成檔案」。':'① 按「列印」，打開列印預覽，確認內容。\n② 網頁版放在 claude.ai 裡面，不能直接叫出印表機，所以請按預覽上方的「下載列印檔」。\n③ 到電腦的「下載」資料夾，打開時間最新的那個檔案，按左上角的「列印」，選「橫向」、A4。\n單機版可以直接在預覽裡按「列印」。'},
+ {sel:'.actions [data-act="undo"]',t:'按錯沒關係',b:'「復原」可以退回上一步，連按可以一直往回退。'},
+ {sel:'.actions [data-act="backup"]',t:'記得備份',b:'班表資料只存在這台電腦。每個月排完按「備份」，把備份檔另外存到隨身碟或雲端。'},
+ {sel:'.tabs',t:'其他設定',b:'「治療師資料」可以設定正職或兼職、時數，以及每個人不能上的時段。「班別與人力」可以改班別時間，以及每個時段要幾個人。'},
+ {sel:'#fsBtn',t:'全螢幕',b:'按「全螢幕」可以讓班表佔滿整個螢幕；手機會自動轉成橫放（部分手機要自己轉）。再按一次「結束全螢幕」就恢復。也可以按「收起剩餘時數」，讓月曆更寬。'},
+ {sel:'#tourBtn',t:'隨時再看一次',b:'忘記怎麼用時，按右上角的「使用教學」就能再看一次。祝排班順利！'}
+];
+const STAFF_TOUR=[
+ {t:'治療師資料怎麼編輯',b:'這一頁管理每位治療師的資料：代號、名字、正職或兼職、時數，以及不能上的時段。\n改了就會自動儲存，不用另外按存檔。'},
+ {sel:'#staffList',t:'治療師名單',b:'左邊是所有治療師。點名字，右邊就會換成他的資料讓你編輯。名字下面寫著他是正職或兼職、需求時數多少。'},
+ {sel:'[data-act="add-staff"]',t:'新增治療師',b:'有新的治療師，按「＋ 新增」。系統會自動給一個還沒用過的代號（A、B、C…），接著在右邊輸入名字就好。'},
+ {sel:'#f-code',t:'代號、姓名、班表上顯示',b:'「代號」就是紙本上的 A、B、C。「姓名」照填。「班表上顯示」是月曆上看到的短名字，空白就自動用名字的後兩個字。'},
+ {sel:'.seg:has([data-act="emp"])',t:'正職或兼職',b:'選正職或兼職。正職的時數跟著每個月的「本月應上時數」；兼職則用他過去幾個月實際排到的時數自動算。'},
+ {sel:'.seg:has([data-act="hmode"])',t:'時數',b:'「浮動」會自動算時數，換月份也會跟著更新。如果這個人有固定的時數，選「自己填」，再輸入最低、需求、上限時數。自動排班和推薦人選都會參考這些數字。'},
+ {sel:'.switch.act',t:'目前在職',b:'有人離職，就把這個開關關掉。他只會留在以前有排班的月份，不會再被排班。建議用這個，不要直接刪除。'},
+ {sel:'.switch[data-act="isme"]',t:'排班者本人',b:'設定排班者後，自動排班會先排其他人，最後剩下的空缺才由排班者補。全組只能有一位。'},
+ {sel:'.tools',t:'班表偏好：先選一種',b:'先選要標記的種類：「偏好」「可以」「盡量不要」「不可」。'},
+ {sel:'.pgrid',t:'班表偏好：再點格子',b:'接著點下面的格子塗上去。點「週一」可以整列一起改，點「早」可以整欄一起改。\n標「不可」的時段，自動排班和推薦都不會排他；「盡量不要」會排在後面才考慮。斜線格是冷門時段。'},
+ {sel:'#f-note',t:'備註',b:'寫下要記得的事，例如「週三下午要上課」「月底比較忙」。'},
+ {sel:'[data-act="del"]',t:'刪除',b:'按「刪除」後會再問一次「確定刪除」才會真的刪掉。離職的人建議關掉「目前在職」就好，以前的班表才看得到他。'},
+ {sel:'#tourBtn',t:'隨時再看一次',b:'在這一頁按右上角的「使用教學」，就會再看一次這份說明。'}
+];
+function tourStart(key){key=key||'sched';closePicker();S.brush=null;TR.key=key;TR.steps=key==='staff'?STAFF_TOUR:TOUR;
+  if(key==='staff'){S.tab='staff';const cur=S.staff[S.editId];if(!cur||cur.isMe){const p=allOrdered().find(x=>!x.isMe);if(p)S.editId=p.id}}
+  else{S.tab='sched';TR.orig=S.view;TR.origSide=S.side;S.side=true}
+  TR.on=true;$('#tour').hidden=false;render();window.scrollTo({top:0});tourGo(0,1)}
+function tourEnd(){TR.on=false;$('#tour').hidden=true;ls(TOUR_FLAG[TR.key],'done');TR.auto[TR.key]=true;if(TR.key==='sched'){S.view=TR.orig;if(TR.origSide===false)S.side=false}render();const b=$('#tourBtn');if(b)b.focus()}
+function tourGo(i,dir){
+  const T=TR.steps;while(i>=0&&i<T.length){const st=T[i];if(st.pre)st.pre();if(!st.sel||document.querySelector(st.sel))break;i+=dir}
+  if(i<0)i=0;if(i>=T.length){tourEnd();return}
+  TR.i=i;TR.dir=dir;const st=T[i];
+  $('#tourN').textContent=`${i+1} / ${T.length}`;$('#tourT').textContent=st.t;$('#tourB').textContent=st.b;
+  $('[data-tour="prev"]').disabled=i===0;$('[data-tour="next"]').textContent=i===T.length-1?'開始使用':'下一步';
+  const el=st.sel&&document.querySelector(st.sel);if(el){const r=el.getBoundingClientRect();if(r.top<70||r.bottom>innerHeight-40)el.scrollIntoView({block:r.height>innerHeight*.6?'start':'center'})}
+  requestAnimationFrame(tourPlace);setTimeout(()=>{const n=$('[data-tour="next"]');if(n)n.focus()},30)}
+function tourPlace(){
+  if(!TR.on)return;const st=TR.steps[TR.i];const spot=$('.tour-spot'),card=$('.tour-card');const el=st.sel&&document.querySelector(st.sel);
+  if(!el){spot.className='tour-spot none';spot.removeAttribute('style');card.style.left=Math.max(16,(innerWidth-card.offsetWidth)/2)+'px';card.style.top=Math.max(16,(innerHeight-card.offsetHeight)/2)+'px';return}
+  const r=el.getBoundingClientRect(),pad=6;const L=Math.max(4,r.left-pad),T=Math.max(4,r.top-pad),W=Math.min(innerWidth-8,r.right+pad)-L,H=Math.min(innerHeight-8,r.bottom+pad)-T;
+  spot.className='tour-spot';spot.style.left=L+'px';spot.style.top=T+'px';spot.style.width=W+'px';spot.style.height=H+'px';
+  if(innerWidth<=700)return;
+  const cw=card.offsetWidth,ch=card.offsetHeight,g=16;let x,y;
+  if(innerHeight-(T+H)>ch+g*2){y=T+H+g;x=L}
+  else if(T>ch+g*2){y=T-ch-g;x=L}
+  else if(innerWidth-(L+W)>cw+g*2){x=L+W+g;y=T}
+  else if(L>cw+g*2){x=L-cw-g;y=T}
+  else{x=(innerWidth-cw)/2;y=innerHeight-ch-g}
+  card.style.left=Math.min(Math.max(g,x),innerWidth-cw-g)+'px';card.style.top=Math.min(Math.max(g,y),innerHeight-ch-g)+'px'}
+$('#printView').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-pv]');if(!b)return;const a=b.dataset.pv;if(a==='print')window.print();else if(a==='dl')downloadPrint();else closePreview()});
+['pointerdown','pointerup'].forEach(t=>$('#printView').addEventListener(t,e=>e.stopPropagation()));
+$('#tour').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-tour]');if(!b)return;const a=b.dataset.tour;
+  if(a==='skip')tourEnd();else if(a==='prev')tourGo(TR.i-1,-1);else if(a==='next'){if(TR.i>=TR.steps.length-1)tourEnd();else tourGo(TR.i+1,1)}});
+['pointerdown','pointerup'].forEach(t=>$('#tour').addEventListener(t,e=>e.stopPropagation()));
+addEventListener('resize',()=>{if(TR.on)tourPlace()});
+addEventListener('scroll',()=>{if(TR.on)tourPlace()},{passive:true});
+
+/* ---------- toast ---------- */
+let toastT=null;function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,4200)}
+
+/* ---------- brush (pick a person + a shift, then tap or sweep across days) ---------- */
+function brushApply(date,mode){
+  const {sid,opt}=S.brush;if(isHol(date))return mode;const cur=getE(date,sid);
+  if(!mode)mode=(cur===opt&&opt)?'clear':'set';
+  const nv=mode==='clear'?'':opt;if(cur===nv)return mode;
+  editMonth(m=>writeE(m,date,sid,nv),{noUndo:true});return mode}
+
+/* ---------- clicks ---------- */
+document.addEventListener('click',e=>{
+  if(D.suppress){e.preventDefault();e.stopPropagation();return}
+  const el=e.target.closest('[data-act]');
+  if(S.brush&&S.tab==='sched'&&$('#modal').hidden&&S.view==='slot'){const row=e.target.closest('.srow[data-date]');
+    if(row){if(S.readonly){toast('你只有檢視權限。');return}slotToggle(S.brush.sid,row.dataset.date,row.dataset.k);return}
+    if(e.target.closest('.day[data-date]')&&!e.target.closest('.dbtn'))return}
+  if(S.brush&&S.tab==='sched'&&$('#modal').hidden&&S.view!=='slot'){const day=e.target.closest('.day[data-date]');
+    if(day&&!e.target.closest('.dbtn')){if(day.classList.contains('hol')){toast('這天休診');return}if(S.readonly){toast('你只有檢視權限。');return}pushUndo();brushApply(day.dataset.date);return}}
+  if(!el)return;const act=el.dataset.act,v=el.dataset.v;
+  switch(act){
+    case 'fullscreen':toggleFull();break;
+    case 'tour':tourStart(S.tab==='staff'?'staff':'sched');break;
+    case 'fs':document.documentElement.dataset.fs=v;ls('tr.fs',v);render();break;
+    case 'tab':S.tab=v;S.confirmClear=S.confirmDel=false;S.confirmOpt=null;render();window.scrollTo({top:0});break;
+    case 'month':S.ym=shiftYm(S.ym,Number(v));ls('tr.ym',S.ym);S.confirmClear=false;S.editBase=false;subMonth();render();break;
+    case 'line':S.picker={type:'entry',sid:el.dataset.sid,date:el.dataset.date};renderPicker();break;
+    case 'day':S.picker={type:'day',date:el.dataset.date};renderPicker();break;
+    case 'sun':{const date=el.dataset.date;let on=false;editMonth(m=>{const a=m.sun||(m.sun=[]);const i=a.indexOf(date);if(i>=0)a.splice(i,1);else{a.push(date);a.sort();on=true}if(!a.length)delete m.sun});
+      if(S.picker&&S.picker.date===date&&!on)closePicker();const d=Number(date.slice(8));toast(on?`${d} 日（週日）已加開，可以排班了`:`${d} 日（週日）已取消加開`);break}
+    case 'side':S.side=!S.side;ls('tr.side',S.side?'on':'off');if(!S.side)S.brush=null;render();break;
+    case 'view':S.view=v;ls('tr.view',v);render();break;
+    case 'slot':S.picker={type:'slot',date:el.dataset.date,k:el.dataset.k};renderPicker();break;
+    case 'openslot':S.picker={type:'slot',date:S.picker.date,k:el.dataset.k};renderPicker();break;
+    case 'cand':{const P=S.picker;slotToggle(el.dataset.sid,P.date,P.k);break}
+    case 'pick-close':closePicker();break;
+    case 'set':{const P=S.picker;setEntry(P.date,P.sid,v);closePicker();break}
+    case 'fillwd':{const P=S.picker;const val=getE(P.date,P.sid);const wd=dtOf(P.date).wd;let n=0;
+      editMonth(m=>{for(const dt of mDates()){if(dt.wd!==wd||m.hol[dt.key]||dt.key===P.date)continue;if((m.e[dt.key]||{})[P.sid])continue;writeE(m,dt.key,P.sid,val);n++}});
+      closePicker();toast(n?`已填入 ${n} 天`:`其他週${WDN[wd]}都已經有排了`);break}
+    case 'hol-set':{const label=v||($('#holInp')&&$('#holInp').value.trim())||'休診';const date=S.picker.date;editMonth(m=>{m.hol[date]=label});closePicker();break}
+    case 'hol-clear':{const date=S.picker.date;editMonth(m=>{delete m.hol[date]});closePicker();break}
+    case 'day-clear':{const date=S.picker.date;editMonth(m=>{delete m.e[date]});closePicker();toast('已清除這天的班，可以按「復原」救回');break}
+    case 'pick-person':{const sid=el.dataset.sid;if(S.brush&&S.brush.sid===sid)S.brush=null;else S.brush={sid,opt:defaultOpt(sid)};render();break}
+    case 'brush-opt':S.brush.opt=v;render();break;
+    case 'brush-off':S.brush=null;render();break;
+    case 'base':S.editBase=!S.editBase;render();break;
+    case 'base-save':{const n=Number($('#baseInp').value);editMonth(m=>{m.base=n>0?n:null});S.editBase=false;render();break}
+    case 'base-auto':editMonth(m=>{m.base=null});S.editBase=false;render();break;
+    case 'copy':doCopy();break;
+    case 'autofill':{if(S.readonly){toast('你只有檢視權限。');break}if(!others().length){toast('請先新增治療師');break}
+      toast('正在比較幾千種排法，找最合適的…');setTimeout(()=>{
+      const r=optimizeFill(S.cfg,usualStaff(),S.month,mDates(),{seed:Date.now()%100000,habit:habits(),restarts:6,iters:90000});
+      if(!r.filled){toast(r.left?`沒有人能再排進去了，還缺 ${r.left} 人次。`:'目前沒有空缺。');return}
+      editMonth(m=>{m.e=r.e});toast(`已自動排好 ${r.filled} 格。${r.left?`還缺 ${r.left} 人次，可以按「③ 剩下由排班者補」或手動調整。`:'每個時段人力都夠了。'}`)},40);break}
+    case 'fillme':{if(S.readonly){toast('你只有檢視權限。');break}const me=meP();if(!me)break;
+      const r=autoFill(S.cfg,ordered().map(eff),S.month,mDates(),{onlyMe:true,seed:3});
+      if(!r.filled){toast(r.capped?`${me.name} 已到上限時數。`:(r.left?`${me.name} 沒有能補的時段（可能是不可或休假）。`:'目前沒有空缺。'));break}
+      editMonth(m=>{m.e=r.e});toast(`${me.name} 補了 ${r.filled} 個時段。${r.left?`還缺 ${r.left} 人次，需要另外找人。`:'人力都夠了。'}`);break}
+    case 'undo':{const prev=S.undo.pop();if(!prev)break;S.month=JSON.parse(prev);queueWrite('months/'+S.ym,S.month);render();toast('已復原上一步');break}
+    case 'print':downloadPrint();break;
+    case 'backup':doBackup();break;
+    case 'unlock':{const t=($('#keyInp')&&$('#keyInp').value.trim())||'';const m=/k=([A-Za-z0-9_-]+)/.exec(t);const k=m?m[1]:t.replace(/^#/,'');if(!k){toast('請貼上連結');break}
+      location.hash='k='+k;location.reload();break}
+    case 'seed-month':S.confirmSeed=v;render();break;
+    case 'seed-all':S.confirmSeed='all';render();break;
+    case 'seed-no':S.confirmSeed=null;render();break;
+    case 'seed-month-yes':{const seed=SEED();const docs=localDocs();docs['months/'+v]=seed['months/'+v];for(const [path,p] of pending){if(path==='months/'+v){clearTimeout(p.timer);pending.delete(path)}}
+      try{localStorage.setItem('tr.docs',JSON.stringify(docs))}catch(e){toast('這台電腦的瀏覽器不能存資料。');break}
+      if(S.ym===v){S.month=normMonth(docs['months/'+v]);S.undo=[]}S.confirmSeed=null;loadHist();render();toast(`${Number(v.slice(5))} 月已恢復成原始班表。`);break}
+    case 'seed-all-yes':S.confirmSeed=null;applyDocs(SEED());break;
+    case 'restore-yes':if(S.restore)applyDocs(S.restore.docs);break;
+    case 'restore-no':S.restore=null;render();break;
+    case 'preview':openPreview();break;
+    case 'clear':S.confirmClear=true;render();break;
+    case 'clear-no':S.confirmClear=false;render();break;
+    case 'clear-yes':S.confirmClear=false;editMonth(m=>{m.e={}});toast('已清空本月的班（休診日保留），可以按「復原」救回。');break;
+    case 'add-staff':{if(S.readonly){toast('你只有檢視權限。');break}const id='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+      const used=new Set(Object.values(S.staff).map(p=>p.code));const code='ABCDEFGHIJKLMNOP'.split('').find(c=>!used.has(c))||'?';
+      const p=normStaff(id,{code,name:'新治療師',color:Object.keys(S.staff).length%COLORS.length,order:Date.now()});S.staff[id]=p;saveStaff(p);S.editId=id;S.tab='staff';S.confirmDel=false;render();
+      setTimeout(()=>{const f=$('#f-name');if(f){f.focus();f.select()}},30);break}
+    case 'edit':S.editId=el.dataset.id;S.confirmDel=false;render();break;
+    case 'del':S.confirmDel=true;render();break;
+    case 'del-no':S.confirmDel=false;render();break;
+    case 'del-yes':{const id=S.editId;const name=S.staff[id].name;delete S.staff[id];queueWrite('staff/'+id,null,0);if(S.brush&&S.brush.sid===id)S.brush=null;S.editId=null;S.confirmDel=false;render();toast(`已刪除 ${name}`);break}
+    case 'color':{const p=S.staff[S.editId];p.color=Number(v);saveStaff(p);render();break}
+    case 'emp':{const p=S.staff[S.editId];p.emp=v;saveStaff(p);render();break}
+    case 'hmode':{const p=S.staff[S.editId];if(v==='fixed'&&!p.minH&&!p.targetH&&!p.maxH){const q=eff(p);p.minH=q.minH||0;p.targetH=q.targetH||0}p.hoursMode=v;saveStaff(p);render();break}
+    case 'active':{const p=S.staff[S.editId];p.active=!p.active;if(!p.active&&S.brush&&S.brush.sid===p.id)S.brush=null;saveStaff(p);render();break}
+    case 'isme':{const p=S.staff[S.editId];const on=!p.isMe;if(on)Object.values(S.staff).forEach(q=>{if(q.isMe&&q.id!==p.id){q.isMe=false;saveStaff(q)}});p.isMe=on;saveStaff(p);render();if(on)toast(`${p.name} 設為排班者，記得填上限時數。`);break}
+    case 'ptool':S.prefTool=v;render();break;
+    case 'pcell':case 'prow':case 'pcol':{const p=S.staff[S.editId];const keys=act==='pcell'?[el.dataset.key]:act==='prow'?SL.map(k=>el.dataset.d+k):[1,2,3,4,5,6,0].map(d=>d+el.dataset.k);
+      p.pref=Object.assign({},p.pref);keys.forEach(k=>{if(S.prefTool)p.pref[k]=S.prefTool;else delete p.pref[k]});saveStaff(p);render();break}
+    case 'oadd':S.cfg.opts.push({id:'o'+Date.now().toString(36),label:'新班',text:'',h:4,cov:'',short:false});saveCfg();render();break;
+    case 'odel':S.confirmOpt=el.dataset.oid;render();break;
+    case 'odel-yes':S.cfg.opts=S.cfg.opts.filter(o=>o.id!==el.dataset.oid);S.confirmOpt=null;saveCfg();render();break;
+    case 'ocov':{const o=S.cfg.opts.find(x=>x.id===el.dataset.oid);const k=el.dataset.k;o.cov=sortCov(o.cov.includes(k)?o.cov.replace(k,''):o.cov+k);saveCfg();render();break}
+    case 'need':{const k=el.dataset.key;S.cfg.need[k]=Math.max(0,Math.min(9,(S.cfg.need[k]??0)+Number(v)));saveCfg();render();break}
+    case 'unpop':{const k=el.dataset.key,u=S.cfg.unpopular;const i=u.indexOf(k);if(i>=0)u.splice(i,1);else u.push(k);saveCfg();render();break}
+    case 'ptmin':S.cfg.ptMinPct=Math.max(0,Math.min(100,(S.cfg.ptMinPct||70)+Number(v)));saveCfg();render();break;
+    case 'maxok':S.cfg.maxOk=Math.max(1,Math.min(5,(S.cfg.maxOk||2)+Number(v)));saveCfg();render();break;
+    case 'maxday':S.cfg.maxPerDay=Math.max(1,Math.min(3,S.cfg.maxPerDay+Number(v)));saveCfg();render();break;
+  }
+});
+async function doCopy(){
+  if(S.readonly){toast('你只有檢視權限。');return}
+  const pym=shiftYm(S.ym,-1);const prev=await readMonth(pym);
+  if(!prev||!Object.keys(prev.e).length){toast(`${Number(pym.split('-')[1])} 月沒有班表可以參考。`);return}
+  const r=copyPattern(ordered(),prev,monthDates(pym,prev.sun),S.month,mDates(),S.cfg);
+  if(!r.n){toast('空白的格子都已經填好了，沒有需要套用的。');return}
+  editMonth(m=>{m.e=r.e});toast(`已照 ${Number(pym.split('-')[1])} 月同星期填入 ${r.n} 格。輪流上的日子（例如週六）照上個月的順序接著排。`);
+}
+document.addEventListener('keydown',e=>{if(!$('#printView').hidden){if(e.key==='Escape'){closePreview();e.preventDefault()}return}if(TR.on){if(e.key==='Escape'){tourEnd();e.preventDefault()}else if(e.key==='ArrowRight'){$('[data-tour="next"]').click();e.preventDefault()}else if(e.key==='ArrowLeft'&&TR.i>0){tourGo(TR.i-1,-1);e.preventDefault()}return}if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('div[role="button"][data-act]')){e.preventDefault();e.target.click();return}if(e.key==='Escape'){if(!$('#modal').hidden){closePicker();return}if(S.brush){S.brush=null;render()}}});
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closePicker()});
+document.addEventListener('input',e=>{const t=e.target;
+  if(t.dataset.field&&S.staff[S.editId]){const p=S.staff[S.editId];const f=t.dataset.field;
+    p[f]=['name','note','short','code'].includes(f)?t.value:Math.max(0,Number(t.value)||0);
+    if(f==='name')$('#edName').textContent=t.value||'未命名';
+    const nw=$('#numWarn');if(nw)nw.textContent=numWarn(p);$('#staffList').innerHTML=staffListHTML();saveStaff(p)}
+  if(t.dataset.ofield){const o=S.cfg.opts.find(x=>x.id===t.dataset.oid);if(!o)return;const f=t.dataset.ofield;
+    o[f]=f==='h'?Math.max(0,Number(t.value)||0):f==='short'?t.checked:t.value;saveCfg()}
+});
+document.addEventListener('change',e=>{const t=e.target;
+  if(t.id==='restoreFile'&&t.files&&t.files[0]){const f=t.files[0];const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const docs=j.docs||j;
+      if(!docs['config/settings']&&!Object.keys(docs).some(k=>k.startsWith('staff/')))throw 0;
+      const d=j.savedAt?new Date(j.savedAt):null;S.restore={docs,when:d?`${d.getFullYear()-1911}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`:'不明',
+        staffN:Object.keys(docs).filter(k=>k.startsWith('staff/')).length,monthN:Object.keys(docs).filter(k=>k.startsWith('months/')).length};render()}
+    catch(err){toast('這個檔案不是排班備份檔，請選「治療師排班備份_….json」。')}};r.readAsText(f);t.value='';return}if(t.dataset&&t.dataset.ofield==='short'){const o=S.cfg.opts.find(x=>x.id===t.dataset.oid);if(o){o.short=t.checked;saveCfg()}}});
+
+/* ---------- pointer: sweep painting + drag & drop (mouse and touch) ---------- */
+const D={c:null,drag:false,sweep:null,over:null,suppress:false,vy:0,raf:0,cx:0,cy:0};
+const vib=()=>{try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}};
+document.addEventListener('contextmenu',e=>{if(e.target.closest('[data-drag],.day'))e.preventDefault()});
+document.addEventListener('pointerdown',e=>{
+  if(!$('#modal').hidden||S.readonly||S.tab!=='sched')return;
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  if(S.brush&&S.view==='slot'){const row=e.target.closest('.srow[data-date]');
+    if(row){const t={date:row.dataset.date,k:row.dataset.k};
+      if(e.pointerType==='mouse'){e.preventDefault();beginSweep(t,e);return}
+      const c={kind:'sweep',date:t,x:e.clientX,y:e.clientY,pid:e.pointerId};
+      c.timer=setTimeout(()=>{if(D.c===c){D.c=null;beginSweep(c.date,{pointerId:c.pid,clientX:c.x,clientY:c.y});vib()}},380);D.c=c;return}}
+  const day=e.target.closest('.day[data-date]');
+  if(S.brush&&S.view!=='slot'&&day&&!e.target.closest('.dbtn')){
+    if(day.classList.contains('hol'))return;
+    if(e.pointerType==='mouse'){e.preventDefault();beginSweep(day.dataset.date,e);return}
+    const c={kind:'sweep',date:day.dataset.date,x:e.clientX,y:e.clientY,pid:e.pointerId};
+    c.timer=setTimeout(()=>{if(D.c===c){D.c=null;beginSweep(c.date,{pointerId:c.pid,clientX:c.x,clientY:c.y});vib()}},380);D.c=c;return}
+  const src=e.target.closest('[data-drag]');if(!src||S.brush&&src.dataset.drag==='line')return;
+  const c={kind:'drag',what:src.dataset.drag,sid:src.dataset.sid,date:src.dataset.date||null,k:src.dataset.k||null,x:e.clientX,y:e.clientY,type:e.pointerType,pid:e.pointerId};
+  if(c.what==='line'&&!getE(c.date,c.sid))return;
+  D.c=c;if(c.type!=='mouse')c.timer=setTimeout(()=>{if(D.c===c)startDrag()},380);
+});
+document.addEventListener('pointermove',e=>{
+  D.cx=e.clientX;D.cy=e.clientY;
+  if(D.sweep){if(e.pointerId===D.sweep.pid)sweepAt(e.clientX,e.clientY);return}
+  if(D.drag){if(e.pointerId===D.c.pid)moveDrag(e.clientX,e.clientY);return}
+  const c=D.c;if(!c||e.pointerId!==c.pid)return;const dd=Math.abs(e.clientX-c.x)+Math.abs(e.clientY-c.y);
+  if(c.kind==='drag'&&c.type==='mouse'){if(dd>6)startDrag();return}
+  if(dd>10)cancelC();
+});
+document.addEventListener('pointerup',e=>{if(D.sweep)endSweep();else if(D.drag)endDrag(true);else cancelC()});
+document.addEventListener('pointercancel',()=>{if(D.sweep)endSweep();else if(D.drag)endDrag(false);else cancelC()});
+document.addEventListener('touchmove',e=>{if(D.sweep||D.drag)e.preventDefault()},{passive:false});
+function cancelC(){if(D.c){clearTimeout(D.c.timer);D.c=null}}
+function edgeScroll(y){D.vy=y<70?-Math.ceil((70-y)/5):y>innerHeight-70?Math.ceil((y-(innerHeight-70))/5):0}
+function loop(){if(!D.sweep&&!D.drag)return;if(D.vy){window.scrollBy(0,D.vy);if(D.sweep)sweepAt(D.cx,D.cy);else moveDrag(D.cx,D.cy)}D.raf=requestAnimationFrame(loop)}
+function beginSweep(date,e){
+  if(S.readonly)return;pushUndo();
+  const slot=typeof date==='object';const mode=slot?slotToggle(S.brush.sid,date.date,date.k,undefined,{noUndo:true}):brushApply(date);
+  if(slot&&!mode){S.undo.pop();return}
+  D.sweep={mode,slot,visited:new Set([slot?date.date+date.k:date]),pid:e.pointerId,n:1};D.suppress=true;D.cx=e.clientX;D.cy=e.clientY;D.raf=requestAnimationFrame(loop)}
+function sweepAt(x,y){const el=document.elementFromPoint(x,y);edgeScroll(y);
+  if(D.sweep.slot){const row=el&&el.closest('.srow[data-date]');if(!row)return;const key=row.dataset.date+row.dataset.k;if(D.sweep.visited.has(key))return;D.sweep.visited.add(key);D.sweep.n++;slotToggle(S.brush.sid,row.dataset.date,row.dataset.k,D.sweep.mode,{noUndo:true,quiet:true});return}
+  const day=el&&el.closest('.day[data-date]');
+  if(!day||day.classList.contains('hol'))return;const d=day.dataset.date;if(D.sweep.visited.has(d))return;D.sweep.visited.add(d);D.sweep.n++;brushApply(d,D.sweep.mode)}
+function endSweep(){const s=D.sweep;D.sweep=null;cancelAnimationFrame(D.raf);D.vy=0;setTimeout(()=>D.suppress=false,60);
+  if(s&&s.n>1)toast(s.slot?(s.mode==='remove'?`已移出 ${s.n} 個時段`:`已加入 ${s.n} 個時段`):(s.mode==='clear'?`已取消 ${s.n} 天`:`已填入 ${s.n} 天`))}
+function startDrag(){const c=D.c;clearTimeout(c.timer);const p=S.staff[c.sid];if(!p){cancelC();return}
+  D.drag=true;document.body.classList.add('dragging');
+  const v=c.what==='line'?getE(c.date,c.sid):(S.brush&&S.brush.sid===c.sid?S.brush.opt:defaultOpt(c.sid));c.v=v;c.slot=S.view==='slot';
+  const g=$('#ghost');g.textContent=c.what==='chip'?`${p.code} ${p.name}・${SLN[c.k]}班（移動）`:c.slot?`${p.code} ${p.name}・拖到時段`:`${p.code} ${p.name}・${vLabel(v)}${c.what==='line'?'（複製）':''}`;g.style.setProperty('--pc',colorOf(p));g.hidden=false;
+  vib();moveDrag(D.cx||c.x,D.cy||c.y);D.raf=requestAnimationFrame(loop)}
+function moveDrag(x,y){const g=$('#ghost');g.style.transform=`translate(${x+14}px,${y-48}px)`;
+  g.hidden=true;const el=document.elementFromPoint(x,y);g.hidden=false;
+  let over=D.c&&D.c.slot?(el&&el.closest('.srow[data-date]')):(el&&el.closest('.day[data-date]'));if(over&&over.classList.contains('hol'))over=null;
+  if(over!==D.over){if(D.over)D.over.classList.remove('drop-ok');D.over=over;if(over)over.classList.add('drop-ok')}edgeScroll(y)}
+function endDrag(drop){const c=D.c,over=D.over;cancelAnimationFrame(D.raf);D.drag=false;D.c=null;D.over=null;D.vy=0;
+  document.body.classList.remove('dragging');$('#ghost').hidden=true;if(over)over.classList.remove('drop-ok');
+  D.suppress=true;setTimeout(()=>D.suppress=false,80);
+  if(!drop||!over)return;
+  if(c.slot){const to={date:over.dataset.date,k:over.dataset.k};if(c.what==='chip')slotMove(c.sid,{date:c.date,k:c.k},to);else if(slotToggle(c.sid,to.date,to.k,'add')){const dt=dtOf(to.date);if($('#toast').hidden||!/注意|盡量|沒有/.test($('#toast').textContent))toast(`已把 ${S.staff[c.sid].name} 排進 ${dt.m}/${dt.d} ${SLN[to.k]}班`)}return}
+  if(!c.v)return;const date=over.dataset.date;if(c.what==='line'&&date===c.date)return;
+  if(setEntry(date,c.sid,c.v)){const dt=dtOf(date);if(!$('#toast').hidden&&/注意|盡量/.test($('#toast').textContent))return;toast(`已把 ${S.staff[c.sid].name}「${vLabel(c.v)}」排到 ${dt.m}/${dt.d}，點一下可以改`)}}
+
+addEventListener('pagehide',()=>{if(S.mode!=='local')return;for(const [path,p] of pending){clearTimeout(p.timer);if(p.dirty||p.busy)localWrite(path,p.val)}});
+render();initStore();
+})();
+</script>
+
+</body>
+</html>
