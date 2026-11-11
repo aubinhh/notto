@@ -121,6 +121,8 @@ h1,h2,h3{margin:0;line-height:1.25;text-wrap:balance}
 .cv.bad{background:var(--bad-soft);color:var(--bad);border:1.5px solid var(--bad)}
 .cv.over{background:var(--warn-soft);color:var(--warn);border:1.5px solid var(--warn)}
 .cv+.cv{margin-left:3px}
+.cv.am{background:var(--warn-soft);color:var(--warn);border:1.5px solid var(--warn)}
+.cv.am+.cv{margin-left:3px}
 .lines{display:flex;flex-direction:column;gap:1px;padding:3px}
 .ln{display:flex;align-items:center;gap:5px;min-height:1.95rem;width:100%;border:0;border-radius:6px;background:none;padding:1px 4px;text-align:left;cursor:pointer;touch-action:pan-y}
 .ln:hover{background:var(--sheet2)}
@@ -443,7 +445,7 @@ textarea.inp{min-height:4.5rem;resize:vertical}
 <div id="printView" hidden></div>
 <div id="tour" hidden><div class="tour-spot" aria-hidden="true"></div><div class="tour-card" role="dialog" aria-modal="true" aria-labelledby="tourT"><div class="tour-n" id="tourN"></div><h3 id="tourT"></h3><p id="tourB"></p><div class="tour-btns"><button type="button" class="btn sm" data-tour="skip">跳過教學</button><span class="sp"></span><button type="button" class="btn" data-tour="prev">上一步</button><button type="button" class="btn primary" data-tour="next">下一步</button></div></div></div>
 
-<script type="application/json" id="seedEnc">{"iv":"s9CbpImFu_sA3eyb","ct":"-FKMeS6B-PkAxzHnAtY8mVwydkfFEbEPSEgwm7_BvJwlFMusFw2fYn0H5uUTeNPAy6EY3sb4I7xvjGEp2aioyIDiUYMjpwPsarHLD3Ii5uVgGKmVfirv8bR_inK71dKbfhWZhDxf1T9HFCG9z-uCXyPSSHgSyiGEoYONe1bW63QZa0YY75plc_MckdUBJ7H4Ivp4G7k1jBKsojhqnLBvid61-iSwXy3sLWswVp-djqwGxAxbbTMqvcFg5C_tG8WzFBN8Cv6neXoGijc0l8MDJgDwa6hjYmy6wJzweYMVCSwa_cj4rmYoMQMFpHy8XnCJ4ivDB7vSh8iaGJUlKliiRYGJxSupYPdSJbMox_QV5QRATKdE4IE0thZy9GQEQucVlLphiPkGF22-dt987wJkwj-fK102J4R9d5aY3bLmMEA_6WpDhCAuFvI__hrI4tpt600SZ9Y2THGegoy8Zh4BMACpVazQNh-MEgHC91lJ3va7y_PUiEb1PAlRDqpKKJaDdw4u0s8nKfnAFBN35UsCYcByxWiSzMqopVNi-bujm4B1cli-IwCkwQrbPABaEiC-ImYPijaCnHNTMa0_FouJUMjmNOlvfvJ-IwduzoG2b4GTQ6T08dnxZ0ZtPmaX_3C4v6VYRqIxCS1Hjbq1UIzouKCaxXy3SFnbPn21U2Qp9NUugoB1P0wM6aNRJe3jzcre24U_enQj6aLm5l4qgk2sA5INmCZyF-KX8-XlKFfFWhjIFjAs4ZYhCYmvpt-JnF3WBnqmwjDXubKhwqKne82UHELI3xMcDIPFzpSJr8sZlNVDpHYZ_6NlqvqqWoYtj-hExA2oVUz1oYYuoe6rOwN7ONYIgvJmNKbnGnDV4xuPdEXbNj_0ARa68hxvPPT71o24O0Xj5kUJIvOtzGIldq9prmdMKhkukugGxmZS8tzdgBqamcQgNvkuWmoyTmqs8hqiuWdIdbqYTDs2jJZpxdGjSHrMoB30_8UBB6N5FZgcW66vd9_r_yA1z1_MMatmnAQJ-1DUWX_LkjspfPg6WET0brmQ6iJTHzpBq0ld5pq7j5gbKGhG1kNgfT_XzqPMpuTQpf1eZA0mfi11UKnLruN3jfTTuIUaE0Srsb1C0YYzAg8i_c5oxfii2qU2wPZDk489fw7hzMLXLcslkcJ_OvCzEz4vrmKp2RIdPSPLiz-WgeVFDccwlFI1Zqa1-NeLvOVOsfh-U3bIuJtn2K5Sg1dMN3SbjEDyT8_ArcgLvo1gsxcO5S7YTCnOQlU_pJrZ43WVPdoUFhWSIFdcAyZjqSa-SRdTpls7Xwtk1WcbRXDHBipi8P_Lk3QplnSQPH7DtkybQHNCByvoXalO2pf5qOTHZKuneDL8WzgyhsMHoCyjYgMdDmDDKXtiZAvcOgPLGEjxgBaSMipk-oQ7tJdnK3XBlkXB8Kqeidp_qU6BwHFsDh72gjd5qln2ejZhqXzqCy3dZvxSNNjRs49IM5pt-UZO-kEIin-qSm6kRzqvUpinDHc7MYS53fszHTdparRY1rYKTT91c32wVgflhDgainrd6BEPKMRaRMHL5yqlLTvYT3ZedJ0D1a7taLIJriwts5WK3R6r_hTQCtHnbimPm4skQPZ6bcBi1k06Mcgir0el1n5YH84i40A57j8cs44-aQMgRvDbeZGctbmupbvGw0QB8GjMX3PbHsk5E3hbxI21Sg1cRxlyWN2G7wf2z11kbJR9DkwyQOhvMZ2jcRRBGHQ74bogmvuYttes5s2uyPWR2FNnwICO3JKgkItt3jelMraXwr3DNMp89EZ_fVB5GY8UGNh3OTJ3Utrp8cI7Gz5xptei_n-V5wF1VwbBxbb0sGwA788Y3tJMn5wXNovStQ0csjdHZBXlHp3ty0DHjTVInGgT4_0FGCOoAi73y0u6mv1XpIvW-TKipqLKDNupAaGO4sXMGDFFo-ixtVLEItco5Ws-X37Ktwuk9yvPh3jZn2g6GU71TqDILwad9agr_Y1NZeBIFDlwgco_Sk1yutS6bVeKilj74IaB84VfGIuJbLaX3qEg3LU1zL5syoBhzivcwJe4AYvbI_KPjK_0Rt_Gq7AdotKW8bv0nQqzyqQZrtDvQN3GFElp3lxjIwSXLtN7kZvLXQ8lpBGBolC1ee3a5O7FAkcmgmADhXuVU6ynj3euk1SwygXq-wQgec7c0T31FZvBMndTWiC3HpupbszgQaV-DLJWJnjsLcEg3VHgBOqMXSFIL-xJdQRRWza_xgOT2NR07Pz1V0AhwqgSi2JT9L7A2XECb7A1XRI3VkXHlxim5AFcdXtgQZfL1P5q-rJWrra9g339ToNw7bPM2ZCzC9NRSUdv2NK3MBVJiQrCP3biZgHYAWVyeUA4ve3SC2_uDue8YFzjskbqeS8W7xuc-vHf3kLgy8UGo0Rv0jaQRfI7Cjq1bS_NrrsdZH5eWHIEWNs50olh2gYAK7KSyZ9NB_vHqGIX7YX33AGOaNWAA_af-MohssusTH19m5La1ow4zTM6eC9QiGjZMsdh0htKGfdlyXi733ph4pknHPKamIzBZWm-trFlhFnI4yA7XlOGC2wOLbkDmwKO2zLdAS6e_LJe5XMpv6MMB1i6cjIijRILc4o0-xHnR5AqLAZhi7Dqy3RtL1vSd-h0adZpxcYyAaL7K8v71vRLe2hkHLmVPCgFqWlmWMpuf2zd262l5bXIjrggiZCVwtoeY35xhua7PZFBHlfBLrT1RFbbniLKLZmC8Tn8ovpESeLDaj2gwpTJ88FUtoDgHSWcBUrgwzz0wOias9DmM2i5_XsKYFMcXNJdQr7BecnVUik0wPYS9GMk7_LqcOWt5sRX4r1TIMt8smI-CdQJObyYQZAM5Uz2K6iRxijQ1PU9eTszpHm8rm4_E_dkTAyRGjt6tqY2wKHYo21E-wMr16LSpBH5Fp-VkVHWRehqeNgL7HNct2DCaAxM8xV-s-elYivNmx0A9LQA-recRGCPqz_XTXalJ6TWO6z2HN5_q4saR9XzasosJk8N4TrOPrngBCU5cHZ_HQ7nXhvxl8IzmqTYIThSjMPuh0pvUVhOPTyR4JYsejI85QhjGCVvFcY0PeTxZB61mHrD7RjUFj_YjKJOcy4n5TnOMgWvlpD4V2SdCMPKY9CjOtSsD8nK3MmgfvrtZLcx-iLDRf_C2ix-5vSae5TuzOZ9GeXhYbBwddEiySqhZoCSkg9nDkrX4p4os4VhCKuDcrNjXjC07EWbHMXmVLsXRyf3TfHjRasv5VN-BdsoIBwBaEYmJIRvmsbW8HA9Ouce9dNoBBLZxKnl3CZqGbTXmpXJIljTXHY-1Vr8IxEckFrTUkYWWtXmjoOs7NXhbZ4F3nXXZsi0PlqE6b_bi4yJT56uKnNqgATJcz5Vnh9QTliHCwem0qAvj0rk_pycfIHaLAO0vQQaZaUqnz7R3r5QApxxYbRecl0z-JZv62FCvvzbjZxA8azkTbzI8UbqJVPP-D2-FzfKMOJNvL-ivBCoEOUyNdg1QIjqN0D1Y1M_BvI7D6z0wNBg2R1EVROcNuqWYJd2QZvF5bG5mnhmhE1tJs54jk25EbdwhAOkUXqPKBrACwIXJlvmrydJlwXMGH4g4CBnV2CYIv5qhSql_6IJCTwacBz7dqZzeIZFtzgSThxEsfYGLmhucuwu1KmZENLhCfh9yr97th1Ez27gRGf5o46Fp2uFuBlDAT1e3XLB4x8BTwUSoyzEAYZRJQoMXyimSe1jP6ghOcL2JdDfPIUc9GU0K8ifP_jr-oi5GEjTBjhnGh9ZzSLiCZWOSyTLW7GkO8GVqBzXbmJYsahumOd86kvSdkbC2Wx4GqmdjIgg6gFJhcYyTmQUXJv6byarfBeBduoEVg0DW5-UpJVzCDiA-IN1LjQkztKl9J2XJ4iZhXlXfWsTl7H842eetdsjzJuHmykCmcz0eGs85JZ64fvhd6q_pHnuROQTnXYZsn5WF6wjPOfxJAgmJhH1f2PV2GFwj_1z6o646Kh7hK5caFtnNFX7fHkJENxQWRlMba1mdeMciGeNafdQJqLi2KSJcBrj3SeQOH7DgFvpdMR-sOHvTuKaisWKLH39QCdlF3EFlKplQVNV6JNi2eAw27lNA21bVWaCXPIiPbkIt8XligI42OxspvHoEBG4IWkgAejnpqaSprWjV9nCbfuYs55Dg1SXdSWGVm21St75SFX1jxIoJtgss73PBJEsWNDwoMu1U5TJehBeTGvp9D5mEhzmnCP6-fKqkV8bDwxQID6nwI4iSWRpHZjoL-st5dH_kx9mnTkIODR6vuZ5lW3Tx-BMl9MAD_HkbiWhyuQPEPEBx5j6zdLW1oz_kU70M83utyYK3-OqKNnGJSN9ft59o2sMkK-1YPXhSySm1jVtPxtuu7Z0aUQsYWQK5embMMfcnJKcOm9uoA5gfbLdAg8bHSYzZVA10h7ygj-PT1gLZLtYQm-aJ0UL6KXVWxtRfypUDZg8TZcQjqamtwQCqoc1T72MU06N_uON3PNtqI2EbhTp2MM2gmaJ0onS8gX9MlflpUsx2fY3fX8F0E7nzEtpOXoENvwz9qQU3MWjJJ92-OglXwleWdmf_p9bwcnRhVJrY7998-DobkjA7q_n8d-6OnzqIIoKEqDMph-BJvSQgZNoQlAEmZcWRbmGd--PIKwOWjMI2bvjTnu8utHLb4kO7y8yDJOzEK0r6i0MoAVvWTcwEE9urfQjuF07ICvBDg51AFuIxzlg888mzzUrDZhJUOxR5RBm2yIdsE4WPY3eX3HjaiZM0rG-k6T1dq-TLQ3H0Khk4mYCWFv6Ec_RcVK5yqtwjor_19ws4ejf7JSFlMx84mSmwsr25MYDC7LLOgcBiU9vkEdfZCujZ5mvEgWUkyPE8GEQfymJ8gk9Aej8qPgOEnmdqc7fEMvYyBnqcDBkQmy8CvKB5f4M_3vgsNN-9HS6nikwMUdTlDaqhexABdfIAzD2Zc7mH-zJ56xi-0tibGMUP5pag8wtJ2i0pa0G9YE9Hb8d5C4DaGpHwAonJ0VFlvb2qG9N9sGNdluYta4potapaqZBhG0gI0fPSyXX1Dv3jTzaVbf2Y46U3r4OcHeAdVO4gOphC78SMRGoKhxjZ2ADr-nbp5Ju0FDWxhCB8Fi3tOZil3_hNClP8XxD_ZtEqs_Zz4uh8FKnONZmClVgAHurTzk9eZ9VJiYKLy1t4tF9xkh2CvooUj9PnonnBtyFebbUeQLeHyZMgACw4kSVu5RiUXkqJD4FXX8Y_F8ZLQ4ImWTkJsd3Pu8lxHGBtXi0oI_G9Y6lDs4eRrbamP8B9NpRJFm2haKuh7ZuHUWYoRVL209kbvHYJSq73kaWtpkae0f-0LNMa_nRKM_Na0ODDrDqMQBFOC4AJo02E_7MEIwBhbDBOud7etdNfPpBkmIW8PU81O-A93SHDH5_UdL1O74vcw_-Pz6_1Hqyh1K-ZkJ3rNjk48T2lxtuPSnT-Sq7b5LrEL4xA4EXhyOQviUJXpnfpFzit8AMbcraDmUkNDOXBE1oSBC0JtiyABAkZMjyojDza8OUklpvfNrZ6I-fIzA0HWWmFagvhWCyTNx-3zHUv79tv9PC4C5j6hBqUp4JsVHvbJ6MEMCWtz2gazspRWI5lntqsj2gco2BO6n9pD4WOUXQ5p2-c5bzgXD8gWg4qrzL2FYqhjlOYol5C1QomGI6caUtpvsRtIYFmM1ZmHZ5Kn7EWdvyRSLRKllR5sYTzZ4Oa-NHyWlEHD59jGtYhNkSajGTCFsR38iZESty2C_R7VHiZ14pHvJtD0p4LXtMEt6U4p2VSujCNIZOp4Jan9Y7umXJazktY2CBfa6DDq8dVFKFuQ02bD5e9SpL3iSkT2vkgJpoo6eKnalMYCml2l8sRr1OiIZ3JQ8EKLSlBdZYhMAq9G69PBCBt-ARaMVIqHUnX6pfD6LWeEzLTFR10E6vHWuaQoUMmv1ur0mn2d7z9qLQrCMzqcYTliBIUC1OdiHs-crjKn_zHh4e5NFVcn1oYI9KJaXeg1_FoLD9ZhIZX3cd7gi9YmkJDQOQwwgXoN7O-NVqQy6KRd6l3iP6cuuInaqzIIFMQOReN3F4JOGnZtT_j5jiSRL85BFpzrMSEYUWlkPjI08FpbaRRbhDzBdE_ed6lCgiN36-yXIvFQXN9I85418Axt-QMryz6yQG75kvnZEMdoyOCf6TnMCT_IWzmTngOz8GvbIb41s8MKE8Za3E64v1i9cMugW1bIueJGewjDMr1q2Y28Nl2rCp4NHaL53klwrBI2JVEFZzD-9QgRPHOws3QhfKbNIZZNUp6iyTkETr4tYOTwnrUEwIeBkplZZHJrVr6Y6UdtsI1sbuHtYm1KHxj5ju4HUDh6CfWUunYRXKa0RTXzhF9Z8_ae0R_7KBq3FstA6EFEpQpHIjZ0EL2KamD1EV4Jgjgp5dFSKlX_qROSd_cRA62Euw0be5azry2CmuPNb4ZZeIDWdTLxN5IjqzaJpco1RP8G-k_v9K2JutZ4U6YHxLhYbtLOY-spN0jwuuUJWjlm-zJiW_DTw8Mfgjeg44y7hDeX6jY6lsAnaLba80UQN7xsIjfH8CmZ8Uzg5YoCFCVTCzWvN3nB6JoxanHFheXPpAUfx8rYdjMMr71vrjwNhblnUMPsdswUNHp2huKjbSgK_WFUsWjoTP-I8XYPo1PRqY4_AvmBj2pEIlxNFgn6_h8a-5T3DvxbU3e7UhTrrvfF0s1uAfDj7praCiTftx7e3F6qlLJcGMKfUXpxy2n-zIhhuUAZuWFq0WOssDWb53fkK9olVQUAtam-JHlf2QLbZf_AG7ZQQ8Vm0NEuZ78Seg4brmdFNIkgcU-5vrEUl7j9Ot4BM9YPCJojJ9xc0geFH1ydLOsmMqIVWceAbcQCO23HZd-CHoi7aLsCCpp3bQA0C7hHEzEuKXCsfGvEg3nkOPlWZN0OLjLuCL-rBH4CrgMvO6CWyOPrykPZyY1S0DSftoegz8LOI-qQi-Yi1jUYmFt0nfGSqFB7ttKe7il65HT-DwDkqUtQfXzs25hZlLfWOmnLB32MGR4VQMKiRhou7txV6sweWYHo8rXhEZyyrfIfp9v2k1DAQp6-aOk-P-sFje7xBmdUr7-rdkOW4nuGqOskKsNqSOnqI3tJ84ygMtltYkWt_a_cVPX78Ry6eNVrr2s5N1gIWdDAgYFu7ir5o5ONyEA4eSMwR3nf4M7dya_iIJF2EGPJB7l_cjslbjm4kfOmopgC1BnkGRqIOLYIHJeK3nVALQUJlcsf7zgrdBZz3OjDptMlMAUHaXx9Qz9KHMdrGgUvkzSWXM3InME4lCD3wWGHrnhuWY6NmJWBUIeVDgGGOhmb1Yw-4Sd--3WJlhxiEgLdebWe_kRlOvDFP9u1D1P96QrAckVFOtIPQLub6g607Bpdwg9caGkS1L_mbXMWXf5k7xJ5g4FzFZ86ilqjZ7IJ7pSu0JC29TGpol8gfI9sROXS-GGLYzoZZOCZuD7MwBDhfSZtM7Oh7aHW12BX_01jghmS41raB-RbZerm5fNvsXGFcTHk3E_LoCfZsFuESO1a2OuGUQY2nx0zP0YHRrR1wBhJGisSjdGAQWhJcIn0MDaIZeTp4WnuiPsi8mMoRL15j-Q_5ez4_bliJUL4T3KMx-9xWWxUSp6WFKklbwqhJfftgux25A313RrE4D2_xwf0u03z6598QaPJ3n520lcyg1ISvPSoaLrl-ynP81pNqLFZ-M4eAXVV0XKPETjyKM_nQsuiUrdyghDPGdXl-shKgCj7HVSqXh3XTHhufmO52vwK5AvKoRuBZ6tOPnKN5R66Y7gH_buomUEXMElPkDaVXSgD7nXsG0o9BgVYrIlqAb7Jkt0eBP5SLCTgmhzwyFh1bx0_T0zDgsVj2zSi1fcKLyk2e9kNvtNO9dtS9v6IAUcsIfNZtjFtiJqPzluQ1w8xBpYyDpigZP6xMKERD9kyNDGSJfi1TG9ozI-QQFhgDf9cBhLzYSc5G1AmVgj4ubu7P9VKoL-26tyooMsBJ143Omg4e7n1nqOsbNnq6Xnxc28OW6kCC_6mTw3ut5_tzGP9HoL6oOMZSoytpDT3xse7ni8PmuszQZ7aEILIaGhy7angO-LrjxZ_MPIDTj0WuARP_r5UMhb1OivFQsFP3tJSw1Y_Sz8worJFJYabT2CjMqWbhBF1cQhKyopkz9SN-KyCa06_LULnIzG6Dz8zXXef5g9p6g2SCmsw-4B6nBe8rmn-Jw7_o8hn9uKEYJho64waFFT7UMUKQkhqq4x-TDyhxBq-Jd9Izeiw6CBpf021dViFQbQl9CCaHaggYNocY7dSwMJBME3SFgk3WDWSDsc6Cl-UfOPSewFXTzqIkjGvUHaoNdM-M-Kx0bdCXsMUKiHihs8KmKmnhmsRD6KD5Rek3an5y929CVHJwv1fjTaUv9dBpyVxwcYAy6Ga8u1IyNHXBgseZsgSh_GDWgbXvGgApr4W3G6vCkd3HiOof3xcnxSRQbnc_rbxxnig5UGDby5Y_go1HmFX5PS-o0c_GsK8KzKwRd8x1q0WE9-Co1tk_auJ0CRQ0SdBCnHz_xnoh2dkJM-dMv4rWmfYWLgk1VNMcUdjPis2m-NzSVUX9XI3btSTeDQDpltPnXwxP2_gt2c6oq51r3her_5YBQDABN0xyNPA8BdEUWC2a9D7LSGPcsKMd_5GArGQIrmhtVb1M-W6MCE2hfbkkZB-lbC6rc5XbvY5Sei6a1ReCZGsORPWOWPRImU_7Q4m0_0kZn6PyVovNmBbX9s2jg_01c3pOeIUgYBhJ5RUhDeqK240RBBxDuof1FB8wzURhw6chyJm3BAxG27ektHfk2-etBIJ0BYFGcOXiU_XPvr3tNijMsoUulhwicxKXe9RCXWHJQY0bincf0Ma_XSVq6oioyrQk1hTLcIXH0g3cqosgqkbcBTYQbIOZWb0lohtqLebhjzduGnmXeLAuJ58ImXYWiXHNzbnoegMprKjI0urRIVoPJG5RHaDf6uDmLNwNa_LkmAUBdtkrYEJMJnlzVUhyrc0irJnXei-F4eq1WbFJr446v5iRLm8n11kowngvUMeSbFTXHIXFFd9_QGUid-7AfJBfjsryPwWpATsPse28Rld95ZwG72l-1aEFwtbGEUwGZDhO7LXoqxTbVhWxqUC-14qOCk-zULx1aZ_TePCHGzNidMdC6ixQBodM_VurDqG_tSbSvup86YbXgPAcLrQ2N-jWnuY382QA31mZBrOr_mZDjffG5CmRjD_QW-5b-eDXR3Nz5k1NLS0XAbdv_iKZHu6BxE495rfzEDzpkHUkcahkkq8vBuqwKzQYfjhEJRUc9PWVgr_xBjbbnbBN7SXNPcE-oHHewQuj6PUj-805SISiuNWq2UfN7ZJgNZKjCevgzVYX5MRPR7s3bxyp1RFRt3KISDudebRbbyJdUcitJkn4hl67mo8A24AHK5Xms1F7ZNS5KPdjM0NO7FRg-0RS4JI9Olj5RnFI6IXEwcwvf7L5_zG0WiVOGqLcIx5udZxFlxWBwQZzSO6BDAlT6kYkp3OL5WMfYqE-W9UE8IiUsdrHdWt0odOdWDTNOwDnlOANtzrUWxZYnjyISr6tT3-a7Mis8uGp7BEyPs8iF9kzNUOq4UGGh275U5E6Q78IfoIH5doj5mxLfTbKcN0Am8s5kdmwGEVZ9kdLOkaGSrWBbfpib1Zqh6mQ41hO386S99H-Q8cOeTe-sf0VaXcrgIiuXf3FJ4b1QJis4oarhgIPpRGemt9TSqE6XaLmNy1VqYzBrku1XME1H3ciDymaNvZcO0HYMsnBGV7UypL3by5pcAiM5LvlXZ4aGitCkzpwwlg0LNMbYdyxcaI5LjltKd9fpTqjMIk_khFYNXciTbiJmxvPI1qK0k1Bm_j7BFIlDgV78Y-JvVhxT7BQbIWW_J5UviftmZehfrqKHJono1cqPsqczcapZKkcY4Emc0KhTHOm7pIaKnIp_JtZ9-hPCKeAk6UTG405inrPcKwsGfeCAPmtZgWCxK4pnpU8UgSCVQIJ8KqgTDAN26RDRodGxJ85LxYJTxogmdYiJdE2_O9yOPoXVgvEO-bw2nNfSpI-3fIkvNo-3Iaeo6OtH0yNaIOKmnGFyNFs-PTfxXQykrif9iMBRVZgZMwaFNRjHoaAxBTtWDeWQ1HbiZ9eIZ4aE4rt3-99mFT_lBc8D-jebqLrCu1IEj8XdficapemoZ4GonfUaiV7I9ukix_wwAWePEvrvPuJjdYqWGEghCf9bd9hZPEEDJOyKEMTsGNsJO_Nznrb8xtwUXBfV3OKf0tVMI-deOo3UBi6XbAZqWqpduCVbV8N1Mp7iv6UwiHmvsAFdvg4OsswZpM_V70G59guyhg0eMcnewMg3k0crkOWeXpt20D1N9DUburxByONu__Od0ByAnOKeGUlFFWLfpeJng2SnlkTOMQadtJXhjU0vDvxL2ZHbx-Yrj0wNxeCq0z34rYRCOMecoPNpfUt6h2IMNTv6q0fy4FDg6UL9XJ0cc3twJaTEzEAUiG4S4L324HL-VrpKcGMT3MDcFBux998HOhWJWM704Ony7OOp4ugXJ4eqaTF8VhmY5HJyKi_5oh_wgQsrbLj_CRp7vtoNaFOqUDfTFMyAc7kucrT1HUGujtucdHcZt69P98Ycwp17CR68KHyaTMHLecq96mN2a3GwwJKa0kNfQT6wky2ARF5OYuwn6BthrVnbm7AnXe8UreVDKHp-ZiBXUJQyKlZ45W92XQ921q1InugRArYnrashOD13QW-tfRZ8BXJwxBPN98PxzFw8fkmcHBH8fCVP-a6EgbJdF6uvVYHsApMPHa0HEogxqMFRvSTyDne5EB45JVw3VzDq_GKa61BZqoR_CTNFxYrRpZ1Jf4nOyyz9pOToFZruZEveOXRtq2vXrH75F7rydK9ZxJzdPObOoSfyT1BRpjwEmZ8yMpHkmCA1ZOLhGigzaS9Xd9hTCKcrrIWxA9afE2MJxXz_mWvWecpkJumDPLUCw05ItxvCf7DlIZpTEHFfhE9BQukl_pcoJOJjjgEEbzOl8ntufyDtLjhySoa6RlgCKJDST8VCJfy_6t7EtM0hKmpL1yeLv6l78pvr7vKeF5ed-t1DYwix2tHxjpQe84QO95B3lpVhEoHlh5CnZ7nbc0tYcAhFpaMtmqVYLlDFsfLvgIxzMvkVTDA0dj12iAtT4Zmqowr_CZqmORzQl-OXBsox4acLz4kqGM7c66jKNOT-HRWEfWGCaBWaLWQyxfvumsJbe7R-vMcAFwgapjDvAOaVsKseJGjyiFopXKPPS6P-n3-fY9tCrTLjI9taz6412NBVdC4AxLnjADAAAguyPDZUvLh-__dxYPLg13GGz7p4EMX4QGD2Q7yWWyot9kllvaSB9qUIE9xOxJxuoZggyEdQC0PaXJ5ja305KuHi-5F0XJWQkQcSkJ8Jy-jMUiKM0bWzbI9LyFmzR8KIumUGIBsROVoz5lH51iYXxikZhzmXGCAtuPUwSNmSZ3371onSRGp1otjLbd4osPwBoYCA7PEQjOv92du8TnqKw-nTbONxjYk8q-7zaYkFCC8TLPzaI_WXFubOqXfuqhyVTVFV6P66ucu6HEoyFEyiBf9ZUomlLLEDciHDlc0T7cD7NCMcJZvgz00ywTblAjnzVLvo3Jnuo5z69mdkXwxzQgEbuqvMbD4G0KL4r7ovVwOOmamzf0STTwnPy_yc53eRx4m_L7MzoZmjJqFJrnUwwdZrJDG-QrqLTN-pbhlou_Je8onV5AgOn2UOzCOQRlGzcnlqoVjXLbGyoaSZnC6KWeNAG-FEnIduEO4KSZ4s8xcW_3cL1nngjln-UvD2vqRvtl7D7y9-1arrL7TYt3Ef_ryBkXQHv8aUAw4EPdMc6acQP3rgw_ThWuiwOhMReSFLj1n4a9YHZFPdOz0CXbZuma8sohvbIlP2hvgwnVVW5pcGwUIn5_P_Ej4J8Q8Rq750j3vWGp8gDcRD6xxIuSKD0gKAK6da0ZIMwCmpy8X8oNoy26hIjAPQaWXe7Pf_4N9aZ6f2UusaozenaBIdn6Mga9rLnbG9hrtmS_ALoA"}</script>
+<script type="application/json" id="seedEnc">{"iv":"Qe5LGPFPgBETgpqf","ct":"cNmiC3TmfAoSce5zst3WeciR1qapYbbXXYi86D-1Xe6cUslRA0kq24SAehyPnEvKpBmtcIDHL9hCuGP_MG1tx43keIz2h3kmed8RPPLhnp5tqeNQtRtT4Awp8Ol4M_oh-LmEcpu011IHylYYuYpurGWuSVcB0pw2PcAEoYzMkVLiWnfb2AAjgQTrMRFhPRb4rtntMPWRXNX_jMjQZ-W1eZ8YmnKT1x-mQOrrTlrkmyr_A98_8TJs4LCB3VLWhJDx_TJMee8HTa9hy5jD_Cl9mthazoDe-jhejuKH8SP68Hf2RRMihW5MYAdGgEuqsEONA6syziuCFnf2IaY7EHDGb_ThQBhsuHWuiGt2ENQBhCyFDcnGqlIMSP7d1fNPjh8DtL5ILTaP1GO6OvwIZ6Irv8yGKOwCPw6p2kMsqhU8QgsjZdDHxuLx3s88z7zWlpPq4QyDFCdnjpVwy4Kc29OzJnXGxmRmcy2xtWMJ8QKPUM5veA5ot0sZoNuQGtJzzK7SodZAxG_7FOQa3OfPhW7QdsjKDcSvD2SruyCoLyj4bWCcNlBVGOBhvqezxP2JT58LvG_wqYF5Tkrb2G32xqcabl-EpTEQODOY_o2CrnuWbzCrDzMib9gN-tZsjGBhFR3h50xYfZN_OfxDzQLRjkioAEjarfLKJiEMY09GqRr4gr5rne1QmVAu33mGp2w4zSVNLImOApB7AxQiHjHRNXVL0KQ0JG7VO1WEPoXNnvu8Qs04rLFF5HgOthROxCzUvN2F1r9CeCuOTHRiBS4rC-tsVWSOysLyvfY3Ct-Ggkfb86tEHjbYabaXgDU_uurZFH5D8CC-W4ewvYcObVSbaMHylns6P7X2g2jyy9s0yhiygIDt3pyjd4Hch52MqArkDksEfcJshXOTbfZWcYblhMO5Pow5BizGEAWPJbkNeTFS7hM6SnoUao2aEoqgLUfeIzLneTUwUFaARDGe_LuS3h-SXUl2vRlHAhemn7NXEW7nAVPhXcX0RJN3E7_tFxJDIJdmOYlvx6PqPDDdiAT92ZqlW6C_fpZFKIs440UjCfLVdxt-rmjtrgbiSuwTBLgMnIkDfc_4xKCK-DNyGvvpNced7C72-s_renrB1PjHifVTj36YGTaY6y7fDodpXGVuIUaCzz60SXsOYEVPmTPxUH4yFVyOwn4XrFb6XRAmddJW7rJKno2iqdqQGacytxVMRY8gEiMqLnBDSCgjah3-i6IGaSwa3G3TVzciZiQpg3aIYNvT0cIryBV0l5jhxbeuYh43GmV9_Soi_-SkHL77EBFEFvelKyL51hDkl-GxfiSuPPUHe8spu36DOUJeW67V_Z_u4R0SnsJDtQWUg3tYR1WAC4Po_uXwZIwnze0WyF-U2vpWR-8RidO2umeZ3IfVBt2l7mcXJDa7J6lq78H4wsawmelAF2gHk7WF7juo_E-35xP7D65EMvI5UrBWDKZLhF_4JgsYQaoVG5_8IDlR9TLsAbhCHw_7j3FpkUgT3RWtOkGpXetxIAEUQlLGGlu3quqjQepD84vnd4hfJz4LyqYqXymCif4qtrpgARLWcTorIQB5X92HuHGm25X0-CLGC0aVTZ7Mq-_JbhSCV4_LmfV2PUBZVV2Q0bg8q-7rc9fPAA98XeC2U6KhQPSjHnbBLL2teJPiINlAO3U4DMKyMnA-3MNmEBEJafojZs8xg__ZdLyRMSSyYm74A30Rzi8U_ur8EiyjIIMWS9LGsPbIrFHbcpjHB5qMrS63MSf1iCdVAimRITYMQpsS3-dy8ELOqNjzzsw5UmWmfKTTHG2qtj09wVDiRJb_0LOPArMqzju6rS39z2nRb1_RTS2YOe1tGzayFx16x2s9I2kgFeK0Bt6e5dQhVi3X3dOnDCO9XisbQ-JutAqkENU5v0qT3ahqlF9O_Hz7qlPWXOQtuB8VpbBoEcVVPBMWDRHTAj8H7c64Gf6wYyktCG-Yq3JmFeMRRmL0zpk_UE_y1_kREGYPNFpfVjTCZYouXko4zQKnFXVgG8mMi2Mp785Q4BdWKjnal-56Ugu5jHmX3xKq6wahInXdX1zAGgqGodCxHFfkjk9Zok8FOOa6aN2QIsDNfbcnsnmxZ3VKwJ1Ay5IZgrRQrp4hUGOLW81KQgVWjwk8fVCNU7bUr5ek1ilemqJ58IrlaWYzAbha3qC2D4tNiqxE0PPvxmYI11vWeEapuKZNw1eUOy3z1TeSO3tD78MWHqzkKPs6ZL5oaFQqkiaWhyFBsDclt3wKKbDHw-zuJ4N48SQURXrZR603ovvcU-2en2RV4Psx8fTgPYntfuhSeUtZrtYk54Rtbr1P0B3la40UdwkTxzpZaCkBYzeXSC1renP9w4wROMfjPwTeB4yYNh1EKfMn2XCMp6E2sfA21T7esJkDRPUnPjjLv8kjuCDCafNUipQ4k_I81-4Sk97jLHKm8g3A1vezemtrvAfUFO8ARCvHvRWteJX3hfPapwuvYR3uTYJFlqKkMXnNvfWvMWGfvCnEL198uWK0vgLP1H-4jUds337nXod2VH9I3wZoevHN_M31Cr8QMpmbaCsDZgSpz3kK4WiVsJI_Hjo_XKeDufk0qEUIQt5OgbjsZPbN6yPCmXbVX4ITmzjOuPkiyZR9JK8mm0vG3S6-kUyZEPtLPoOyNr4uxnRfX2jwaSmKZl-NV5pD4plgWB9iPeC8BtkoXQtlYW6jrYzdCXzykvVEI1Kktd9FANesIG25JWm3NGGA9_e4PTJzoOOT7PpS65lw64tVZc5bUm9O0G2bGVIZ8Du0-tRrtBuLsE1un8nC9rroUZ0c52S1iHgKCNf06aFfUyzzgl3_id8HW80pPzpUX7diJwSoa9pvvGWjZa4p1CTBy3XvrIbeQdTPiESEc36NyMSvELHed5nnVrctPDlyIq7BQTHo4m8KPHUOy33Q1jliZcEfzvT-C9tlwvR_hDsu-SCNynY1ImAFUVzBmbsyTrzMCUlrXDAyyu7od5WUmevHPB29MDDYaH1LweGYBcWffeinbuK-Gxkg2TSQTR0W24OKHl54OpwvmWTXNcPdis_0veseevonHwsi5KOcdboIPV-VzM9oWBFOADEjv2VVIGMt-8Joi740YF5Adt5snU4aR9HW8JgBt6CUmevcVQ1i3cQEsrM1QfCIJUR4wVL7NsJf_pxsz-VIohjlbM1kT9w-wZ7KVYnanndl5qqm0qCQES38QylT6KtBa4UQToFs5RdESwFpRGbpC_fk-uGVIZjDHzeuogF4j5YNnNhxRoGd6lqAa-1NnvLyeiCZjiU7U_MA3BGoUvtl0afnBdSbPu3OsqioMXLNiqifEa_SfSVcbd-AIoYVAg2zBD07coJrvAR-rL116nY-v3p4JTlkXV1OCUlJSKKzIm5J7T-uwtsWvnQ34qRKpo1pF3DnfKX5Ck4wRqCH6WEY1uLtR23RP-gehlHJjwpAzToMwBf1B1ieqqkLPD7KuBex8lc7P3Tb1gdKrWmJ1CGFBxvN8BgZS7Ytt7uguXwF4UTwzsG68ZZnuX9fMtFyCBSveUGwoJW0BzO--q0AHUBKvLT6GB4tgxC0ylWsd8elQg0S5KsHEos0ZIysGmM6cnBEvMPNLBKxFbKZlNWcaeLBHU2FE34rjHb0V-jBIQAWNMWRn_xy3JeFypSeMYaB_LfLMOZxLI-gFPUFCn_jvO2f-_mSgM7XIe9tWtrHeI8kvjeEALbqoEuJUX-yo7NHCbYv6jofdlyiZyeAEpF2g_xnRs0Jtfc5f1Z28wrSp85zwxg38btqKHCyrb3QH-a0S3wnxtfhUDrUtKv62qafSQqyzu6q5heU1Iu9GuuCLpn-lMJHhX0QTlwM6qSfmmD5qHUBdzjHyQeih8cv3NrhEw491dCYVntXqI1F68WA0q6tT1bxvmKoJtkz_O7FuqnvGhCJbzkLQh2hYaI1d3qHn7Gxod49zsxKVEzXxsq3dgEJHfihZYpWSphNsr8TNzwzhzn2FqjjFEB9DkiNqMf1PvvRZMNB-L4g2eGm-vO-48Re1TzPXUY_xWGCbIABklxvWI1PLzfLyV_2RujmsMetzjf1tOyPQejr8VKn9oucCikwQkhU1FJ8hCFFurtwg_ePOz3lADT9FtSa-6l1HgK_xv9BulOLb8wa1IHs_SWP4kxpVXx4vOg3KXdcqxX6B4W_64wPwaNLbYOh-07OtZa0xTaYX9fL1bvSqRnnufvDhvsPhLTPDQ9PWG_DSIWwSENujT8h9WjYDruWPhlcSRmPrepmCLJro76j3k8TY6NHjCS7Zxfpf9Ejws9xJGQbW7rPy6wvtsIlkluIZH5aBGdbSAOgiWRlzDUJ4oOhqaQiE8cyANTArfThGd-ERN5NZrBMV9z6Cjqwn2237ZyOD4yHjiMEzTt4F4suEKpU_gvZWzAiKjN_TRcvTH8Ekx8lLjM-K4EHaArcaeS3CwxMBiLL3X_BX-hdUMknIuzVkllg59U4yDSJH3JBIC7qng4MC2V2HUKG0m8UpJxJaTjAk79RmwmAaVXjt4yaE1GXFLdZS1avRADqbm1vX23piL9skRiZpWmu_9GSIyJtr-AjQQjIBHBa0Kr2-x-WkPlqygo_qSMl7WSxN8RFENGHyIpe4_vTcDFsCG5dSDxzbMxakscYGZJiLgADYrXWp-25EDI15es1kaQvDW8rRwwok7cS15N0cdoKhmwEtykbFq7qyfmceppFe0lCsa2GLYqxvSCq3puGKJ6wwLSqjrIDkZxjHqCJSG9avtByG1ngbVQZ1-rOImHsc0OKNon10ef3OathjeGoQEwoGYNpX14Dk5OnjO65HqVrV1cU4HCY9cck97ZvbKZyE1wa2aNEdpEBHIhJNKT_Metby9pJ2S5uArgDPRwkfxvpLF23DEWL175zCx2Ry90ZFjC4nwehel_1Lo9lD9QAjJPdIFN8YHdIoQ-l0x5QAwlpTYLDetrZ-6KN7lNjt82wYzDfN_OvW8N0BILJWGWNIR4-E1FfWeyhRstdVainkye3XkdjuVVVcQgr1wripvs_gAut9Nn2u1_IOPtc7XGFilweggRwql1owATzyg1fWaXo4HatQNb_ln6h5y5Wzr6VAB2koOs2o-ZgnpRMfZbJNFZH7MHR_w4x0y4GPn_GS77ABq-bQtnqQRED7IwfKEClILVFEg9dLnq52zfaMQN9IfM2IUmWWgUjrRQKKsd_w-GgZzYjEH02NnSqF9Svo5dcwyMRNyM5pUa0ArxM10RNDgvPiwYzNj5gXuDnE9EEYEssDSQ7FSebllqGrBMKkkQhTkWDWRLPLBFbVaok4YTAb4yl0lKgOTdR5DWBxB75jJ4Bj2_TYirght-eM1okiz7BVi7juPfMoQfUXcy1dn205y2ZoDRjfCVb-eMQVycByVryHEgYwa2dLKFdT4A8liI-AM89zNVlI-uFSJil1OgwRomihagj1-vQfpFwLX5zPVet2DXrQa2p1L2bDWWz7-7Rp5F8sDTgebkgPAkr859y3CkfKZhx5f7EX1NqMQVLEc0HfCB0PFJ5t1KoeQvCu_WT9ewGyDuZNJMzgLFsYtpUJRvEWd5uRltJBzEKsD9P9ivs9L0EtbHK-dL2ttcixJl28jcGY9FEZ_mcSKuHbDINKdN7oiSZWVbFVa3m4h5TWA72LHyRPmnn2-Tp5t85jBbdPApvfYUl6P-BsPvHVowLiOvapAXhDWO3n6ESD5Pd_cyAlWvuVNgLCaSPaEvbA7nu2_edsYbqpX6xgKx0_G3lsaHyo1LvelupyVoVRIV5ck9c8ZY1TtKvakFgXoTtwsvSCtSf6-PukDedPqBcsfnrpM0BVuQZd1UIE267sQykGrQX1naHzZxlZPntFl-5xA7dNWTDj0O88t-GxIHp078_8ScSxvE329esmHgZIUt4dVFSU5RBKJHz89FYdajCNFRUUakiR9cSXmht0GHDBelRPCkYWrNdWrawR3UBSW_npUE1kgn_5BTqI7gx-yGAFTJoB_xMorPzEaQ8jIn0CMsqYJdKw6OULF_2H40Yt-kRSHN4MWQ1T5kv578vKmM5G2bQWQbDSK1kY22o6zjNpKjXWWmbENdTsSmCx1brIyZdg9QtlNfR88R-KKXZIx6gFLGuG2hv1jCMYdHgOOSkJdY2HjmxTECG1rNTgobvFtNGOe-_FIIM9GO5qARXVVg6mHq7vYiGC_f1LaC9AbZ8nXpRlic0G2mOY6564HPchu-VgDV2F2CYEs3GUO7O9dEDU98ANRX2eZSycHAJ-ZurKaAcR7uCOt-tbP_zHbwe-UFagaeOxYwBWe-iAsNZm1rTQLBivsWxZjBfhh5cqLHCTHAvuyugJcCjbZIuL0wToX2puJuV5xJ-iZqQ4xDSU_lgrrMxiPF7wiCScf1XOpT_SS-t-4kbvsd0oU7wp6_Annz5_kChei4Wh-u0mm0sMgv1Gh5-MuDR1YnQjamTiOJj2wQV-vUluxiirqEegsp8pgSoE56U4QaltvPKcjbBTQmwq8k7cUA88Lgt7DU6T0ME1vdcsHpHYRcjXIRkkoee6r6BMWDSc9jOZLljlHx73CzdFgT40FsBSzNQ8HOCpjzaV-4_3hVL6ToUA2WKR2FmLxl11Qo9iFT2-0cpz-ePVK8Z83dnAZIPRgc553EsTvhy4lY3wdaTdZID9lVY6-jvhFJXTq9YjB18K_-3Ux5DForcN7hS6d8gMhd0jOPDXkIoedRY4wFWAXffjyO8GL2YF4am-2bJa61jy9_ybIk6fPi1X0uFDQinPFDmY_7fL9CcYowxxK0NzcS9LNVBM7xn7IRZtjrObcFI2Fxj4BTQaMgI0K11EKL6AbyYxs-vHMzxLQ2cDRjVnv5g7ASgjn79HxD0zp2rOdobpEp0mzo6vUmwD_CxbSEyJh4yjsJ-ne4vtRIQKNngLoLdzAvi_BkFu_MopCbhS-BkaFLLF4WHqNS0KpQTHfm8Uw6J_vWK5N1QfjIdVtg8TWvRaYaw9394wpYBuU8ZKgcoDVJA7tCc0w0FnsGjKJ88hk3BcPvaL33pNX3a3GYy3WCTETf4d9ij0wHaNC1M4t1qSyXUw4shDDetUdaElxQmHHpN8-23EutD9zG5gc5uJIbYDTGkdkSl6pmy10IkuHw5MDD7QyrNqlAvV-xt0FJs--H5tt0NFtnlUDxuxqPCniEPactr455VoGbtxr6dLqJD19JpQ1B7grgCMdwb0qc8w-M_BmTkq_LNJmc79EiT5YqbuwABtpF3wNUqC63t52e9zep_NP85yEPIr_Xk_X1-OD_r_PBHSMD5G2avbjsPEbl-s3U29Sj5vqQHk-oAEAAZf7v2KxqILbow8eDmws6i-2S_p5WIjMIKBqhJqrM69T1RITk3nyYnafCLsmUjfmocvqDSTsZULYaUzz03O-_HmDhEXjVmEzcD40FziVohE8sVYmdeZ6cze2lOCFVc-SvJxcm_grF0XRYhEhxVY89bdryaV4Mb3cOWYXUkgNnWpTfokqUNiABW4eo5WoIyMU8PsHJa7_eHXJTWjwqPD0KtZJyCvKtPxx_pjra73BNwIvUsunAwai5wS11mVwbP5QU0txghDNOOWVy_fBshGCNFXC4MF24LNtWHH-4zPmU2TvbKJ9audB_MEQWrUIjFKuwxXK4EcsBDg5OuchJbtQSzUqZOViqyREic1X8Ewoljg4n6e6k6linVlE-gk-y55eLmMzRRYbL-nFJaCgYSuFVlezDsOCTOh0-sJUNfIBRuIbMyDXz8F8pQi4OVZCTCNiVtflT_ufoPmvoz-oQSpFnOLaBjT3ustZk8ROqzAHKXrcNPhf1F5VeJK9y4jyhX5EeTKJXtPRsLfbOHklyqdMulQKpjV8hutpp12RNW19taWhckMVph7PrfRrlcaT74sufPlc6yqA9pmQjZKcGQPlkyQ9wYRWqG7e9elfhCGc5gdppLX6JTSMiLNo3CwJOiQdoMTJAhL4fnOjYxinFxuGBhba9w5nokkYvXVP7yozgS1obGelsRB0MU6QIjH9JNpqsLS_J5e4qkFZ5pIt6SSCgalV3aVCwoRCmLc4REBpXw-zb8pyV-ErXgIVbx9rBMt8xFNlcl-kO2PLkMP6ShQrxnXlHmjntfo8PL8TSnFQUoZKx76nByL5-P6c-2cC3vtBO-XlFZSstENeI5xvSaXz0EUNKgxu2iFvKoNjEinpp-Z7iH2bupbT_gO_5DhpYQdHZ_Q4RpifyTxOKmdWUDbbSZW9pJOukclWjgWgbOy38R79J5DSLUiCzLu9P29uT0XtsewHYGO1NBGpiuBtdFQ4X5i1BEvrptQ82MA0Kp9uTJNOX8_8sgxb8t8WRvPqLUdoD1TGL5Eex1JIPhtFyY4b3mYHfMnM0Wwtjpr-epS_Jpi6LGXg8lmbT5EPYqKMvV4XsbuMcQ6FGZ5yNTBAYpKmqNtOMnbR0dOqflnL6fIObCwBhd87KUQcqtW9ciPAfRTB6UoKdpy9ffCGaoo5OkLdC1O6IRhJg_BlVJzFg3eOc4Dr7sskmQw_qBJhKy6yYU1tuaIA3Cux-lByGs4e21bMTMwNC1oTG0TE6p2TPC_Lii1h4LPwvAla-LGU6RhsSWziYdNgkJJGvXkE0pdq4_aFMqCs9ghpwKkIaHYqoNwvTPyXZvB-sCdj95pc5G1t2ajVWwVYC8PShDr-aFbivcFC44YrEfAF0J06y1x-8UrPAAW7WBBoios8Xm5Ay7_vL2d3NzTZOTYVjc2uSt5NLvkMv4RnQUfP__P3jPkEZtvQ5AODGfCGKu6xBdz3URNV_auCtzrOy3f8Dl5ifq4JVVYQYTdx6yGefe9XWEsjUT1bL9EtjwHwd-G6R7od7ZPmntKiK5O9WVLIjqd4oTr8mlaAzpJ5pdtPQaHPTUl8ADR2l9DMtqo72QVgL7H9VhPVKGtYdbiKRwkBEzKX3sd6rA0gaOo1PdEAitmG302pR3_JOnz9XSRu6-rhKBGwGqmd4qXTZnO9PuWCje3JOomfsTUJ0DZiHaRFbeyTP1M1Uh_PGGSezr3bu40y4LpQUN7nIG1dHfqc-wEIHrdqaqio2YhWuEywIMQ-PYr5eAtmURABKzE5kPYY45UqgcVwR_bXwR4-mBJ8hJAtE-7pgBQrB0lAMh6E-Chm0ZmyAi-mU2mvpF39JHasOuKp3d72LF05WhwoIeBskcA80wo0-tjoiZb2lL4hSmDeedP1AAPsRoTKa8CoqU7NHqmYXJvmEJOCypsI3Q9KX3p5_gRlTW9N8lu5hApt9Lo_-HLJgA9GBgPaPInKteTDapq-RSI2VN127yGV4supK5UH5NnuB7VNEbS6HBWhrr1GL-4FswgAkZWW6XcLCgKoztiBPZe0q6l0iCnmkE9is57rYYvVQlmW5uAQyUjTvnQyAXPCzobCvsmRjL625S9JngO6Rf88l0wduKY3zfDNQar9lj95z0mWBTza_m-QJuOGn40wfHPGD_ZrSqlZLqVbPbcVGmkGdpTNTgFQm1ZyjRj4CcWFKtQc8lI_GwsLPkHI2sfWk3H__NtOTTMnsy8CBj1-YJMBSMfLId9cN3LGrOJiqEoqBuF1vc8BQNbUyKn3brYLhEjDIBr_iCXsxfzUXWrTeXB_aD3Hff1ouKnbO6amUgjDcIFT8cLS8P1rWruIEtSYEEcig8do1ltqo9KAP_sM4NInXtNQ7ZDmUDwBkiDOOKnC8iCLddADNlad6Hp5UJ4a7FikMMl67HMs28JyINlGiHxbEFixlkldXGI0h3OQPNH1-P6mVZCNeHEmaGv8DlruYIn4jY4o1RxKeBbfUljAQfinFWoh8cnabtkum0k8Dl6d8P96_9-5q4BT0waD8UF5jA4cKvOKitp-rnzXT1QLil92e2ojRxRSnMnayndzkYhVqkQhsCEhyTc6siF5oCWW26Hf_eL78AYh8prvMJHF_tGrjkTqCCvGIVWTFZ8SNC5Ap2xpux6NBqhKH3TD8rjyvEnKxfvPltZxLv38mf7fLn7hiYcFve43eyjBgKhio0mWa7J_6AHiB_GzNtu2uBmaqwPBe6BOvMXCG-LcVaV4iMCAKMYgVGD9JI-t7tlSzlaIk4TGR1QIuus43ubCdwSgAxWL-AQK-NXsXeijT1Ie9kT1U5wnGRZY-TUd1vzA5A824pZgMdsALaxQSHeYDaGmivy1mFLaR1gl-dQ3hxrmaWysZM6o591OWjIxaMwYWhgitOROifnKaWKf2_F-D7Zlc7IZyr6LFxDWfXC9kYdDTNb3itLdcfLFdAb9CNvhM6lsMdCI99vTrlauuDsKu__CMwM3clYdae-SdgZAVvE1pavO_eH0Txs_ahONr6tKKJmsvDQHNmMlNlgSViggA9cRPE6iDC64OVUfnD4w0kj13uR5TDms0WC1or7VCVO_kVa0n06EIORnhtqflrISfK3ozM7BUfIahe3oqksTQ9blAePxu-4cRs0dJo-cZZAv1FX2DiW_GExwg9g3-j_EhWHTOtcn7ZuGdRcjwwdaPXY8AMnfR59BfiZN9hWgNOB0SZQxuSNkiE4SmIeQRNcekXJV4JjJ73S5LZBhgaiLdPixUzJ_4JlpPJpZVzv3kOCzFSxQb0C9t2aur2ua_wzibGH6356o3GbBd1OpWSEzBaevLgekqLRZWmvHupstCxEg1zr5WP9anm5Y7PxyjjI5nqXSXhmmGHDRyr3FAXGS-vSYs25rPAgUxOlHzr6U3txJoevM1LUiCODIN-VN1bKlZCYQzfjW4jJC5rRPK3SMqi-PtEGbbfQX_FeZSbGR_OC9VfC7SP6cbIpHXHGxEWAaPK_YkNCyqYFLFn1bssTSmMrBhuzJqZWFIjvWekBZ_E49nVjDyni_IRE2Ldr36B-xEsPLP5fnD29ZJaTBHXv3KjmlFGvd7317niojwb6mMP5c0I-iC0QB0n3-31fuGcC197F_iBNH3ygftQsprMFgw9Y_eQnIb4POAynAdGyv5hgHxwq9fqqzWrgPIyUpy-W-M5eyX-FAdJABnUxWhhl2wKhSyddXxyGSo6L8B05f4US-24lTciwpABQnMrFdidniIvsYqGatCDe9KZty2MlPdeCoMawfWCnamX2m70Yot8CpHaKnnKgHLOCDnaVN4Nbm6rllc1o-_fcJjaZ4UmyaqoC98z6U1pfn19peUEqOwk1ki5VF7ZP8k0Bv-fE5ze8k64CX5WduIY6UOtPZ-9cl0l8djoNGWPgWVswzzLNpWgd5ehafJN9i_CRPDIFMVrsLR213XbAwyHaxR9xQmxOWZx87IgJj1Kz5vU17dPPIG2Uj-xZ_frT0eQKR66HMYv0I6WSqwGSCBvcgDH464EEANdUs3qbNKB9hp5MWn0_48REpQxgfFeWiQaXnL7GDRsUtHRXqff2LnFcwF735AK4XoePBtAZo65JCx94rG-tzc8jTBl44nCDsRitPWjKb-ZN4a9a_QZhxtAhFxMJk4PyagqPAicXGslGI6fbS8E7_CR8KURlG49Y8gyKDacxBsFGbYT06mDcXc68BRJaMWBLl8doZ1rA60ayS-Xf65Sr-LqpVdpPwHsH5Ugowu8EKP252tty2UcnaevNgIK11yI-57ODd6Y_f6ZYDkOFMokDmqL1XKKl4mk3V5Kt17IekeDppLii8VYRp5fHekZwsSvFaZ6BxDjIpbaZsuJ_TSy7jC66sQR2ESSJo44CLxkf7CUR_HmGRQ-coqJOtJymYuX77uQqpiLKChIkBPkPj9a7ZHmcb6z4Y4YggJCGkI08FLU9mPEqTvtXYGqBAn0H7AH2f87aNxPdRCOLtMc5s2i1SNCjRKbH65sVJffy8MJRoLAq-nU6VoR_-4tL-Tjr85dabPSuA8sdjLAIO3DJgxSsVMf8diZE1OidXOi23U_B7EHGbG7QWpZHW-HrIEgTrCngpyUZfBr5QOH87AMC1eADuI7w0ZQIccXmLDi78TZruVUapbfbavAR0f7nMcs-PiuUiZ5lRnAoGlrGY4PQayqTDIklUaU0CrwnSWrhAzy7-292_8TF8ZYpOiclJjz08FzV3W62JqT8WsbGZaKkQTYBPLWShjS8fTXgN9a15Ez5LVaD-3rJgS2BV502SOMxiwPzEs6U6EOSGWuQJid6cmA1KRp0g"}</script>
 <script>
 /*CORE-START*/
 const SL=['E','M','L'];
@@ -456,7 +458,11 @@ function covOfV(cfg,v){if(!v||v==='X')return '';const o=optById(cfg,v);return o?
 function hOfV(cfg,v){if(!v||v==='X')return 0;const o=optById(cfg,v);return o?(+o.h||0):0}
 function optForCov(cfg,cov){if(!cov)return null;return (cfg.opts||[]).find(o=>o.cov===cov)||null}
 function prefOf(p,wd,c){return (p&&p.pref&&p.pref[wd+c])||''}
-function baseHours(month,dates){if(month.base>0)return month.base;const hol=month.hol||{};return dates.filter(d=>d.wd>=1&&d.wd<=5&&!hol[d.key]).length*8}
+/* a morning-only day (month.am): only 早 is open, 午 and 晚 need nobody */
+function isAM(month,key){return !!(month&&month.am&&month.am[key])}
+function needAt(cfg,month,dt,k){return isAM(month,dt.key)&&k!=='E'?0:((cfg.need||{})[dt.wd+k]||0)}
+function trimAM(cfg,v){if(!v||v==='X')return v;const c=covOfV(cfg,v);if(!c||c==='E')return v;if(!c.includes('E'))return '';const o=optForCov(cfg,'E');return o?o.id:''}
+function baseHours(month,dates){if(month.base>0)return month.base;const hol=month.hol||{};return dates.filter(d=>d.wd>=1&&d.wd<=5&&!hol[d.key]).reduce((s,d)=>s+(isAM(month,d.key)?4:8),0)}
 function tally(cfg,staff,month,dates){
   const T={};staff.forEach(p=>T[p.id]={wk:0,sat:0,tot:0,days:0,unpop:0,bad:0});
   const cov={},short={E:0,M:0,L:0},over={E:0,M:0,L:0};let shortN=0,overN=0;const unpop=new Set(cfg.unpopular||[]);const hol=month.hol||{};
@@ -464,7 +470,7 @@ function tally(cfg,staff,month,dates){
     for(const p of staff){const v=day[p.id];if(!v||v==='X')continue;const o=optById(cfg,v);if(!o)continue;const t=T[p.id];const h=+o.h||0;
       if(dt.wd===6||dt.wd===0)t.sat+=h;else t.wk+=h;t.tot+=h;t.days++;
       for(const s of o.cov){c[s]++;if(unpop.has(dt.wd+s))t.unpop++;if(prefOf(p,dt.wd,s)==='x')t.bad++}}
-    cov[dt.key]=c;for(const s of SL){const nd=(cfg.need||{})[dt.wd+s]||0;const n=nd-c[s];const lim=Math.max(nd,cfg.maxOk||2);if(n>0){short[s]+=n;shortN+=n}else if(c[s]>lim){over[s]+=c[s]-lim;overN+=c[s]-lim}}}
+    cov[dt.key]=c;for(const s of SL){const nd=needAt(cfg,month,dt,s);const n=nd-c[s];const lim=isAM(month,dt.key)&&s!=='E'?0:Math.max(nd,cfg.maxOk||2);if(n>0){short[s]+=n;shortN+=n}else if(c[s]>lim){over[s]+=c[s]-lim;overN+=c[s]-lim}}}
   return {T,cov,short,shortN,over,overN};
 }
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -484,10 +490,10 @@ function canAdd(cfg,p,e,st,dt,c,maxSlots,useCap){
    the scheduler takes part too but only up to her usual load. onlyMe=true: the scheduler covers whatever is still open. */
 function autoFill(cfg,staff,month,dates,opt){
   const e=JSON.parse(JSON.stringify(month.e||{}));const hol=month.hol||{};const unpop=new Set(cfg.unpopular||[]);
-  const tl=tally(cfg,staff,{e,hol},dates);const st={},up={};staff.forEach(p=>{st[p.id]=tl.T[p.id].tot;up[p.id]=tl.T[p.id].unpop});
+  const tl=tally(cfg,staff,{e,hol,am:month.am},dates);const st={},up={};staff.forEach(p=>{st[p.id]=tl.T[p.id].tot;up[p.id]=tl.T[p.id].unpop});
   const people=staff.filter(p=>p.active!==false&&(opt.onlyMe?p.isMe:true));const hb=opt.habit||{};const useCap=!opt.onlyMe;if(!people.length)return {e,filled:0,left:tl.shortN,capped:false};
   const rnd=mulberry32(opt.seed||7);const maxS=p=>p.isMe?3:(cfg.maxPerDay||2);const slots=[];
-  for(const dt of dates){if(hol[dt.key])continue;for(const c of SL){const open=((cfg.need||{})[dt.wd+c]||0)-tl.cov[dt.key][c];if(open>0)slots.push({dt,c,open,un:unpop.has(dt.wd+c),r:rnd()})}}
+  for(const dt of dates){if(hol[dt.key])continue;for(const c of SL){const open=needAt(cfg,month,dt,c)-tl.cov[dt.key][c];if(open>0)slots.push({dt,c,open,un:unpop.has(dt.wd+c),r:rnd()})}}
   if(opt.onlyMe){const me=people[0];const rk={p:0,'':1,a:2};slots.sort((x,y)=>((rk[prefOf(me,x.dt.wd,x.c)]??3)-(rk[prefOf(me,y.dt.wd,y.c)]??3))||(x.r-y.r))}
   else{slots.forEach(s=>s.k=people.filter(p=>canAdd(cfg,p,e,st,s.dt,s.c,maxS(p),useCap)).length);slots.sort((x,y)=>(x.k-y.k)||((y.un?1:0)-(x.un?1:0))||(x.r-y.r))}
   let filled=0,capped=false;
@@ -506,7 +512,7 @@ function autoFill(cfg,staff,month,dates,opt){
       if(sc>bs){bs=sc;best=p;bo=r}}
     if(!best)break;
     (e[s.dt.key]||(e[s.dt.key]={}))[best.id]=bo.o.id;st[best.id]+=bo.delta;if(s.un)up[best.id]++;filled++;}}
-  const after=tally(cfg,staff,{e,hol},dates);
+  const after=tally(cfg,staff,{e,hol,am:month.am},dates);
   return {e,filled,left:after.shortN,capped};
 }
 /* Same weekday, last month. A person who always does the same thing on that weekday keeps it on every such day this month.
@@ -518,48 +524,48 @@ function copyPattern(staff,prev,prevDates,month,dates,cfg){
     if(!src.some(Boolean))continue;
     const vals=[...new Set(src.filter(Boolean))];const fixed=vals.length===1&&src.every(Boolean);
     const tgt=dates.filter(dt=>dt.wd===wd&&!hol[dt.key]);
-    tgt.forEach((dt,i)=>{const day=e[dt.key]||(e[dt.key]={});if(day[p.id])return;const v=fixed?vals[0]:src[i%src.length];if(!v){if(!Object.keys(day).length)delete e[dt.key];return}
+    tgt.forEach((dt,i)=>{const day=e[dt.key]||(e[dt.key]={});if(day[p.id])return;let v=fixed?vals[0]:src[i%src.length];if(v&&cfg&&isAM(month,dt.key))v=trimAM(cfg,v);if(!v){if(!Object.keys(day).length)delete e[dt.key];return}
       if(cfg&&v!=='X'){const c=covOfV(cfg,v);if(c){const cnt={E:0,M:0,L:0};for(const id in day)for(const k of covOfV(cfg,day[id]))cnt[k]++;
-        if([...c].every(k=>cnt[k]>=((cfg.need||{})[dt.wd+k]||0))){if(!Object.keys(day).length)delete e[dt.key];return}}}
+        if([...c].every(k=>cnt[k]>=needAt(cfg,month,dt,k))){if(!Object.keys(day).length)delete e[dt.key];return}}}
       day[p.id]=v;n++})}}
   return {e,n};
 }
 /* Search-based fill: tries many complete arrangements and keeps the one with the lowest total cost.
    Only empty cells are filled (or an existing shift is extended); nothing the user entered is removed.
    staff fields used: id, isMe, emp, active, pref, minH, targetH, maxH (hard), capH (usual max), usual (scheduler's usual hours). */
-const FILL_W={short:1000,over:250,min:40,below:6,above:9,cap:30,hard:500,meAbove:12,meBelow:3,split:{EL:90,EML:140,EM:35},solo:{M:6,L:10},prefA:25,prefP:-6,habit:-14,unpop:3,wk:5,soft:60};
+const FILL_W={short:1000,over:250,min:40,below:6,above:9,cap:30,hard:500,meAbove:12,meBelow:3,split:{EL:90,EML:140,EM:35},solo:{M:6,L:10},prefA:25,prefP:-6,habit:-14,unpop:3,wk:5,soft:60,ftMin:120,satMax:2,sat:600};
 function optimizeFill(cfg,staff,month,dates,opt){
   opt=opt||{};const W=FILL_W;const hol=month.hol||{};const e=JSON.parse(JSON.stringify(month.e||{}));
   const act=staff.filter(p=>p.active!==false&&(!opt.onlyMe||p.isMe));const unpop=new Set(cfg.unpopular||[]);const hb=opt.habit||{};
-  const ds=dates.filter(d=>!hol[d.key]);const need=ds.map(d=>SL.map(k=>(cfg.need||{})[d.wd+k]||0));
-  const cov=ds.map(()=>[0,0,0]);const H={},U={},WK={};staff.forEach(p=>{H[p.id]=0;U[p.id]=0;WK[p.id]=0});const isWk=d=>d.wd===6||d.wd===0;
+  const ds=dates.filter(d=>!hol[d.key]);const need=ds.map(d=>SL.map(k=>needAt(cfg,month,d,k)));
+  const cov=ds.map(()=>[0,0,0]);const H={},U={},WK={},SA={};staff.forEach(p=>{H[p.id]=0;U[p.id]=0;WK[p.id]=0;SA[p.id]=0});const isWk=d=>d.wd===6||d.wd===0;
   const SI={E:0,M:1,L:2};
   const cellCost=(p,d,c)=>{let x=0;if(!p.isMe){x+=W.split[c]||0;if(c==='M')x+=W.solo.M;if(c==='L')x+=W.solo.L}
     for(const k of c){const pr=prefOf(p,d.wd,k);if(pr==='a')x+=W.prefA;else if(pr==='p')x+=W.prefP;x+=W.habit*((hb[p.id]||{})[d.wd+k]||0)}return x};
   const vars=[];
   ds.forEach((d,di)=>{const day=e[d.key]||{};
-    for(const p of staff){const v=day[p.id];const c=covOfV(cfg,v);if(c){const o=optById(cfg,v);H[p.id]+=+o.h||0;if(isWk(d))WK[p.id]+=c.length;for(const k of c){cov[di][SI[k]]++;if(unpop.has(d.wd+k))U[p.id]++}}}
+    for(const p of staff){const v=day[p.id];const c=covOfV(cfg,v);if(c){const o=optById(cfg,v);H[p.id]+=+o.h||0;if(isWk(d))WK[p.id]+=c.length;if(d.wd===6)SA[p.id]++;for(const k of c){cov[di][SI[k]]++;if(unpop.has(d.wd+k))U[p.id]++}}}
     for(const p of act){const v=day[p.id]||'';if(v==='X'||v==='LV')continue;const c=covOfV(cfg,v);const h0=hOfV(cfg,v);
       const maxS=p.isMe?3:Math.max(cfg.maxPerDay||2,c.length);
-      const cands=[{v,c,h:h0,u:[...c].filter(k=>unpop.has(d.wd+k)).length,w:isWk(d)?c.length:0,cost:c?cellCost(p,d,c):0}];
+      const cands=[{v,c,h:h0,u:[...c].filter(k=>unpop.has(d.wd+k)).length,w:isWk(d)?c.length:0,s:d.wd===6&&c?1:0,cost:c?cellCost(p,d,c):0}];
       const seen=new Set([c]);
       for(const o of cfg.opts){if(seen.has(o.cov))continue;if(c&&![...c].every(k=>o.cov.includes(k)))continue;if(o.cov.length>maxS)continue;
-        if([...o.cov].some(k=>prefOf(p,d.wd,k)==='x'))continue;seen.add(o.cov);
-        cands.push({v:o.id,c:o.cov,h:+o.h||0,u:[...o.cov].filter(k=>unpop.has(d.wd+k)).length,w:isWk(d)?o.cov.length:0,cost:cellCost(p,d,o.cov)})}
+        if([...o.cov].some(k=>prefOf(p,d.wd,k)==='x'||(!c.includes(k)&&!need[di][SI[k]])))continue;seen.add(o.cov);
+        cands.push({v:o.id,c:o.cov,h:+o.h||0,u:[...o.cov].filter(k=>unpop.has(d.wd+k)).length,w:isWk(d)?o.cov.length:0,s:d.wd===6?1:0,cost:cellCost(p,d,o.cov)})}
       if(cands.length>1)vars.push({di,p,d,cands,cur:0,base:0})}});
-  const pCost=(p,h,u,w)=>{let x=(w||0)*(w||0)*W.wk;
+  const pCost=(p,h,u,w,sa)=>{let x=(w||0)*(w||0)*W.wk;if(!p.isMe&&sa>W.satMax)x+=(sa-W.satMax)*W.sat;
     if(p.isMe){const us=p.usual||0;if(us)x+=h>us?(h-us)*W.meAbove:(us-h)*W.meBelow}
-    else{const mn=p.minH||0,tg=p.targetH||mn;if(mn&&h<mn)x+=(mn-h)*W.min;if(tg)x+=h<tg?(tg-h)*W.below:(h-tg)*W.above;if(p.capH&&h>p.capH)x+=(h-p.capH)*W.cap}
+    else{const mn=p.minH||0,tg=p.targetH||mn;if(mn&&h<mn)x+=(mn-h)*(p.emp==='ft'?W.ftMin:W.min);if(tg)x+=h<tg?(tg-h)*W.below:(h-tg)*W.above;if(p.capH&&h>p.capH)x+=(h-p.capH)*W.cap}
     if(p.maxH&&h>p.maxH)x+=(h-p.maxH)*W.hard;return x+U2(u)};
   const U2=u=>u*u*W.unpop;
   const lim=n=>Math.max(n,cfg.maxOk||2);const sCost=(n,c)=>c<n?(n-c)*W.short:c<=lim(n)?(c-n)*W.soft:(c-lim(n))*W.over+(lim(n)-n)*W.soft;
   const delta=(vr,b)=>{const A=vr.cands[vr.cur],B=vr.cands[b];if(A===B)return 0;const di=vr.di,p=vr.p;let x=B.cost-A.cost;
     for(const k of SL){const a=A.c.includes(k),bb=B.c.includes(k);if(a===bb)continue;const i=SI[k],n=need[di][i],c=cov[di][i];x+=sCost(n,c+(bb?1:-1))-sCost(n,c)}
-    x+=pCost(p,H[p.id]-A.h+B.h,U[p.id]-A.u+B.u,WK[p.id]-A.w+B.w)-pCost(p,H[p.id],U[p.id],WK[p.id]);return x};
+    x+=pCost(p,H[p.id]-A.h+B.h,U[p.id]-A.u+B.u,WK[p.id]-A.w+B.w,SA[p.id]-A.s+B.s)-pCost(p,H[p.id],U[p.id],WK[p.id],SA[p.id]);return x};
   const apply=(vr,b)=>{const A=vr.cands[vr.cur],B=vr.cands[b];for(const k of SL){const a=A.c.includes(k),bb=B.c.includes(k);if(a!==bb)cov[vr.di][SI[k]]+=bb?1:-1}
-    H[vr.p.id]+=B.h-A.h;U[vr.p.id]+=B.u-A.u;WK[vr.p.id]+=B.w-A.w;vr.cur=b};
-  const total=()=>{let x=0;ds.forEach((d,di)=>SL.forEach((k,i)=>x+=sCost(need[di][i],cov[di][i])));for(const p of act)x+=pCost(p,H[p.id],U[p.id],WK[p.id]);for(const vr of vars)x+=vr.cands[vr.cur].cost;return x};
-  if(!vars.length)return {e,filled:0,left:tally(cfg,staff,{e,hol},dates).shortN};
+    H[vr.p.id]+=B.h-A.h;U[vr.p.id]+=B.u-A.u;WK[vr.p.id]+=B.w-A.w;SA[vr.p.id]+=B.s-A.s;vr.cur=b};
+  const total=()=>{let x=0;ds.forEach((d,di)=>SL.forEach((k,i)=>x+=sCost(need[di][i],cov[di][i])));for(const p of act)x+=pCost(p,H[p.id],U[p.id],WK[p.id],SA[p.id]);for(const vr of vars)x+=vr.cands[vr.cur].cost;return x};
+  if(!vars.length)return {e,filled:0,left:tally(cfg,staff,{e,hol,am:month.am},dates).shortN};
   const byDay=ds.map(()=>[]);vars.forEach(v=>byDay[v.di].push(v));
   const findC=(vr,c)=>{for(let b=0;b<vr.cands.length;b++)if(vr.cands[b].c===c)return b;return -1};
   /* compound move: person X gives slot k to person Y on the same day (keeps coverage, so it can cross the shortage barrier) */
@@ -599,7 +605,7 @@ function optimizeFill(cfg,staff,month,dates,opt){
     if(rb<bestCost){bestCost=rb;best=rbs}}
   vars.forEach((v,i)=>apply(v,best[i]));
   let filled=0;for(const vr of vars){const C=vr.cands[vr.cur];if(vr.cur!==0){filled++;(e[vr.d.key]||(e[vr.d.key]={}))[vr.p.id]=C.v}}
-  return {e,filled,left:tally(cfg,staff,{e,hol},dates).shortN,cost:bestCost};
+  return {e,filled,left:tally(cfg,staff,{e,hol,am:month.am},dates).shortN,cost:bestCost};
 }
 /*CORE-END*/
 
@@ -653,7 +659,7 @@ const fsv=ls('tr.fs');if(fsv)document.documentElement.dataset.fs=fsv;
 function normStaff(id,d){d=d||{};return {id,code:d.code||'?',name:d.name||'未命名',short:d.short||'',color:d.color??0,minH:+d.minH||0,targetH:+d.targetH||0,maxH:+d.maxH||0,isMe:!!d.isMe,active:d.active!==false,emp:(d.emp==='ft'||d.emp==='pt')?d.emp:(d.isMe?'ft':'pt'),hoursMode:d.hoursMode||((+d.minH||+d.targetH||+d.maxH)?'fixed':'auto'),pref:d.pref||{},note:d.note||'',order:+d.order||0}}
 function normCfg(d){const c=clone(S&&S.group==='desk'?DESK_CFG:DEF_CFG);if(!d)return c;if(Array.isArray(d.opts))c.opts=d.opts.map(o=>({id:o.id,label:o.label||'',text:o.text||'',h:+o.h||0,cov:sortCov(o.cov||''),short:!!o.short}));
   if(d.need){Object.assign(c.need,d.need);SL.forEach(k=>{if(d.need['0'+k]===undefined)c.need['0'+k]=c.need['6'+k]??0})}if(Array.isArray(d.unpopular))c.unpopular=d.unpopular;if(d.maxPerDay)c.maxPerDay=d.maxPerDay;c.ptMinPct=d.ptMinPct>0?+d.ptMinPct:70;c.maxOk=d.maxOk>0?+d.maxOk:2;return c}
-function normMonth(d){d=d?clone(d):{};const o={e:d.e||{},hol:d.hol||{},base:d.base>0?+d.base:null};if(Array.isArray(d.sun)&&d.sun.length)o.sun=d.sun;return o}
+function normMonth(d){d=d?clone(d):{};const o={e:d.e||{},hol:d.hol||{},am:d.am||{},base:d.base>0?+d.base:null};if(Array.isArray(d.sun)&&d.sun.length)o.sun=d.sun;return o}
 
 /* ---------- storage: shared db when available, this browser otherwise ---------- */
 let DB=null,unsubMonth=null,slowTimer=null;const pending=new Map();
@@ -746,6 +752,7 @@ const getE=(date,sid)=>((S.month.e[date]||{})[sid])||'';
 const isHol=date=>!!S.month.hol[date];
 const mDates=()=>monthDates(S.ym,S.month.sun);
 const limOf=(wd,k)=>Math.max(S.cfg.need[wd+k]||0,S.cfg.maxOk||2);
+const limAt=(dt,k)=>isAM(S.month,dt.key)&&k!=='E'?0:limOf(dt.wd,k);const needOf=(dt,k)=>needAt(S.cfg,S.month,dt,k);const amDay=date=>isAM(S.month,date);
 const hasSun=()=>!!(S.month.sun&&S.month.sun.length);
 const dtOf=date=>mDates().find(x=>x.key===date);
 function vLabel(v){if(!v)return '未排';if(v==='X')return '休';const o=optById(S.cfg,v);return o?o.label:'?'}
@@ -773,7 +780,7 @@ function usualStaff(){
     const avg=hs.length?hs.reduce((a,b)=>a+b,0)/hs.length:0;const mx=hs.length?Math.max(...hs):0;
     if(p.isMe){q.usual=Math.round(avg);q.targetH=0;q.maxH=0}
     else if(p.hoursMode==='fixed'){q.capH=0}
-    else if(p.emp==='ft'){q.minH=0;q.targetH=avg?Math.round(avg):base;q.capH=base+8}
+    else if(p.emp==='ft'){q.minH=base;q.targetH=base;q.capH=base+12}
     else if(hs.length){q.targetH=Math.round(avg);q.capH=Math.round(mx)+4}
     return q})}
 function status(p,r){
@@ -797,9 +804,10 @@ function pushUndo(){S.undo.push(JSON.stringify(S.month));if(S.undo.length>50)S.u
 function editMonth(fn,o={}){
   if(S.readonly){toast('你只有檢視權限，不能修改班表。');return false}
   if(!o.noUndo)pushUndo();fn(S.month);queueWrite(PX()+'months/'+S.ym,S.month);if(!o.noRender)render();return true}
-function writeE(m,date,sid,v){const d=m.e[date]||(m.e[date]={});if(v)d[sid]=v;else{delete d[sid];if(!Object.keys(d).length)delete m.e[date]}}
+function writeE(m,date,sid,v){if(v&&isAM(m,date))v=trimAM(S.cfg,v);const d=m.e[date]||(m.e[date]={});if(v)d[sid]=v;else{delete d[sid];if(!Object.keys(d).length)delete m.e[date]}}
 function setEntry(date,sid,v,o={}){
   if(isHol(date)){toast('這天休診，不能排班');return false}
+  if(v&&amDay(date)){const t=trimAM(S.cfg,v);if(!t){toast('這天只有早上，不能排午班或晚班');return false}if(t!==v){v=t;if(!o.quiet)toast('這天只有早上，已改成早班')}}
   const ok=editMonth(m=>writeE(m,date,sid,v),o);
   if(ok&&!o.quiet&&v&&v!=='X'){const p=S.staff[sid],dt=dtOf(date),opt=optById(S.cfg,v);
     if(p&&dt&&opt){const w=worstPref(p,dt.wd,opt.cov);if(w==='x')toast(`注意：${p.name} 週${WDN[dt.wd]}這個時段標示「不可」`);else if(w==='a')toast(`已排入。${p.name} 標示「盡量不要」這個時段`)}}
@@ -874,22 +882,22 @@ function schedHTML(){
 }
 function dayHTML(dt,staff,tl){
   const hol=S.month.hol[dt.key];let cv='';
-  if(!hol){const c=tl.cov[dt.key];const s=SL.map(k=>{const n=(S.cfg.need[dt.wd+k]||0)-c[k];return n>0?`${SLN[k]}${n}`:''}).filter(Boolean);
-    const o=SL.map(k=>{const n=c[k]-limOf(dt.wd,k);return n>0?`${SLN[k]}${n}`:''}).filter(Boolean);
-    cv=(s.length?`<span class="cv bad">缺${s.join(' ')}</span>`:'')+(o.length?`<span class="cv over" title="比需要的人多">多${o.join(' ')}</span>`:'')||`<span class="cv ok" title="人力足夠">✓</span>`}
-  const cls=['day'];if(dt.wd===6)cls.push('sat');if(dt.wd===0)cls.push('sunday');if(hol)cls.push('hol');if(dt.key===todayKey())cls.push('today');
+  if(!hol){const c=tl.cov[dt.key];const s=SL.map(k=>{const n=needOf(dt,k)-c[k];return n>0?`${SLN[k]}${n}`:''}).filter(Boolean);
+    const o=SL.map(k=>{const n=c[k]-limAt(dt,k);return n>0?`${SLN[k]}${n}`:''}).filter(Boolean);
+    cv=(s.length?`<span class="cv bad">缺${s.join(' ')}</span>`:'')+(o.length?`<span class="cv over" title="比需要的人多">多${o.join(' ')}</span>`:'')||`<span class="cv ok" title="人力足夠">✓</span>`;if(amDay(dt.key))cv=`<span class="cv am" title="下午、晚上休診">只有早上</span>`+cv}
+  const cls=['day'];if(dt.wd===6)cls.push('sat');if(dt.wd===0)cls.push('sunday');if(hol)cls.push('hol');else if(amDay(dt.key))cls.push('am');if(dt.key===todayKey())cls.push('today');
   return `<article class="${cls.join(' ')}" data-date="${dt.key}" aria-label="${dt.m}月${dt.d}日 週${WDN[dt.wd]}${hol?'，'+esc(hol)+'休診':''}">
-    <div class="dh"><button class="dbtn" data-act="day" data-date="${dt.key}" title="看當天誰上班、設定休診"><span class="dnum">${dt.d}</span><span class="dwd">${WDN[dt.wd]}</span></button>${cv}</div>
+    <div class="dh"><button class="dbtn" data-act="day" data-date="${dt.key}" title="看當天誰上班、設定休診或只有早上"><span class="dnum">${dt.d}</span><span class="dwd">${WDN[dt.wd]}</span></button>${cv}</div>
     ${hol?`<div class="holb"><b>${esc(hol)}</b><span>休診</span></div>`:S.view==='slot'?slotsHTML(dt,staff):`<div class="lines">${staff.map(p=>lineHTML(p,dt)).join('')}</div>`}</article>`;
 }
 function slotTime(k){const o=optForCov(S.cfg,k);return o?o.text:''}
 function whoIn(dt,k,staff){return (staff||ordered()).filter(p=>covOfV(S.cfg,getE(dt.key,p.id)).includes(k))}
 function slotsHTML(dt,staff){
-  return `<div class="slots">${SL.map(k=>{const need=S.cfg.need[dt.wd+k]||0;const ids=whoIn(dt,k,staff);if(!need&&!ids.length)return '';
-    const st=ids.length<need?'short':ids.length>limOf(dt.wd,k)?'over':'ok';let cls=`srow k-${k} ${st}`;if((S.cfg.unpopular||[]).includes(dt.wd+k))cls+=' unp';let tag='';
+  return `<div class="slots">${SL.map(k=>{const need=needOf(dt,k);const ids=whoIn(dt,k,staff);if(!need&&!ids.length)return '';
+    const st=ids.length<need?'short':ids.length>limAt(dt,k)?'over':'ok';let cls=`srow k-${k} ${st}`;if((S.cfg.unpopular||[]).includes(dt.wd+k))cls+=' unp';let tag='';
     if(S.brush&&S.staff[S.brush.sid]){const b=S.staff[S.brush.sid];const on=ids.includes(b);const pr=prefOf(b,dt.wd,k);if(on)cls+=' b-on';if(pr){cls+=' b-'+pr;tag=`<span class="bt">${pr==='x'?'不可':pr==='a'?'不要':'偏好'}</span>`}if(getE(dt.key,b.id)==='X'){cls+=' b-x';tag='<span class="bt">休假</span>'}}
     const chips=ids.map(p=>{const bad=prefOf(p,dt.wd,k)==='x';return `<span class="sch${p.isMe?' me':''}${bad?' bad':''}" style="--pc:${colorOf(p)}" data-drag="chip" data-sid="${p.id}" data-date="${dt.key}" data-k="${k}" title="${esc(p.name)}・${esc(vLabel(getE(dt.key,p.id)))}">${esc(p.code)}<i>${esc(shortName(p))}</i></span>`}).join('');
-    const cnt=st==='short'?`缺${need-ids.length}`:st==='over'?`多${ids.length-limOf(dt.wd,k)}`:ids.length>need?`<span class="extra" title="比平常多 ${ids.length-need} 人，可以接受">+${ids.length-need}</span>`:'✓';
+    const cnt=st==='short'?`缺${need-ids.length}`:st==='over'?`多${ids.length-limAt(dt,k)}`:ids.length>need?`<span class="extra" title="比平常多 ${ids.length-need} 人，可以接受">+${ids.length-need}</span>`:'✓';
     return `<div class="${cls}" data-act="slot" data-date="${dt.key}" data-k="${k}" role="button" tabindex="0" aria-label="${dt.m}月${dt.d}日${SLN[k]}班：${ids.map(p=>p.name).join('、')||'沒有人'}，需要${need}人"><span class="sk">${SLN[k]}</span><span class="who">${chips}</span><span class="sc">${cnt}</span>${tag}</div>`}).join('')}</div>`;
 }
 function lineHTML(p,dt){
@@ -906,7 +914,7 @@ function panelHTML(tl,dates){
   {let ft=0,pt=0;for(const p of ordered()){const r=tl.T[p.id];if(!r)continue;if(p.emp==='ft')ft+=r.tot;else pt+=r.tot}
    h+=`<div class="pn-split"><span><span class="emp ft">正職</span> ${fmtH(ft)} 小時</span><span><span class="emp pt">兼職</span> ${fmtH(pt)} 小時</span></div>`}
   h+=tl.shortN?`<div class="pn-gap bad">還缺：${SL.map(k=>`${SLN[k]} ${tl.short[k]}`).join('・')} 人次</div>`:`<div class="pn-gap ok">✓ 每個時段人力都夠</div>`;
-  if(tl.overN){const days=dates.filter(d=>!S.month.hol[d.key]&&SL.some(k=>tl.cov[d.key][k]>limOf(d.wd,k)));
+  if(tl.overN){const days=dates.filter(d=>!S.month.hol[d.key]&&SL.some(k=>tl.cov[d.key][k]>limAt(d,k)));
     h+=`<div class="pn-gap warn">多排：${SL.filter(k=>tl.over[k]).map(k=>`${SLN[k]} ${tl.over[k]}`).join('・')} 人次（${days.length} 天，日期上標「多」的格子）</div>`}
   h+=`<p class="hint">點人員的名字，選好班別後點日期；也可以按住名字拖到日期上。<br>名字顏色＝這個人最常上的時段（偏早班橘黃、午班青綠、晚班靛紫、早晚兩頭玫瑰）。</p></div>`;
   for(const p0 of [...others(),...(me?[me]:[])]){const p=eff(p0);const r=tl.T[p.id],st=status(p,r),sel=S.brush&&S.brush.sid===p.id;
@@ -948,9 +956,12 @@ function renderPicker(){
     const hol=S.month.hol[P.date];const c=tl.cov[P.date];
     body=`<h3>${dt.m}月${dt.d}日（${WDN[dt.wd]}）${hol?'':'・當天誰上班'}</h3>`;
     if(dt.wd===0)body+=`<div class="rowbtns"><span class="pill bad">週日加開</span><button class="btn sm" data-act="sun" data-date="${P.date}">取消加開（這個週日不上班）</button></div>`;
-    if(!hol)body+=timelineHTML(dt)+`<div class="tl-cov">${SL.filter(k=>(S.cfg.need[dt.wd+k]||0)>0||c[k]).map(k=>{const n=S.cfg.need[dt.wd+k]||0;return `<button class="btn${c[k]<n?' danger':''}" data-act="openslot" data-k="${k}">${SLN[k]}班 ${c[k]}／${n} 人${c[k]<n?'・補人':'・調整'}</button>`}).join('')}</div>`;
+    const am=!hol&&amDay(P.date);if(am)body+=`<div class="rowbtns amrow"><span class="pill warn">只有早上</span><span class="msub" style="margin:0">午班、晚班休診</span><button class="btn sm" data-act="am-clear">恢復整天看診</button></div>`;
+    if(!hol)body+=timelineHTML(dt)+`<div class="tl-cov">${SL.filter(k=>needOf(dt,k)>0||c[k]).map(k=>{const n=needOf(dt,k);return `<button class="btn${c[k]<n?' danger':''}" data-act="openslot" data-k="${k}">${SLN[k]}班 ${c[k]}／${n} 人${c[k]<n?'・補人':'・調整'}</button>`}).join('')}</div>`;
     if(hol)body+=`<div class="msub">這天設為休診：<b>${esc(hol)}</b></div><button class="btn primary" data-act="hol-clear">取消休診，恢復排班</button>`;
-    else{body+=`<details class="more"><summary>休診、清除這天…</summary><div style="display:flex;flex-direction:column;gap:10px">
+    else{const canAM=!am&&((S.cfg.need[dt.wd+'M']||0)>0||(S.cfg.need[dt.wd+'L']||0)>0);
+      body+=`<details class="more"><summary>${canAM?'休診、只有早上、清除這天…':'休診、清除這天…'}</summary><div style="display:flex;flex-direction:column;gap:10px">
+      ${canAM?`<div class="flabel">只有早上（午班、晚班休診，例如除夕、半天颱風假）</div><div class="rowbtns"><button class="btn" data-act="am-set">改成只有早上</button><span class="help">已排的午班、晚班會拿掉，早午會改成早。</span></div>`:''}
       <div class="flabel">設為休診（國定假日、診所休息）</div>
       <div class="rowbtns">${['國定假日','休診','颱風假'].map(t=>`<button class="btn" data-act="hol-set" data-v="${t}">${t}</button>`).join('')}</div>
       <div class="rowbtns"><input id="holInp" class="inp" placeholder="其他名稱，例如：中秋節" style="flex:1;min-width:10rem"><button class="btn primary" data-act="hol-set">設定</button></div>
@@ -985,14 +996,14 @@ function evalCand(p,dt,k,T){
   return r;
 }
 function slotPickerHTML(dt,k,tl){
-  const need=S.cfg.need[dt.wd+k]||0;const staff=ordered();const T=tl.T;const n=tl.cov[dt.key][k];
+  const need=needOf(dt,k);const staff=ordered();const T=tl.T;const n=tl.cov[dt.key][k];
   const all=staff.filter(p=>p.active||getE(dt.key,p.id)).map(p=>evalCand(p,dt,k,T));
   const on=all.filter(r=>r.on),ok=all.filter(r=>!r.on&&r.level==='ok').sort((a,b)=>b.score-a.score),me=all.filter(r=>!r.on&&r.level==='me'),warn=all.filter(r=>!r.on&&r.level==='warn').sort((a,b)=>b.score-a.score),no=all.filter(r=>!r.on&&r.level==='no');
   const hrs=r=>`<span class="ch">${fmtH(r.t)} → ${fmtH(r.after)}<small>小時${r.q&&r.q.targetH?`（${r.p.emp==='ft'?'應上':'需求'} ${fmtH(r.q.targetH)}）`:''}</small></span>`;
   const btn=(r,cls,top)=>`<button class="cand ${cls}${top?' top':''}" data-act="cand" data-sid="${r.p.id}" ${cls==='no'?'disabled':''}><span class="cd" style="--pc:${colorOf(r.p)}">${esc(r.p.code)}</span><span class="cn"><b>${esc(r.p.name)}</b> <span class="emp ${r.p.emp}">${empName(r.p)}</span>${top?'<span class="star">最推薦</span>':''}${cls==='on'?' <span class="act">點一下移除</span>':''}<small>${esc(r.why.join('・'))}</small></span>${cls==='no'?'':hrs(r)}</button>`;
   const unp=(S.cfg.unpopular||[]).includes(dt.wd+k);
   let h=`<h3>${dt.m}月${dt.d}日（${WDN[dt.wd]}）${SLN[k]}班　誰來上？</h3>
-    <div class="need"><span class="msub">${esc(slotTime(k))}${unp?'・冷門時段':''}</span>${n<need?`<span class="pill bad">還缺 ${need-n} 人</span>`:n>limOf(dt.wd,k)?`<span class="pill warn">需要 ${need} 人，已排 ${n} 人，太多了</span>`:`<span class="pill ok">✓ 需要 ${need} 人，已排 ${n} 人</span>`}</div>`;
+    <div class="need"><span class="msub">${esc(slotTime(k))}${unp?'・冷門時段':''}</span>${n<need?`<span class="pill bad">還缺 ${need-n} 人</span>`:n>limAt(dt,k)?`<span class="pill warn">${amDay(dt.key)&&k!=='E'?'這天只有早上':`需要 ${need} 人，已排 ${n} 人，太多了`}</span>`:`<span class="pill ok">✓ 需要 ${need} 人，已排 ${n} 人</span>`}</div>`;
   if(on.length)h+=`<div class="grp-h on">已排</div><div class="cands">${on.map(r=>btn(r,'on')).join('')}</div>`;
   if(ok.length)h+=`<div class="grp-h ok">推薦（點一下加入）</div><div class="cands">${ok.map((r,i)=>btn(r,'ok',i===0&&n<need)).join('')}</div>`;
   if(warn.length)h+=`<div class="grp-h warn">可以，但要注意</div><div class="cands">${warn.map(r=>btn(r,'warn')).join('')}</div>`;
@@ -1019,12 +1030,13 @@ function slotNewV(v,k,add){const cur=v==='X'?'':covOfV(S.cfg,v);const has=cur.in
 function slotToggle(sid,date,k,mode,o={}){
   if(isHol(date)){toast('這天休診');return null}
   const p=S.staff[sid];const v=getE(date,sid);const has=covOfV(S.cfg,v).includes(k);if(!mode)mode=has?'remove':'add';
+  if(mode==='add'&&k!=='E'&&amDay(date)){toast('這天只有早上，不能排午班或晚班');return null}
   const r=slotNewV(v,k,mode==='add');if(r.same)return mode;if(r.err){toast(r.err);return null}
   editMonth(m=>writeE(m,date,sid,r.nv),o);
   if(mode==='add'&&!o.quiet&&p){const dt=dtOf(date);const pr=prefOf(p,dt.wd,k);if(v==='X')toast(`注意：${p.name} 這天原本標「休假」`);else if(pr==='x')toast(`注意：${p.name} 週${WDN[dt.wd]}${SLN[k]}班標示「不可」`);else if(pr==='a')toast(`已排入。${p.name} 標示「盡量不要」這個時段`)}
   return mode}
 function slotMove(sid,from,to){
-  if(isHol(to.date)){toast('這天休診');return}if(from.date===to.date&&from.k===to.k)return;
+  if(isHol(to.date)){toast('這天休診');return}if(to.k!=='E'&&amDay(to.date)){toast('這天只有早上，不能排午班或晚班');return}if(from.date===to.date&&from.k===to.k)return;
   const v0=getE(from.date,sid);const a=slotNewV(v0,from.k,false);if(a.err){toast(a.err);return}
   const base=from.date===to.date?(a.same?v0:a.nv):getE(to.date,sid);const b=slotNewV(base,to.k,true);
   if(b.same){toast(`${S.staff[sid].name} 那個時段已經有排了`);return}if(b.err){toast(b.err);return}
@@ -1032,13 +1044,21 @@ function slotMove(sid,from,to){
   const dt=dtOf(to.date);toast(`已把 ${S.staff[sid].name} 移到 ${dt.m}/${dt.d} ${SLN[to.k]}班`)}
 /* closed days are the whole clinic's: copy them to the other roster's same month */
 async function otherMonth(path){const pd=pending.get(path);if(pd&&pd.val)return normMonth(pd.val);if(S.mode==='local')return normMonth(localDocs()[path]);const d=await DB.doc(path).get();return normMonth(d.exists?d.data():null)}
-async function setOtherHol(path,date,label){const m=await otherMonth(path);if(label)m.hol[date]=label;else delete m.hol[date];queueWrite(path,m,100)}
-async function syncHol(date,label){const other=S.group==='desk'?'':'desk-';const path=other+'months/'+date.slice(0,7);
-  const ui=S.undo.length-1,entry=S.undo[ui];
-  try{const m=await otherMonth(path);const prev=m.hol[date]||null;
-    if(label)m.hol[date]=label;else delete m.hol[date];queueWrite(path,m,100);
+async function otherCfg(px){const path=px+'config/settings';const pd=pending.get(path);let raw;
+  if(pd&&pd.val)raw=pd.val;else if(S.mode==='local')raw=localDocs()[path];else{const d=await DB.doc(path).get();raw=d.exists?d.data():null}
+  const g=S.group;S.group=px?'desk':'ther';try{return normCfg(raw)}finally{S.group=g}}
+const dayState=(m,date)=>({hol:m.hol[date]||null,am:!!(m.am&&m.am[date]),day:m.e[date]?clone(m.e[date]):null});
+function putDay(m,date,st,cfg){if(st.hol)m.hol[date]=st.hol;else delete m.hol[date];m.am=m.am||{};if(st.am)m.am[date]=true;else delete m.am[date];
+  if(st.day!==undefined){if(st.day&&Object.keys(st.day).length)m.e[date]=st.day;else delete m.e[date]}
+  else if(st.am&&m.e[date]){for(const id in m.e[date]){const v=trimAM(cfg,m.e[date][id]);if(v)m.e[date][id]=v;else delete m.e[date][id]}if(!Object.keys(m.e[date]).length)delete m.e[date]}}
+async function setOtherHol(path,date,prev){const m=await otherMonth(path);putDay(m,date,prev);queueWrite(path,m,100)}
+/* closed days and morning-only days belong to the whole clinic: copy this roster's state of the day to the other roster */
+async function syncHol(date,kind){const other=S.group==='desk'?'':'desk-';const path=other+'months/'+date.slice(0,7);
+  const ui=S.undo.length-1,entry=S.undo[ui];const oname=S.group==='desk'?'治療師':'櫃台';
+  try{const m=await otherMonth(path);const prev=dayState(m,date);const cfg=await otherCfg(other);
+    putDay(m,date,{hol:S.month.hol[date]||null,am:amDay(date)},cfg);queueWrite(path,m,100);
     if(S.undo[ui]===entry&&typeof entry==='string')S.undo[ui]={m:entry,link:{path,date,prev}};
-    toast(`${label?'已設為休診':'已取消休診'}，${S.group==='desk'?'治療師':'櫃台'}班表也一起${label?'設定':'取消'}了。`)}
+    toast({hol:`已設為休診，${oname}班表也一起設定了。`,unhol:`已取消休診，${oname}班表也一起取消了。`,am:`已改成只有早上，${oname}班表也一起改了。`,unam:`已恢復整天看診，${oname}班表也一起恢復了。`}[kind])}
   catch(e){toast(`${S.group==='desk'?'治療師':'櫃台'}班表沒有同步成功，請切過去檢查這一天。`)}}
 function closePicker(){S.picker=null;$('#modal').hidden=true;$('#modal').innerHTML=''}
 
@@ -1132,7 +1152,7 @@ function deskParts(){
   let rows='';for(let d=1;d<=n;d++){const key=S.ym+'-'+String(d).padStart(2,'0');const wd=new Date(y,m-1,d).getDay();const hol=S.month.hol[key];
     const wl=wd===6?`六(${esc(tE)})`:WDN[wd];let cells;
     if(hol)cells=`<td>X</td><td></td><td></td>`;else if(!open.has(key))cells='<td></td><td></td><td></td>';
-    else{const dt={key,wd};cells=SL.map(k=>`<td>${esc(whoIn(dt,k,staff).map(p=>p.name).join('、'))}</td>`).join('')}
+    else{const dt={key,wd};const am=amDay(key);cells=SL.map(k=>`<td>${am&&k!=='E'?'X':esc(whoIn(dt,k,staff).map(p=>p.name).join('、'))}</td>`).join('')}
     rows+=`<tr${wd===0?' class="sunr"':''}><td class="dn">${d}</td><td>${wl}</td>${cells}</tr>`}
   const sum=staff.map(p=>{const r=tl.T[p.id];return `<div>${esc(p.name)}：${fmtH(r.tot)} 小時（平日 ${fmtH(r.wk)} ＋ 週六 ${fmtH(r.sat)}）</div>`}).join('');
   const title=`${y-1911}/${String(m).padStart(2,'0')}`;const now=new Date();const stamp=`${now.getFullYear()-1911}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -1151,7 +1171,7 @@ function printParts(){
   if(weeks.length>5){const f=weeks[0],l=weeks[weeks.length-1];if(l.every((c,i)=>!c||!f[i])){l.forEach((c,i)=>{if(c)f[i]=c});weeks.pop()}}
   const cellHTML=c=>{if(!c)return '<td></td>';if(c.wd===7&&!(S.month.sun||[]).includes(c.key))return `<td><div class="d">${c.d}</div></td>`;
     const hol=S.month.hol[c.key];if(hol)return `<td><div class="d">${c.d}</div>${staff.map((p,i)=>`<div>${esc(p.code)}: ${i===0?esc(hol):'X'}</div>`).join('')}</td>`;
-    return `<td><div class="d">${c.d}</div>${staff.map(p=>`<div>${esc(p.code)}: ${esc(txt(p,c.key))}</div>`).join('')}</td>`};
+    return `<td><div class="d">${c.d}${amDay(c.key)?'<span class="amn">（只有早上）</span>':''}</div>${staff.map(p=>`<div>${esc(p.code)}: ${esc(txt(p,c.key))}</div>`).join('')}</td>`};
   const run=w=>{let best=[0,0],i=0;while(i<7){if(!w[i]){let j=i;while(j<7&&!w[j])j++;if(j-i>best[1])best=[i,j-i];i=j}else i++}return best};
   let spot=null;for(const wi of [0,weeks.length-1]){const r=run(weeks[wi]);if(r[1]>=3&&(!spot||r[1]>spot.n))spot={wi,at:r[0],n:r[1]}}
   const sum=staff.map(p=>{const r=tl.T[p.id];const hrs=p.isMe?'':`（${r.sat?`${fmtH(r.wk)} + ${fmtH(r.sat)}`:fmtH(r.wk)} 小時）`;return `<div>${esc(p.code)}: ${esc(p.name)}${hrs}　簽名：</div>`}).join('');
@@ -1179,6 +1199,7 @@ ${sc} table.desk td.dn{text-align:center}
 ${sc} table.desk tr.sunr td{background:#f2f2f2}
 ${sc} tr{break-inside:avoid;page-break-inside:avoid}
 ${sc} .d{font-weight:bold}
+${sc} .d .amn{font-weight:normal;font-size:.85em}
 ${sc} .sum{display:flex;gap:40px;margin-top:8px;break-inside:avoid;page-break-inside:avoid}
 ${sc} .sum div{line-height:1.9}
 ${sc} .stamp{margin-top:4px;font-size:8pt;color:#555;text-align:right}`}
@@ -1272,7 +1293,7 @@ const TOUR=[
  {sel:'.monthbar',t:'切換月份',b:'按「上個月」「下個月」切換月份。標題是民國年月，跟紙本一樣。'},
  {sel:'.cal .day:not(.hol)',pre:()=>setView('person'),t:'一天一格，跟紙本一樣',b:'每一列是一位治療師：左邊是代號和名字，右邊是他這天的班，例如「早」「午晚」「早晚」「全1」。「休」是休假，「—」是還沒排。顏色代表時段：早班橘黃、午班青綠、晚班靛紫。'},
  {sel:'.cal .day:not(.hol) .ln',t:'點一下就能改',b:'點任何一列，會跳出大按鈕讓你選班別。選好後，還可以一鍵填到這個月其他同一天，例如所有的週二。'},
- {sel:'.cal .day:not(.hol) .dbtn',t:'點日期',b:'點日期數字，可以看當天從早到晚誰在上班的時間軸，也可以把這天設成休診，例如國定假日、颱風假。'},
+ {sel:'.cal .day:not(.hol) .dbtn',t:'點日期',b:'點日期數字，可以看當天從早到晚誰在上班的時間軸，也可以把這天設成休診（國定假日、颱風假），或設成只有早上（例如除夕）。'},
  {sel:'.panel .pn-sum',t:'右邊是剩餘時數',b:'這裡顯示本月應上時數、正職和兼職各排了多少，以及還有沒有時段缺人。'},
  {sel:'.panel .pcard',t:'每個人的時數',b:'每張卡片是一個人：本月已排幾小時（平日＋週六），還差多少。正職跟「本月應上時數」比，兼職跟他過去幾個月的平均比。名字的顏色是他最常上的時段。'},
  {sel:'.panel .pcard',t:'一次排很多天',b:'點某個人的卡片，選好班別，再點日期就填進去；用滑鼠按住拖過好幾天，可以一次填完。也可以按住卡片，直接拖到某一天。'},
@@ -1346,7 +1367,7 @@ let toastT=null;function toast(msg){const t=$('#toast');t.textContent=msg;t.hidd
 function brushApply(date,mode){
   const {sid,opt}=S.brush;if(isHol(date))return mode;const cur=getE(date,sid);
   if(!mode)mode=(cur===opt&&opt)?'clear':'set';
-  const nv=mode==='clear'?'':opt;if(cur===nv)return mode;
+  let nv=mode==='clear'?'':opt;if(nv&&amDay(date)){nv=trimAM(S.cfg,nv);if(!nv)return mode}if(cur===nv)return mode;
   editMonth(m=>writeE(m,date,sid,nv),{noUndo:true});return mode}
 
 /* ---------- clicks ---------- */
@@ -1380,8 +1401,10 @@ document.addEventListener('click',e=>{
     case 'fillwd':{const P=S.picker;const val=getE(P.date,P.sid);const wd=dtOf(P.date).wd;let n=0;
       editMonth(m=>{for(const dt of mDates()){if(dt.wd!==wd||m.hol[dt.key]||dt.key===P.date)continue;if((m.e[dt.key]||{})[P.sid])continue;writeE(m,dt.key,P.sid,val);n++}});
       closePicker();toast(n?`已填入 ${n} 天`:`其他週${WDN[wd]}都已經有排了`);break}
-    case 'hol-set':{const label=v||($('#holInp')&&$('#holInp').value.trim())||'休診';const date=S.picker.date;if(editMonth(m=>{m.hol[date]=label}))syncHol(date,label);closePicker();break}
-    case 'hol-clear':{const date=S.picker.date;if(editMonth(m=>{delete m.hol[date]}))syncHol(date,null);closePicker();break}
+    case 'hol-set':{const label=v||($('#holInp')&&$('#holInp').value.trim())||'休診';const date=S.picker.date;if(editMonth(m=>{m.hol[date]=label;delete m.am[date]}))syncHol(date,'hol');closePicker();break}
+    case 'hol-clear':{const date=S.picker.date;if(editMonth(m=>{delete m.hol[date]}))syncHol(date,'unhol');closePicker();break}
+    case 'am-set':{const date=S.picker.date;if(editMonth(m=>putDay(m,date,{hol:null,am:true},S.cfg)))syncHol(date,'am');closePicker();break}
+    case 'am-clear':{const date=S.picker.date;if(editMonth(m=>{delete m.am[date]}))syncHol(date,'unam');render();break}
     case 'day-clear':{const date=S.picker.date;editMonth(m=>{delete m.e[date]});closePicker();toast('已清除這天的班，可以按「復原」救回');break}
     case 'pick-person':{const sid=el.dataset.sid;if(S.brush&&S.brush.sid===sid)S.brush=null;else S.brush={sid,opt:defaultOpt(sid)};render();break}
     case 'brush-opt':S.brush.opt=v;render();break;
@@ -1400,7 +1423,7 @@ document.addEventListener('click',e=>{
       if(!r.filled){toast(r.capped?`${me.name} 已到上限時數。`:(r.left?`${me.name} 沒有能補的時段（可能是不可或休假）。`:'目前沒有空缺。'));break}
       editMonth(m=>{m.e=r.e});toast(`${me.name} 補了 ${r.filled} 個時段。${r.left?`還缺 ${r.left} 人次，需要另外找人。`:'人力都夠了。'}`);break}
     case 'undo':{const prev=S.undo.pop();if(!prev)break;const ent=typeof prev==='string'?{m:prev}:prev;S.month=JSON.parse(ent.m);queueWrite(PX()+'months/'+S.ym,S.month);render();
-      if(ent.link){const L=ent.link;setOtherHol(L.path,L.date,L.prev).then(()=>toast(`已復原上一步，${S.group==='desk'?'治療師':'櫃台'}班表的休診也一起還原了。`)).catch(()=>toast('已復原上一步，但另一邊的休診沒有還原成功，請切過去檢查。'))}
+      if(ent.link){const L=ent.link;setOtherHol(L.path,L.date,L.prev).then(()=>toast(`已復原上一步，${S.group==='desk'?'治療師':'櫃台'}班表的那一天也一起還原了。`)).catch(()=>toast('已復原上一步，但另一邊沒有還原成功，請切過去檢查那一天。'))}
       else toast('已復原上一步');break}
     case 'print':downloadPrint();break;
     case 'backup':doBackup();break;
